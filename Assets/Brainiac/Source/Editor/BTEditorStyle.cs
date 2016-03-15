@@ -24,15 +24,15 @@ namespace BrainiacEditor
 		{
 			if(m_compositeStyle == null)
 			{
-				m_compositeStyle = new BTGraphNodeStyle("flow node hex 1", "flow node hex 1 on", new Vector2(120, 40));
+				m_compositeStyle = new BTGraphNodeStyle("flow node hex 1", "flow node hex 1 on");
 			}
 			if(m_decoratorStyle == null)
 			{
-				m_decoratorStyle = new BTGraphNodeStyle("flow node hex 1", "flow node hex 1 on", new Vector2(120, 40));
+				m_decoratorStyle = new BTGraphNodeStyle("flow node hex 1", "flow node hex 1 on");
 			}
 			if(m_actionStyle == null)
 			{
-				m_actionStyle = new BTGraphNodeStyle("flow node 0", "flow node 0 on", new Vector2(100, 30));
+				m_actionStyle = new BTGraphNodeStyle("flow node 0", "flow node 0 on");
 			}
 			if(m_selectionBoxStyle == null)
 			{

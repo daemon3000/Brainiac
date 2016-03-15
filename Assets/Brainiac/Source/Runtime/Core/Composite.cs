@@ -8,7 +8,16 @@ namespace Brainiac
 	{
 		[JsonProperty(PropertyName = "Children")]
 		protected List<BehaviourNode> m_children;
-		
+
+		public override Vector2 Size
+		{
+			get
+			{
+				return new Vector2(120, 40);
+			}
+		}
+
+		[JsonIgnore]
 		public int ChildCount
 		{
 			get

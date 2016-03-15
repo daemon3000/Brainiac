@@ -8,17 +8,13 @@ namespace BrainiacEditor
 	{
 		private GUIStyle m_normalStyle;
 		private GUIStyle m_selectedStyle;
-		private Vector2 m_size;
 		private string m_normalStyleName;
 		private string m_selectedStyleName;
 
-		public Vector2 Size { get { return m_size; } }
-
-		public BTGraphNodeStyle(string normalStyle, string selectedStyle, Vector2 size)
+		public BTGraphNodeStyle(string normalStyle, string selectedStyle)
 		{
 			m_normalStyleName = normalStyle;
 			m_selectedStyleName = selectedStyle;
-			m_size = size;
 
 			EnsureStyle();
 		}

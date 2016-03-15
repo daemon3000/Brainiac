@@ -47,13 +47,11 @@ namespace BrainiacEditor
 
 		private void DrawTransitions()
 		{
-			BTGraphNodeStyle nodeStyle = BTEditorStyle.GetNodeStyle(m_node.GetType());
-			Rect position = new Rect(m_node.Position + BTEditorCanvas.Current.Position, nodeStyle.Size);
+			Rect position = new Rect(m_node.Position + BTEditorCanvas.Current.Position, m_node.Size);
 
 			foreach(var child in m_children)
 			{
-				BTGraphNodeStyle childNodeStyle = BTEditorStyle.GetNodeStyle(child.Node.GetType());
-				Rect childPosition = new Rect(child.Node.Position + BTEditorCanvas.Current.Position, childNodeStyle.Size);
+				Rect childPosition = new Rect(child.Node.Position + BTEditorCanvas.Current.Position, child.Node.Size);
 				BTEditorUtils.DrawBezier(position, childPosition);
 			}
 		}
@@ -61,14 +59,13 @@ namespace BrainiacEditor
 		private void DrawNode()
 		{
 			BTGraphNodeStyle nodeStyle = BTEditorStyle.GetNodeStyle(m_node.GetType());
-			Rect position = new Rect(m_node.Position + BTEditorCanvas.Current.Position, nodeStyle.Size);
+			Rect position = new Rect(m_node.Position + BTEditorCanvas.Current.Position, m_node.Size);
 			EditorGUI.LabelField(position, m_node.Title, nodeStyle.GetStyle(m_isSelected));
 		}
 
 		private void HandleEvents()
 		{
-			BTGraphNodeStyle nodeStyle = BTEditorStyle.GetNodeStyle(m_node.GetType());
-			Rect position = new Rect(m_node.Position, nodeStyle.Size);
+			Rect position = new Rect(m_node.Position, m_node.Size);
 			Vector2 mousePosition = BTEditorCanvas.Current.WindowSpaceToCanvasSpace(BTEditorCanvas.Current.Event.mousePosition);
 
 			if(BTEditorCanvas.Current.Event.type == EventType.MouseDown && BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
@@ -225,8 +222,7 @@ namespace BrainiacEditor
 				BehaviourNode node = BTUtils.CreateNode(type);
 				if(node != null)
 				{
-					BTGraphNodeStyle nodeStyle = BTEditorStyle.GetNodeStyle(node.GetType());
-					Vector2 nodePos = m_node.Position + nodeStyle.Size * 1.5f;
+					Vector2 nodePos = m_node.Position + node.Size * 1.5f;
 					nodePos.x = Mathf.Max(nodePos.x, 0.0f);
 					nodePos.y = Mathf.Max(nodePos.y, 0.0f);
 

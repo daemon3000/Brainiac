@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Newtonsoft.Json;
+using System;
 
 namespace Brainiac
 {
@@ -7,6 +8,14 @@ namespace Brainiac
 	{
 		[JsonProperty(PropertyName = "Child")]
 		protected BehaviourNode m_child;
+
+		public override Vector2 Size
+		{
+			get
+			{
+				return new Vector2(120, 40);
+			}
+		}
 
 		public override void OnInitialize()
 		{

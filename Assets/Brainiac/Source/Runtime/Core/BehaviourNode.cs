@@ -1,4 +1,5 @@
 using UnityEngine;
+using Newtonsoft.Json;
 
 namespace Brainiac
 {
@@ -49,6 +50,9 @@ namespace Brainiac
 		}
 
 		public abstract string Title { get; }
+
+		[JsonIgnore]
+		public abstract Vector2 Size { get; }
 
 		public virtual void OnInitialize()
 		{
