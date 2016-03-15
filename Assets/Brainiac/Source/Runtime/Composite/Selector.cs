@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace Brainiac
 {
+	[AddBehaviourNodeMenu("Composite/Selector")]
 	public class Selector : Composite
 	{
 		private int m_currentChild;

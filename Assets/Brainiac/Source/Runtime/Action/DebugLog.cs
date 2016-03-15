@@ -7,6 +7,7 @@ namespace Brainiac
 		Info, Warning, Error
 	}
 
+	[AddBehaviourNodeMenu("Action/Debug")]
 	public class DebugLog : Action
 	{
 		private string m_message;

@@ -2,6 +2,7 @@
 
 namespace Brainiac
 {
+	[AddBehaviourNodeMenu("Action/Move")]
 	public class Move : Action
 	{
 		private string m_destination;

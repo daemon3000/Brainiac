@@ -69,14 +69,17 @@ namespace BrainiacEditor
 				m_selectionBoxStartPos = BTEditorCanvas.Current.Event.mousePosition;
 				BTEditorCanvas.Current.Event.Use();
 			}
-			else if(BTEditorCanvas.Current.Event.type == EventType.MouseDrag && BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
+			if(BTEditorCanvas.Current.CanEdit)
 			{
-				m_drawSelectionBox = true;
-			}
-			else if(BTEditorCanvas.Current.Event.type == EventType.MouseUp && BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
-			{
-				m_drawSelectionBox = false;
-				BTEditorCanvas.Current.Event.Use();
+				if(BTEditorCanvas.Current.Event.type == EventType.MouseDrag && BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
+				{
+					m_drawSelectionBox = true;
+				}
+				else if(BTEditorCanvas.Current.Event.type == EventType.MouseUp && BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
+				{
+					m_drawSelectionBox = false;
+					BTEditorCanvas.Current.Event.Use();
+				}
 			}
 		}
 

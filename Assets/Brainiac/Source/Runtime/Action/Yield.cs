@@ -2,6 +2,7 @@
 
 namespace Brainiac
 {
+	[AddBehaviourNodeMenu("Action/Yield")]
 	public class Yield : Action
 	{
 		private bool m_yield;

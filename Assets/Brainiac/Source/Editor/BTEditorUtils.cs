@@ -1,15 +1,31 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using UnityEngine.Events;
-using Brainiac;
 using System;
+using System.Linq;
+using System.Reflection;
+using System.Collections.Generic;
+using Brainiac;
 
 namespace BrainiacEditor
 {
 	public static class BTEditorUtils
 	{
+		private class BTContextMenuPath
+		{
+			public readonly string menuPath;
+			public readonly Type nodeType;
+
+			public BTContextMenuPath(string menuPath, Type nodeType)
+			{
+				this.menuPath = menuPath;
+				this.nodeType = nodeType;
+			}
+		}
+
 		private const int BEZIER_H_OFFSET = 0;
 		private const int BEZIER_WIDTH = 3;
+
+		private static List<BTContextMenuPath> m_nodeMenuPaths;
 
 		public static void DrawBezier(Rect a, Rect b)
 		{
@@ -42,14 +58,15 @@ namespace BrainiacEditor
 
 			if(canAddChild)
 			{
-				menu.AddItem(new GUIContent("Add Child/Actions/Debug"), false, onCreateChild, typeof(DebugLog));
-				menu.AddItem(new GUIContent("Add Child/Actions/Move"), false, onCreateChild, typeof(Move));
-				menu.AddItem(new GUIContent("Add Child/Actions/Timer"), false, onCreateChild, typeof(Timer));
-				menu.AddItem(new GUIContent("Add Child/Actions/Yield"), false, onCreateChild, typeof(Yield));
-				menu.AddItem(new GUIContent("Add Child/Composite/Sequence"), false, onCreateChild, typeof(Sequence));
-				menu.AddItem(new GUIContent("Add Child/Composite/Selector"), false, onCreateChild, typeof(Selector));
-				menu.AddItem(new GUIContent("Add Child/Decorator/Inverter"), false, onCreateChild, typeof(Inverter));
-				menu.AddItem(new GUIContent("Add Child/Decorator/Succeder"), false, onCreateChild, typeof(Succeder));
+				if(m_nodeMenuPaths == null)
+				{
+					BuildNodeMenuPaths();
+				}
+
+				foreach(var item in m_nodeMenuPaths)
+				{
+					menu.AddItem(new GUIContent("Add Child/" + item.menuPath), false, onCreateChild, item.nodeType);
+				}
 
 				menu.AddSeparator("");
 			}
@@ -87,6 +104,30 @@ namespace BrainiacEditor
 			}
 
 			return menu;
+		}
+
+		private static void BuildNodeMenuPaths()
+		{
+			if(m_nodeMenuPaths == null)
+			{
+				m_nodeMenuPaths = new List<BTContextMenuPath>();
+			}
+			else
+			{
+				m_nodeMenuPaths.Clear();
+			}
+
+			Type nodeType = typeof(BehaviourNode);
+			Assembly assembly = nodeType.Assembly;
+			foreach(Type type in assembly.GetTypes().Where(t => t.IsSubclassOf(nodeType)))
+			{
+				object[] attributes = type.GetCustomAttributes(typeof(AddBehaviourNodeMenuAttribute), false);
+				if(attributes.Length > 0)
+				{
+					AddBehaviourNodeMenuAttribute attribute = attributes[0] as AddBehaviourNodeMenuAttribute;
+					m_nodeMenuPaths.Add(new BTContextMenuPath(attribute.MenuPath, type));
+				}
+			}
 		}
 	}
 }

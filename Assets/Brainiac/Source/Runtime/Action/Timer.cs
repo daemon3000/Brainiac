@@ -2,6 +2,7 @@
 
 namespace Brainiac
 {
+	[AddBehaviourNodeMenu("Action/Timer")]
 	public class Timer : Action
 	{
 		private float m_duration;

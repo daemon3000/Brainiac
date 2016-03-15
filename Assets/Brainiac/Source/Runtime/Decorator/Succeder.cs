@@ -2,6 +2,7 @@
 
 namespace Brainiac
 {
+	[AddBehaviourNodeMenu("Decorator/Succeder")]
 	public class Succeder : Decorator
 	{
 		public override string Title

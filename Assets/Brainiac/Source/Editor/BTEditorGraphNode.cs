@@ -76,8 +76,10 @@ namespace BrainiacEditor
 					{
 						m_graph.OnNodeSelected(this);
 					}
-
-					m_graph.OnNodeBeginDrag(this, mousePosition);
+					if(BTEditorCanvas.Current.CanEdit)
+					{
+						m_graph.OnNodeBeginDrag(this, mousePosition);
+					}
 					BTEditorCanvas.Current.Event.Use();
 				}
 			}
