@@ -25,6 +25,16 @@ namespace BrainiacEditor
 			get { return m_node; }
 		}
 
+		public BTEditorGraphNode Parent
+		{
+			get { return m_parent; }
+		}
+
+		public BTEditorGraph Graph
+		{
+			get { return m_graph; }
+		}
+
 		private void OnCreated()
 		{
 			if(m_children == null)
@@ -183,7 +193,7 @@ namespace BrainiacEditor
 
 		private void SetNode(BehaviourNode node)
 		{
-			DeleteChildren();
+			OnDeleteChildren();
 
 			m_node = node;
 			m_isSelected = false;
@@ -212,13 +222,12 @@ namespace BrainiacEditor
 
 		private void ShowContextMenu()
 		{
-			GenericMenu menu = BTEditorUtils.CreateContextMenu(m_node, CreateChild, Delete, DeleteChildren);
+			GenericMenu menu = BTEditorUtils.CreateNodeContextMenu(this);
 			menu.DropDown(new Rect(BTEditorCanvas.Current.Event.mousePosition, Vector2.zero));
 		}
 
-		private void CreateChild(object childType)
+		public void OnCreateChild(Type type)
 		{
-			Type type = childType as Type;
 			if(type != null)
 			{
 				BehaviourNode node = BTUtils.CreateNode(type);
@@ -239,7 +248,7 @@ namespace BrainiacEditor
 					{
 						Decorator decorator = m_node as Decorator;
 
-						DeleteChildren();
+						OnDeleteChildren();
 						decorator.ReplaceChild(node);
 					}
 
@@ -255,17 +264,16 @@ namespace BrainiacEditor
 			}
 		}
 
-		private void Delete()
+		public void OnDelete()
 		{
 			if(m_parent != null)
 			{
-				m_parent.RemoveChild(this);
+				m_parent.OnDeleteChild(this);
+				BTEditorGraphNode.DestroyImmediate(this);
 			}
-
-			BTEditorGraphNode.DestroyImmediate(this);
 		}
 
-		private void DeleteChildren()
+		public void OnDeleteChildren()
 		{
 			for(int i = 0; i < m_children.Count; i++)
 			{
@@ -284,7 +292,7 @@ namespace BrainiacEditor
 			m_children.Clear();
 		}
 
-		private void RemoveChild(BTEditorGraphNode child)
+		public void OnDeleteChild(BTEditorGraphNode child)
 		{
 			if(m_children.Remove(child))
 			{

@@ -1,12 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Brainiac;
+using UnityEditor;
+using System;
 
 namespace BrainiacEditor
 {
 	public class BTEditorGraph : ScriptableObject
 	{
 		private const int SELECT_MOUSE_BUTTON = 0;
+		private const int CONTEXT_MOUSE_BUTTON = 1;
 
 		private List<BTEditorGraphNode> m_selection;
 		private BTEditorGraphNode m_root;
@@ -62,23 +65,55 @@ namespace BrainiacEditor
 
 		private void HandleEvents()
 		{
+			Rect windowPosition = new Rect(0, 0, BTEditorCanvas.Current.Window.position.width, BTEditorCanvas.Current.Window.position.height);
+
 			if(BTEditorCanvas.Current.Event.type == EventType.MouseDown && BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
 			{
-				ClearSelection();
-				
-				m_selectionBoxStartPos = BTEditorCanvas.Current.Event.mousePosition;
-				BTEditorCanvas.Current.Event.Use();
+				if(windowPosition.Contains(BTEditorCanvas.Current.Event.mousePosition))
+				{
+					ClearSelection();
+
+					m_selectionBoxStartPos = BTEditorCanvas.Current.Event.mousePosition;
+					BTEditorCanvas.Current.Event.Use();
+				}
 			}
 			if(BTEditorCanvas.Current.CanEdit)
 			{
 				if(BTEditorCanvas.Current.Event.type == EventType.MouseDrag && BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
 				{
-					m_drawSelectionBox = true;
+					if(windowPosition.Contains(BTEditorCanvas.Current.Event.mousePosition))	
+					{
+						if(!m_drawSelectionBox)
+						{
+							m_drawSelectionBox = true;
+							BTUndoSystem.BeginUndoGroup("Selection changed");
+						}
+
+						BTEditorCanvas.Current.Event.Use();
+					}
 				}
-				else if(BTEditorCanvas.Current.Event.type == EventType.MouseUp && BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
+				else if(BTEditorCanvas.Current.Event.type == EventType.MouseUp)
 				{
-					m_drawSelectionBox = false;
-					BTEditorCanvas.Current.Event.Use();
+					if(windowPosition.Contains(BTEditorCanvas.Current.Event.mousePosition))
+					{
+						if(BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
+						{
+							if(m_drawSelectionBox)
+							{
+								m_drawSelectionBox = false;
+								BTUndoSystem.EndUndoGroup();
+							}
+
+							BTEditorCanvas.Current.Event.Use();
+						}
+						else if(BTEditorCanvas.Current.Event.button == CONTEXT_MOUSE_BUTTON)
+						{
+							GenericMenu menu = BTEditorUtils.CreateGraphContextMenu();
+							menu.DropDown(new Rect(BTEditorCanvas.Current.Event.mousePosition, Vector2.zero));
+
+							BTEditorCanvas.Current.Event.Use();
+						}
+					}
 				}
 			}
 		}
@@ -91,6 +126,7 @@ namespace BrainiacEditor
 				{
 					m_selection.Add(node);
 					node.OnSelected();
+					BTUndoSystem.RegisterUndo(new UndoNodeSelected(this, node));
 				}
 			}
 			else
@@ -98,6 +134,7 @@ namespace BrainiacEditor
 				ClearSelection();
 				m_selection.Add(node);
 				node.OnSelected();
+				BTUndoSystem.RegisterUndo(new UndoNodeSelected(this, node));
 			}
 		}
 
@@ -106,6 +143,7 @@ namespace BrainiacEditor
 			if(m_selection.Remove(node))
 			{
 				node.OnDeselected();
+				BTUndoSystem.RegisterUndo(new UndoNodeDeselected(this, node));
 			}
 		}
 
@@ -148,19 +186,60 @@ namespace BrainiacEditor
 			}
 		}
 
+		public void OnNodeCreateChild(BTEditorGraphNode node, Type childType)
+		{
+			if(node != null && childType != null)
+			{
+				node.OnCreateChild(childType);
+			}
+		}
+
+		public void OnNodeDelete(BTEditorGraphNode node)
+		{
+			if(node != null)
+			{
+				node.OnDelete();
+			}
+		}
+
+		public void OnNodeDeleteChildren(BTEditorGraphNode node)
+		{
+			if(node != null)
+			{
+				node.OnDeleteChildren();
+			}
+		}
+
 		public void RemoveNodeFromSelection(BTEditorGraphNode node)
 		{
-			m_selection.Remove(node);
+			if(node != null)
+			{
+				m_selection.Remove(node);
+			}
+		}
+
+		public void AddNodeToSelection(BTEditorGraphNode node)
+		{
+			if(node != null && !m_selection.Contains(node))
+			{
+				m_selection.Add(node);
+			}
 		}
 
 		private void ClearSelection()
 		{
-			for(int i = 0; i < m_selection.Count; i++)
+			if(m_selection.Count > 0)
 			{
-				m_selection[i].OnDeselected();
-			}
+				BTUndoSystem.BeginUndoGroup("Selection changed");
+				for(int i = 0; i < m_selection.Count; i++)
+				{
+					m_selection[i].OnDeselected();
+					BTUndoSystem.RegisterUndo(new UndoNodeDeselected(this, m_selection[i]));
+				}
+				BTUndoSystem.EndUndoGroup();
 
-			m_selection.Clear();
+				m_selection.Clear();
+			}
 		}
 
 		private void OnDestroy()

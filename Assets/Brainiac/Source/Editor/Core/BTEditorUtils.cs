@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 using Brainiac;
+using UnityEngine.Events;
 
 namespace BrainiacEditor
 {
@@ -42,18 +43,18 @@ namespace BrainiacEditor
 							   Color.white, null, BEZIER_WIDTH);
 		}
 
-		public static GenericMenu CreateContextMenu(BehaviourNode m_node, GenericMenu.MenuFunction2 onCreateChild, GenericMenu.MenuFunction onDelete, GenericMenu.MenuFunction onDeleteChildren)
+		public static GenericMenu CreateNodeContextMenu(BTEditorGraphNode m_node)
 		{
 			GenericMenu menu = new GenericMenu();
 			bool canAddChild = false;
 
-			if(m_node is Composite)
+			if(m_node.Node is Composite)
 			{
 				canAddChild = true;
 			}
-			else if(m_node is Decorator)
+			else if(m_node.Node is Decorator)
 			{
-				canAddChild = ((Decorator)m_node).GetChild() == null;
+				canAddChild = ((Decorator)m_node.Node).GetChild() == null;
 			}
 
 			if(canAddChild)
@@ -63,6 +64,8 @@ namespace BrainiacEditor
 					BuildNodeMenuPaths();
 				}
 
+				GenericMenu.MenuFunction2 onCreateChild = t => m_node.Graph.OnNodeCreateChild(m_node, t as Type);
+
 				foreach(var item in m_nodeMenuPaths)
 				{
 					menu.AddItem(new GUIContent("Add Child/" + item.menuPath), false, onCreateChild, item.nodeType);
@@ -71,36 +74,63 @@ namespace BrainiacEditor
 				menu.AddSeparator("");
 			}
 
-			if(m_node is Root)
+			if(m_node.Node is Root)
 			{
 				menu.AddDisabledItem(new GUIContent("Delete"));
 			}
 			else
 			{
-				menu.AddItem(new GUIContent("Delete"), false, onDelete);
+				menu.AddItem(new GUIContent("Delete"), false, () => m_node.Graph.OnNodeDelete(m_node));
 			}
 
-			if(m_node is Composite)
+			if(m_node.Node is Composite)
 			{
-				if(((Composite)m_node).ChildCount > 0)
+				if(((Composite)m_node.Node).ChildCount > 0)
 				{
-					menu.AddItem(new GUIContent("Delete Children"), false, onDeleteChildren);
+					menu.AddItem(new GUIContent("Delete Children"), false, () => m_node.Graph.OnNodeDeleteChildren(m_node));
 				}
 				else
 				{
 					menu.AddDisabledItem(new GUIContent("Delete Children"));
 				}
 			}
-			else if(m_node is Decorator)
+			else if(m_node.Node is Decorator)
 			{
-				if(((Decorator)m_node).GetChild() != null)
+				if(((Decorator)m_node.Node).GetChild() != null)
 				{
-					menu.AddItem(new GUIContent("Delete Child"), false, onDeleteChildren);
+					menu.AddItem(new GUIContent("Delete Child"), false, () => m_node.Graph.OnNodeDeleteChildren(m_node));
 				}
 				else
 				{
 					menu.AddDisabledItem(new GUIContent("Delete Child"));
 				}
+			}
+
+			return menu;
+		}
+
+		public static GenericMenu CreateGraphContextMenu()
+		{
+			GenericMenu menu = new GenericMenu();
+
+			if(BTUndoSystem.CanUndo)
+			{
+				BTUndoState topUndo = BTUndoSystem.PeekUndo();
+				menu.AddItem(new GUIContent(string.Format("Undo \"{0}\"", topUndo.Title)), false, () => BTUndoSystem.Undo());
+			}
+			else
+			{
+				menu.AddDisabledItem(new GUIContent("Undo"));
+			}
+
+			if(BTUndoSystem.CanRedo)
+			{
+				BTUndoState topRedo = BTUndoSystem.PeekRedo();
+				menu.AddItem(new GUIContent(string.Format("Redo \"{0}\"", topRedo.Title)), false, () => BTUndoSystem.Redo());
+			}
+			else
+			{
+				menu.AddDisabledItem(new GUIContent("Redo"));
 			}
 
 			return menu;

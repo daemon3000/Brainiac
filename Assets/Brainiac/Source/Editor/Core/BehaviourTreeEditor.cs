@@ -37,6 +37,7 @@ namespace BrainiacEditor
 			if(m_canvas == null)
 			{
 				m_canvas = new BTEditorCanvas();
+				m_canvas.Window = this;
 				BTEditorCanvas.Current = m_canvas;
 			}
 			if(m_grid == null)

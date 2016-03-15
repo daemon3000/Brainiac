@@ -26,10 +26,19 @@ namespace BrainiacEditor
 			}
 		}
 
+		public EditorWindow Window { get; set; }
+
 		public Event Event
 		{
 			get
 			{
+				if(Event.current == null)
+				{
+					Event evt = new Event();
+					evt.type = EventType.Ignore;
+					return evt;
+				}
+
 				return Event.current;
 			}
 		}
