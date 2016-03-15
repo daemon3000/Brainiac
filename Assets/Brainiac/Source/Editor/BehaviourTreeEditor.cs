@@ -1,26 +1,35 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using Brainiac;
+using UnityEditor.Callbacks;
 
 namespace BrainiacEditor
 {
 	public class BehaviourTreeEditor : EditorWindow
 	{
 		[SerializeField]
-		private Texture m_grid;
+		private Texture m_gridTexture;
+		[SerializeField]
+		private GUISkin m_editorSkin;
 		[SerializeField]
 		private BTAsset m_btAsset;
 
+		private BTEditorGrid m_grid;
 		private BTEditorGraph m_graph;
 		private BTEditorCanvas m_canvas;
 		private bool m_isDisposed;
 
 		private void OnEnable()
 		{
-			if(m_grid == null)
+			if(m_gridTexture == null)
 			{
-				m_grid = Resources.Load<Texture>("Brainiac/background");
+				m_gridTexture = Resources.Load<Texture>("Brainiac/background");
 			}
+			if(m_editorSkin == null)
+			{
+				m_editorSkin = Resources.Load<GUISkin>("Brainiac/editor_style");
+			}
+
 			if(m_graph == null)
 			{
 				m_graph = BTEditorGraph.Create();
@@ -29,6 +38,10 @@ namespace BrainiacEditor
 			{
 				m_canvas = new BTEditorCanvas();
 				BTEditorCanvas.Current = m_canvas;
+			}
+			if(m_grid == null)
+			{
+				m_grid = new BTEditorGrid(m_gridTexture);
 			}
 
 			if(m_btAsset != null)
@@ -103,27 +116,11 @@ namespace BrainiacEditor
 		{
 			if(m_btAsset != null)
 			{
-				BTEditorStyle.EnsureStyle();
-				DrawGrid();
+				BTEditorStyle.EnsureStyle(m_editorSkin);
+				m_grid.DrawGUI();
 				m_graph.DrawGUI();
 				m_canvas.HandleEvents(this);
-				DrawLogo();
 			}
-		}
-
-		private void DrawGrid()
-		{
-			float width = Mathf.Max(m_grid.width, m_canvas.Size.x);
-			float height = Mathf.Max(m_grid.height, m_canvas.Size.y);
-			Rect position = new Rect(m_canvas.Position.x, m_canvas.Position.y, width, height);
-			Rect texCoords = new Rect(0.0f, 0.0f, width / m_grid.width, height / m_grid.height);
-
-			GUI.DrawTextureWithTexCoords(position, m_grid, texCoords);
-		}
-
-		private void DrawLogo()
-		{
-			//EditorGUI.LabelField(new Rect(position.width - 260, position.height - 60, 260, 60), "BRAINIAC", BTEditorStyle.LogoStyle);
 		}
 
 		public static void Open(BTAsset behaviourTree)
@@ -131,5 +128,18 @@ namespace BrainiacEditor
 			var window = EditorWindow.GetWindow<BehaviourTreeEditor>("Braniac");
 			window.SetBTAsset(behaviourTree);
 		}
+
+		//[OnOpenAsset(0)]
+		//private static bool Open(int instanceID, int line)
+		//{
+		//	var asset = EditorUtility.InstanceIDToObject(instanceID);
+		//	if(asset is BTAsset)
+		//	{
+		//		Open(asset as BTAsset);
+		//		return true;
+		//	}
+
+		//	return false;
+		//}
 	}
 }

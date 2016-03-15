@@ -15,7 +15,9 @@ namespace BrainiacEditor
 		private List<BTEditorGraphNode> m_children;
 		private BehaviourNode m_node;
 		private BTEditorGraphNode m_parent;
+		private BTEditorGraph m_graph;
 		private bool m_isSelected;
+		private bool m_isDragging;
 		private Vector2 m_dragOffset;
 
 		public BehaviourNode Node
@@ -23,7 +25,7 @@ namespace BrainiacEditor
 			get { return m_node; }
 		}
 
-		private void Initialize()
+		private void OnCreated()
 		{
 			if(m_children == null)
 			{
@@ -31,6 +33,7 @@ namespace BrainiacEditor
 			}
 
 			m_isSelected = false;
+			m_isDragging = false;
 			m_dragOffset = Vector2.zero;
 		}
 
@@ -66,16 +69,19 @@ namespace BrainiacEditor
 		{
 			BTGraphNodeStyle nodeStyle = BTEditorStyle.GetNodeStyle(m_node.GetType());
 			Rect position = new Rect(m_node.Position, nodeStyle.Size);
-			Vector2 mousePosition = GetMousePositionInCanvasSpace();
+			Vector2 mousePosition = BTEditorCanvas.Current.WindowSpaceToCanvasSpace(BTEditorCanvas.Current.Event.mousePosition);
 
 			if(BTEditorCanvas.Current.Event.type == EventType.MouseDown && BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
 			{
 				if(position.Contains(mousePosition))
 				{
-					m_dragOffset = GetMousePositionInCanvasSpace() - m_node.Position;
+					if(!m_isSelected)
+					{
+						m_graph.OnNodeSelected(this);
+					}
+
+					m_graph.OnNodeBeginDrag(this, mousePosition);
 					BTEditorCanvas.Current.Event.Use();
-					BTEditorCanvas.Current.ReplaceSelection(this);
-					BTEditorCanvas.Current.Repaint();
 				}
 			}
 			else if(BTEditorCanvas.Current.Event.type == EventType.MouseDown && BTEditorCanvas.Current.Event.button == CONTEXT_MOUSE_BUTTON)
@@ -88,36 +94,37 @@ namespace BrainiacEditor
 			}
 			else if(BTEditorCanvas.Current.Event.type == EventType.MouseUp && BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
 			{
-				if(m_isSelected)
+				if(m_isDragging)
 				{
-					BTEditorCanvas.Current.RecalculateCanvasSize(this);
+					m_graph.OnNodeEndDrag(this);
+					BTEditorCanvas.Current.Event.Use();
 				}
 			}
 			else if(BTEditorCanvas.Current.Event.type == EventType.MouseDrag && BTEditorCanvas.Current.Event.button == DRAG_MOUSE_BUTTON)
 			{
-				if(BTEditorCanvas.Current.CanEdit && m_isSelected)
+				if(m_isDragging)
 				{
-					Vector2 nodePos = mousePosition - m_dragOffset;
-					if(BTEditorCanvas.Current.SnapToGrid)
-					{
-						float snapSize = BTEditorCanvas.Current.SnapSize;
-						nodePos.x = (float)Math.Round(nodePos.x / snapSize) * snapSize;
-						nodePos.y = (float)Math.Round(nodePos.y / snapSize) * snapSize;
-					}
-
-					nodePos.x = Mathf.Max(nodePos.x, 0.0f);
-					nodePos.y = Mathf.Max(nodePos.y, 0.0f);
-
-					m_node.Position = nodePos;
+					m_graph.OnNodeDrag(this, mousePosition);
 					BTEditorCanvas.Current.Event.Use();
-					BTEditorCanvas.Current.Repaint();
 				}
 			}
-		}
-
-		private Vector2 GetMousePositionInCanvasSpace()
-		{
-			return BTEditorCanvas.Current.Event.mousePosition - BTEditorCanvas.Current.Position;
+			else if(m_graph.SelectionBox.HasValue)
+			{
+				if(m_graph.SelectionBox.Value.Contains(position.center))
+				{
+					if(!m_isSelected)
+					{
+						m_graph.OnNodeSelected(this);
+					}
+				}
+				else
+				{
+					if(m_isSelected)
+					{
+						m_graph.OnNodeDeselected(this);
+					}
+				}
+			}
 		}
 
 		private void DrawChildren()
@@ -131,11 +138,48 @@ namespace BrainiacEditor
 		public void OnSelected()
 		{
 			m_isSelected = true;
+			Selection.activeObject = this;
+			BTEditorCanvas.Current.Repaint();
 		}
 
 		public void OnDeselected()
 		{
 			m_isSelected = false;
+			m_isDragging = false;
+			if(Selection.activeObject == this)
+			{
+				Selection.activeObject = null;
+			}
+			BTEditorCanvas.Current.Repaint();
+		}
+
+		public void OnBeginDrag(Vector2 position)
+		{
+			m_dragOffset = position - m_node.Position;
+			m_isDragging = true;
+		}
+
+		public void OnDrag(Vector2 position)
+		{
+			Vector2 nodePos = position - m_dragOffset;
+			if(BTEditorCanvas.Current.SnapToGrid)
+			{
+				float snapSize = BTEditorCanvas.Current.SnapSize;
+				nodePos.x = (float)Math.Round(nodePos.x / snapSize) * snapSize;
+				nodePos.y = (float)Math.Round(nodePos.y / snapSize) * snapSize;
+			}
+
+			nodePos.x = Mathf.Max(nodePos.x, 0.0f);
+			nodePos.y = Mathf.Max(nodePos.y, 0.0f);
+
+			m_node.Position = nodePos;
+
+			BTEditorCanvas.Current.Repaint();
+		}
+
+		public void OnEndDrag()
+		{
+			m_isDragging = false;
 		}
 
 		private void SetNode(BehaviourNode node)
@@ -151,7 +195,7 @@ namespace BrainiacEditor
 				for(int i = 0; i < composite.ChildCount; i++)
 				{
 					BehaviourNode childNode = composite.GetChild(i);
-					BTEditorGraphNode graphNode = BTEditorGraphNode.Create(this, childNode);
+					BTEditorGraphNode graphNode = BTEditorGraphNode.Create(m_graph, this, childNode);
 					m_children.Add(graphNode);
 				}
 			}
@@ -161,7 +205,7 @@ namespace BrainiacEditor
 				BehaviourNode childNode = decorator.GetChild();
 				if(childNode != null)
 				{
-					BTEditorGraphNode graphNode = BTEditorGraphNode.Create(this, childNode);
+					BTEditorGraphNode graphNode = BTEditorGraphNode.Create(m_graph, this, childNode);
 					m_children.Add(graphNode);
 				}
 			}
@@ -182,7 +226,11 @@ namespace BrainiacEditor
 				if(node != null)
 				{
 					BTGraphNodeStyle nodeStyle = BTEditorStyle.GetNodeStyle(node.GetType());
-					m_node.Position = m_node.Position + nodeStyle.Size * 1.5f;
+					Vector2 nodePos = m_node.Position + nodeStyle.Size * 1.5f;
+					nodePos.x = Mathf.Max(nodePos.x, 0.0f);
+					nodePos.y = Mathf.Max(nodePos.y, 0.0f);
+
+					node.Position = nodePos;
 
 					if(m_node is Composite)
 					{
@@ -197,8 +245,14 @@ namespace BrainiacEditor
 						decorator.ReplaceChild(node);
 					}
 
-					BTEditorGraphNode graphNode = BTEditorGraphNode.Create(this, node);
+					BTEditorGraphNode graphNode = BTEditorGraphNode.Create(m_graph, this, node);
 					m_children.Add(graphNode);
+					
+					Vector2 canvasSize = BTEditorCanvas.Current.Size;
+					canvasSize.x = Mathf.Max(node.Position.x + 250.0f, canvasSize.x);
+					canvasSize.y = Mathf.Max(node.Position.y + 250.0f, canvasSize.y);
+
+					BTEditorCanvas.Current.Size = canvasSize;
 				}
 			}
 		}
@@ -251,19 +305,28 @@ namespace BrainiacEditor
 
 		private void OnDestroy()
 		{
-			BTEditorCanvas.Current.RemoveFromSelection(this);
+			if(m_isSelected)
+			{
+				m_graph.RemoveNodeFromSelection(this);
+				if(Selection.activeObject == this)
+				{
+					Selection.activeObject = null;
+				}
+			}
+
 			foreach(var child in m_children)
 			{
 				BTEditorGraphNode.DestroyImmediate(child);
 			}
 		}
 
-		public static BTEditorGraphNode Create(BTEditorGraphNode parent, BehaviourNode node)
+		public static BTEditorGraphNode Create(BTEditorGraph graph, BTEditorGraphNode parent, BehaviourNode node)
 		{
 			BTEditorGraphNode graphNode = ScriptableObject.CreateInstance<BTEditorGraphNode>();
-			graphNode.Initialize();
+			graphNode.OnCreated();
 			graphNode.hideFlags = HideFlags.HideAndDontSave;
 			graphNode.m_parent = parent;
+			graphNode.m_graph = graph;
 			graphNode.SetNode(node);
 
 			return graphNode;

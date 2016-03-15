@@ -10,14 +10,17 @@ namespace BrainiacEditor
 		private static BTGraphNodeStyle m_compositeStyle;
 		private static BTGraphNodeStyle m_decoratorStyle;
 		private static BTGraphNodeStyle m_actionStyle;
-		private static GUIStyle m_logoStyle;
+		private static GUIStyle m_selectionBoxStyle;
 
-		public static GUIStyle LogoStyle
+		public static GUIStyle SelectionBox
 		{
-			get { return m_logoStyle; }
+			get
+			{
+				return m_selectionBoxStyle;
+			}
 		}
 
-		public static void EnsureStyle()
+		public static void EnsureStyle(GUISkin editorSkin)
 		{
 			if(m_compositeStyle == null)
 			{
@@ -31,12 +34,13 @@ namespace BrainiacEditor
 			{
 				m_actionStyle = new BTGraphNodeStyle("flow node 0", "flow node 0 on", new Vector2(100, 30));
 			}
-			if(m_logoStyle == null)
+			if(m_selectionBoxStyle == null)
 			{
-				m_logoStyle = new GUIStyle(EditorStyles.largeLabel);
-				m_logoStyle.alignment = TextAnchor.LowerLeft;
-				m_logoStyle.fontSize = 50;
-				m_logoStyle.normal.textColor = new Color32(158, 255, 125, 255);
+				m_selectionBoxStyle = editorSkin.FindStyle("selection_box");
+				if(m_selectionBoxStyle == null)
+				{
+					m_selectionBoxStyle = editorSkin.box;
+				}
 			}
 		}
 

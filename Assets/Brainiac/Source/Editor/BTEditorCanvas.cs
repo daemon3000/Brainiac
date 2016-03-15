@@ -8,11 +8,9 @@ namespace BrainiacEditor
 	public class BTEditorCanvas
 	{
 		private const int DRAG_MOUSE_BUTTON = 2;
-		private const int SELECT_MOUSE_BUTTON = 0;
-
+		
 		public event UnityAction OnRepaint;
-
-		private HashSet<BTEditorGraphNode> m_currentSelection;
+		
 		private int m_snapSize;
 		private static BTEditorCanvas m_instance;
 
@@ -54,7 +52,6 @@ namespace BrainiacEditor
 		
 		public BTEditorCanvas()
 		{
-			m_currentSelection = new HashSet<BTEditorGraphNode>();
 			Position = Vector2.zero;
 			Size = new Vector2(1000, 1000);
 			IsDebuging = false;
@@ -84,12 +81,7 @@ namespace BrainiacEditor
 				canvasSize.y = window.position.height;
 			}
 
-			if(Event.current.type == EventType.MouseDown && Event.current.button == SELECT_MOUSE_BUTTON)
-			{
-				ClearSelection();
-				Event.current.Use();
-			}
-			else if(Event.current.type == EventType.MouseDrag && Event.current.button == DRAG_MOUSE_BUTTON)
+			if(Event.current.type == EventType.MouseDrag && Event.current.button == DRAG_MOUSE_BUTTON)
 			{
 				canvasPosition += Event.current.delta;
 				Event.current.Use();
@@ -102,71 +94,9 @@ namespace BrainiacEditor
 			Size = canvasSize;
 		}
 
-		public void AddToSelection(BTEditorGraphNode graphNode)
+		public Vector2 WindowSpaceToCanvasSpace(Vector2 mousePosition)
 		{
-			if(graphNode != null)
-			{
-				if(!m_currentSelection.Contains(graphNode))
-				{
-					m_currentSelection.Add(graphNode);
-					graphNode.OnSelected();
-				}
-
-				UnityEditor.Selection.activeObject = graphNode;
-			}
-		}
-
-		public void RemoveFromSelection(BTEditorGraphNode graphNode)
-		{
-			if(graphNode != null)
-			{
-				m_currentSelection.Remove(graphNode);
-				graphNode.OnDeselected();
-
-				if(UnityEditor.Selection.activeObject == graphNode)
-				{
-					UnityEditor.Selection.activeObject = null;
-				}
-			}
-		}
-
-		public void ReplaceSelection(BTEditorGraphNode graphNode)
-		{
-			if(graphNode != null)
-			{
-				ClearSelection();
-				m_currentSelection.Add(graphNode);
-				graphNode.OnSelected();
-				UnityEditor.Selection.activeObject = graphNode;
-			}
-		}
-
-		public void ClearSelection()
-		{
-			foreach(var node in m_currentSelection)
-			{
-				if(UnityEditor.Selection.activeObject == node)
-				{
-					UnityEditor.Selection.activeObject = null;
-				}
-				node.OnDeselected();
-			}
-
-			m_currentSelection.Clear();
-		}
-
-		public bool IsSelected(BTEditorGraphNode graphNode)
-		{
-			return graphNode != null && m_currentSelection.Contains(graphNode);
-		}
-
-		public void RecalculateCanvasSize(BTEditorGraphNode lastMovedNode)
-		{
-			Vector2 size = Size;
-			size.x = Mathf.Max(lastMovedNode.Node.Position.x + 250.0f, size.x);
-			size.y = Mathf.Max(lastMovedNode.Node.Position.y + 250.0f, size.y);
-
-			Size = size;
+			return mousePosition - Position;
 		}
 	}
 }
