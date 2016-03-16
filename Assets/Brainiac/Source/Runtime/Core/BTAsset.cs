@@ -51,17 +51,17 @@ namespace Brainiac
 
 		public void Serialize()
 		{
-			m_serializedData = BTUtils.Save(m_behaviourTree);
+			m_serializedData = BTUtils.SaveTree(m_behaviourTree);
 		}
 
 		public void Deserialize()
 		{
-			m_behaviourTree = BTUtils.Load(m_serializedData);
+			m_behaviourTree = BTUtils.LoadTree(m_serializedData);
 		}
 
 		public BehaviourTree DeserializeAsCopy()
 		{
-			return BTUtils.Load(m_serializedData);
+			return BTUtils.LoadTree(m_serializedData);
 		}
 
 		public void Dispose()

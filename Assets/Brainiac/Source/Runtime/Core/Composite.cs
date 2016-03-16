@@ -42,20 +42,42 @@ namespace Brainiac
 
 		public override void OnReset()
 		{
-			for (int i = 0; i < m_children.Count; i++)
+			for(int i = 0; i < m_children.Count; i++)
+			{
 				m_children[i].OnReset();
+			}
 		}
 
 		public void AddChild(BehaviourNode child)
 		{
 			if(child != null)
+			{
 				m_children.Add(child);
+			}
+		}
+
+		public void InsertChild(int index, BehaviourNode child)
+		{
+			if(child != null)
+			{
+				m_children.Insert(index, child);
+			}
 		}
 
 		public void RemoveChild(BehaviourNode child)
 		{
-			if (child != null)
+			if(child != null)
+			{
 				m_children.Remove(child);
+			}
+		}
+
+		public void RemoveChild(int index)
+		{
+			if(index >= 0 && index < m_children.Count)
+			{
+				m_children.RemoveAt(index);
+			}
 		}
 
 		public void RemoveAllChildren()

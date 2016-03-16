@@ -21,6 +21,7 @@ namespace BrainiacEditor
 
 		private void OnCreated()
 		{
+			m_root = null;
 			m_drawSelectionBox = false;
 			m_selectionBoxStartPos = Vector2.zero;
 			SelectionBox = null;
@@ -28,17 +29,23 @@ namespace BrainiacEditor
 
 		public void SetBehaviourTree(BehaviourTree behaviourTree)
 		{
-			if(m_root == null)
+			if(m_root != null)
 			{
-				m_root = BTEditorGraphNode.Create(this, null, behaviourTree.Root);
+				BTEditorGraphNode.DestroyImmediate(m_root);
+				m_root = null;
 			}
+
+			m_root = BTEditorGraphNode.Create(this, behaviourTree.Root);
 		}
 
 		public void DrawGUI()
 		{
-			m_root.DrawGUI();
-			DrawSelectionBox();
-			HandleEvents();
+			if(m_root != null)
+			{
+				m_root.DrawGUI();
+				DrawSelectionBox();
+				HandleEvents();
+			}
 		}
 
 		private void DrawSelectionBox()
@@ -126,7 +133,6 @@ namespace BrainiacEditor
 				{
 					m_selection.Add(node);
 					node.OnSelected();
-					BTUndoSystem.RegisterUndo(new UndoNodeSelected(this, node));
 				}
 			}
 			else
@@ -134,7 +140,6 @@ namespace BrainiacEditor
 				ClearSelection();
 				m_selection.Add(node);
 				node.OnSelected();
-				BTUndoSystem.RegisterUndo(new UndoNodeSelected(this, node));
 			}
 		}
 
@@ -143,7 +148,6 @@ namespace BrainiacEditor
 			if(m_selection.Remove(node))
 			{
 				node.OnDeselected();
-				BTUndoSystem.RegisterUndo(new UndoNodeDeselected(this, node));
 			}
 		}
 
@@ -151,8 +155,10 @@ namespace BrainiacEditor
 		{
 			if(m_selection.Contains(node))
 			{
+				BTUndoSystem.BeginUndoGroup("Moved node(s)");
 				for(int i = 0; i < m_selection.Count; i++)
 				{
+					BTUndoSystem.RegisterUndo(new UndoNodeMoved(m_selection[i]));
 					m_selection[i].OnBeginDrag(position);
 				}
 			}
@@ -182,15 +188,20 @@ namespace BrainiacEditor
 					m_selection[i].OnEndDrag();
 				}
 
+				BTUndoSystem.EndUndoGroup();
 				BTEditorCanvas.Current.Size = canvasSize;
 			}
 		}
 
-		public void OnNodeCreateChild(BTEditorGraphNode node, Type childType)
+		public void OnNodeCreateChild(BTEditorGraphNode parent, Type childType)
 		{
-			if(node != null && childType != null)
+			if(parent != null && childType != null)
 			{
-				node.OnCreateChild(childType);
+				BTEditorGraphNode child = parent.OnCreateChild(childType);
+				if(child != null)
+				{
+					BTUndoSystem.RegisterUndo(new UndoNodeCreated(child));
+				}
 			}
 		}
 
@@ -198,6 +209,7 @@ namespace BrainiacEditor
 		{
 			if(node != null)
 			{
+				BTUndoSystem.RegisterUndo(new UndoNodeDeleted(node));
 				node.OnDelete();
 			}
 		}
@@ -206,7 +218,15 @@ namespace BrainiacEditor
 		{
 			if(node != null)
 			{
-				node.OnDeleteChildren();
+				BTUndoSystem.BeginUndoGroup("Delete children");
+				int childIndex = 0;
+				while(node.ChildCount > 0)
+				{
+					BTUndoSystem.RegisterUndo(new UndoNodeDeleted(node.GetChild(0), childIndex));
+					node.OnDeleteChild(0);
+					childIndex++;
+				}
+				BTUndoSystem.EndUndoGroup();
 			}
 		}
 
@@ -226,17 +246,48 @@ namespace BrainiacEditor
 			}
 		}
 
+		public string GetNodePath(BTEditorGraphNode node)
+		{
+			List<byte> path = new List<byte>();
+			for(BTEditorGraphNode n = node; n != null && n.Parent != null; n = n.Parent)
+			{
+				path.Add((byte)n.Parent.GetChildIndex(n));
+			}
+			path.Reverse();
+
+			return Convert.ToBase64String(path.ToArray());
+		}
+
+		public BTEditorGraphNode GetNodeAtPath(string path)
+		{
+			byte[] actualPath = Convert.FromBase64String(path);
+			if(actualPath != null)
+			{
+				BTEditorGraphNode node = m_root;
+
+				for(int i = 0; i < actualPath.Length; i++)
+				{
+					node = node.GetChild(actualPath[i]);
+					if(node == null)
+					{
+						return null;
+					}
+				}
+
+				return node;
+			}
+
+			return null;
+		}
+
 		private void ClearSelection()
 		{
 			if(m_selection.Count > 0)
 			{
-				BTUndoSystem.BeginUndoGroup("Selection changed");
 				for(int i = 0; i < m_selection.Count; i++)
 				{
 					m_selection[i].OnDeselected();
-					BTUndoSystem.RegisterUndo(new UndoNodeDeselected(this, m_selection[i]));
 				}
-				BTUndoSystem.EndUndoGroup();
 
 				m_selection.Clear();
 			}

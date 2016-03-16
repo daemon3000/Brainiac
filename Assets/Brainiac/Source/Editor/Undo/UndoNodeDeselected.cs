@@ -7,13 +7,13 @@ namespace BrainiacEditor
 	public class UndoNodeDeselected : BTUndoState
 	{
 		private BTEditorGraph m_graph;
-		private BTEditorGraphNode m_selectedNode;
+		private string m_selectedNodePath;
 
 		public override bool CanUndo
 		{
 			get
 			{
-				return m_graph != null && m_selectedNode != null;
+				return m_graph != null && m_selectedNodePath != null;
 			}
 		}
 
@@ -21,14 +21,14 @@ namespace BrainiacEditor
 		{
 			get
 			{
-				return m_graph != null && m_selectedNode != null;
+				return m_graph != null && m_selectedNodePath != null;
 			}
 		}
 
 		public UndoNodeDeselected(BTEditorGraph graph, BTEditorGraphNode node)
 		{
 			m_graph = graph;
-			m_selectedNode = node;
+			m_selectedNodePath = m_graph.GetNodePath(node);
 			Title = "Selection changed";
 		}
 
@@ -36,8 +36,9 @@ namespace BrainiacEditor
 		{
 			if(CanUndo)
 			{
-				m_graph.AddNodeToSelection(m_selectedNode);
-				m_selectedNode.OnSelected();
+				var selectedNode = m_graph.GetNodeAtPath(m_selectedNodePath);
+				m_graph.AddNodeToSelection(selectedNode);
+				selectedNode.OnSelected();
 			}
 		}
 
@@ -45,8 +46,9 @@ namespace BrainiacEditor
 		{
 			if(CanRedo)
 			{
-				m_graph.RemoveNodeFromSelection(m_selectedNode);
-				m_selectedNode.OnDeselected();
+				var selectedNode = m_graph.GetNodeAtPath(m_selectedNodePath);
+				m_graph.RemoveNodeFromSelection(selectedNode);
+				selectedNode.OnDeselected();
 			}
 		}
 	}

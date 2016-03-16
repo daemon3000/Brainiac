@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 using Brainiac;
-using UnityEngine.Events;
 
 namespace BrainiacEditor
 {

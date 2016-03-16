@@ -35,6 +35,11 @@ namespace BrainiacEditor
 			get { return m_graph; }
 		}
 
+		public int ChildCount
+		{
+			get { return m_children.Count; }
+		}
+
 		private void OnCreated()
 		{
 			if(m_children == null)
@@ -86,10 +91,7 @@ namespace BrainiacEditor
 					{
 						m_graph.OnNodeSelected(this);
 					}
-					if(BTEditorCanvas.Current.CanEdit)
-					{
-						m_graph.OnNodeBeginDrag(this, mousePosition);
-					}
+					
 					BTEditorCanvas.Current.Event.Use();
 				}
 			}
@@ -111,7 +113,12 @@ namespace BrainiacEditor
 			}
 			else if(BTEditorCanvas.Current.Event.type == EventType.MouseDrag && BTEditorCanvas.Current.Event.button == DRAG_MOUSE_BUTTON)
 			{
-				if(m_isDragging)
+				if(BTEditorCanvas.Current.CanEdit && !m_isDragging && position.Contains(mousePosition))
+				{
+					m_graph.OnNodeBeginDrag(this, mousePosition);
+					BTEditorCanvas.Current.Event.Use();
+				}
+				else if(m_isDragging)
 				{
 					m_graph.OnNodeDrag(this, mousePosition);
 					BTEditorCanvas.Current.Event.Use();
@@ -191,9 +198,9 @@ namespace BrainiacEditor
 			m_isDragging = false;
 		}
 
-		private void SetNode(BehaviourNode node)
+		private void SetExistingNode(BehaviourNode node)
 		{
-			OnDeleteChildren();
+			DestroyChildren();
 
 			m_node = node;
 			m_isSelected = false;
@@ -204,7 +211,7 @@ namespace BrainiacEditor
 				for(int i = 0; i < composite.ChildCount; i++)
 				{
 					BehaviourNode childNode = composite.GetChild(i);
-					BTEditorGraphNode graphNode = BTEditorGraphNode.Create(m_graph, this, childNode);
+					BTEditorGraphNode graphNode = BTEditorGraphNode.CreateExistingNode(this, childNode);
 					m_children.Add(graphNode);
 				}
 			}
@@ -214,7 +221,7 @@ namespace BrainiacEditor
 				BehaviourNode childNode = decorator.GetChild();
 				if(childNode != null)
 				{
-					BTEditorGraphNode graphNode = BTEditorGraphNode.Create(m_graph, this, childNode);
+					BTEditorGraphNode graphNode = BTEditorGraphNode.CreateExistingNode(this, childNode);
 					m_children.Add(graphNode);
 				}
 			}
@@ -226,7 +233,7 @@ namespace BrainiacEditor
 			menu.DropDown(new Rect(BTEditorCanvas.Current.Event.mousePosition, Vector2.zero));
 		}
 
-		public void OnCreateChild(Type type)
+		public BTEditorGraphNode OnCreateChild(Type type)
 		{
 			if(type != null)
 			{
@@ -239,41 +246,133 @@ namespace BrainiacEditor
 
 					node.Position = nodePos;
 
-					if(m_node is Composite)
-					{
-						Composite composite = m_node as Composite;
-						composite.AddChild(node);
-					}
-					else if(m_node is Decorator)
-					{
-						Decorator decorator = m_node as Decorator;
-
-						OnDeleteChildren();
-						decorator.ReplaceChild(node);
-					}
-
-					BTEditorGraphNode graphNode = BTEditorGraphNode.Create(m_graph, this, node);
-					m_children.Add(graphNode);
-					
-					Vector2 canvasSize = BTEditorCanvas.Current.Size;
-					canvasSize.x = Mathf.Max(node.Position.x + 250.0f, canvasSize.x);
-					canvasSize.y = Mathf.Max(node.Position.y + 250.0f, canvasSize.y);
-
-					BTEditorCanvas.Current.Size = canvasSize;
+					return OnCreateChild(node);
 				}
 			}
+
+			return null;
+		}
+
+		public BTEditorGraphNode OnCreateChild(BehaviourNode node)
+		{
+			if(node != null && ((m_node is Composite) || (m_node is Decorator)))
+			{
+				if(m_node is Composite)
+				{
+					Composite composite = m_node as Composite;
+					composite.AddChild(node);
+				}
+				else if(m_node is Decorator)
+				{
+					Decorator decorator = m_node as Decorator;
+
+					DestroyChildren();
+					decorator.ReplaceChild(node);
+				}
+
+				BTEditorGraphNode graphNode = BTEditorGraphNode.CreateExistingNode(this, node);
+				m_children.Add(graphNode);
+
+				Vector2 canvasSize = BTEditorCanvas.Current.Size;
+				canvasSize.x = Mathf.Max(node.Position.x + 250.0f, canvasSize.x);
+				canvasSize.y = Mathf.Max(node.Position.y + 250.0f, canvasSize.y);
+
+				BTEditorCanvas.Current.Size = canvasSize;
+
+				return graphNode;
+			}
+
+			return null;
+		}
+
+		public BTEditorGraphNode OnInsertChild(int index, BehaviourNode node)
+		{
+			if(node != null && ((m_node is Composite) || (m_node is Decorator)))
+			{
+				BTEditorGraphNode graphNode = null;
+
+				if(m_node is Composite)
+				{
+					Composite composite = m_node as Composite;
+					composite.InsertChild(index, node);
+
+					graphNode = BTEditorGraphNode.CreateExistingNode(this, node);
+					m_children.Insert(index, graphNode);
+				}
+				else if(m_node is Decorator)
+				{
+					Decorator decorator = m_node as Decorator;
+
+					DestroyChildren();
+					decorator.ReplaceChild(node);
+
+					graphNode = BTEditorGraphNode.CreateExistingNode(this, node);
+					m_children.Add(graphNode);
+				}
+
+				Vector2 canvasSize = BTEditorCanvas.Current.Size;
+				canvasSize.x = Mathf.Max(node.Position.x + 250.0f, canvasSize.x);
+				canvasSize.y = Mathf.Max(node.Position.y + 250.0f, canvasSize.y);
+
+				BTEditorCanvas.Current.Size = canvasSize;
+
+				return graphNode;
+			}
+
+			return null;
 		}
 
 		public void OnDelete()
 		{
 			if(m_parent != null)
 			{
-				m_parent.OnDeleteChild(this);
+				m_parent.RemoveChild(this);
 				BTEditorGraphNode.DestroyImmediate(this);
 			}
 		}
 
-		public void OnDeleteChildren()
+		public void OnDeleteChild(int index)
+		{
+			BTEditorGraphNode child = GetChild(index);
+			if(child != null)
+			{
+				child.OnDelete();
+			}
+		}
+
+		public int GetChildIndex(BTEditorGraphNode child)
+		{
+			return m_children.IndexOf(child);
+		}
+
+		public BTEditorGraphNode GetChild(int index)
+		{
+			if(index >= 0 && index < m_children.Count)
+			{
+				return m_children[index];
+			}
+
+			return null;
+		}
+
+		private void RemoveChild(BTEditorGraphNode child)
+		{
+			if(m_children.Remove(child))
+			{
+				if(m_node is Composite)
+				{
+					Composite composite = m_node as Composite;
+					composite.RemoveChild(child.Node);
+				}
+				else if(m_node is Decorator)
+				{
+					Decorator decorator = m_node as Decorator;
+					decorator.RemoveChild();
+				}
+			}
+		}
+
+		private void DestroyChildren()
 		{
 			for(int i = 0; i < m_children.Count; i++)
 			{
@@ -290,23 +389,6 @@ namespace BrainiacEditor
 			}
 
 			m_children.Clear();
-		}
-
-		public void OnDeleteChild(BTEditorGraphNode child)
-		{
-			if(m_children.Remove(child))
-			{
-				if(m_node is Composite)
-				{
-					Composite composite = m_node as Composite;
-					composite.RemoveChild(child.Node);
-				}
-				else if(m_node is Decorator)
-				{
-					Decorator decorator = m_node as Decorator;
-					decorator.RemoveChild();
-				}
-			}
 		}
 
 		private void OnDestroy()
@@ -326,16 +408,43 @@ namespace BrainiacEditor
 			}
 		}
 
-		public static BTEditorGraphNode Create(BTEditorGraph graph, BTEditorGraphNode parent, BehaviourNode node)
+		private static BTEditorGraphNode CreateEmptyNode()
 		{
 			BTEditorGraphNode graphNode = ScriptableObject.CreateInstance<BTEditorGraphNode>();
 			graphNode.OnCreated();
 			graphNode.hideFlags = HideFlags.HideAndDontSave;
-			graphNode.m_parent = parent;
-			graphNode.m_graph = graph;
-			graphNode.SetNode(node);
 
 			return graphNode;
+		}
+
+		private static BTEditorGraphNode CreateExistingNode(BTEditorGraphNode parent, BehaviourNode node)
+		{
+			BTEditorGraphNode graphNode = BTEditorGraphNode.CreateEmptyNode();
+			graphNode.m_parent = parent;
+			graphNode.m_graph = parent.Graph;
+			graphNode.SetExistingNode(node);
+
+			return graphNode;
+		}
+
+		public static BTEditorGraphNode Create(BTEditorGraph graph, BehaviourNode node)
+		{
+			BTEditorGraphNode graphNode = CreateEmptyNode();
+			graphNode.m_graph = graph;
+			graphNode.m_parent = null;
+			graphNode.SetExistingNode(node);
+
+			return graphNode;
+		}
+
+		public static BTEditorGraphNode Create(BTEditorGraphNode parent, BehaviourNode node)
+		{
+			return parent.OnCreateChild(node);
+		}
+
+		public static BTEditorGraphNode Create(BTEditorGraphNode parent, BehaviourNode node, int index)
+		{
+			return parent.OnInsertChild(index, node);
 		}
 	}
 }

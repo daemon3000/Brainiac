@@ -26,7 +26,7 @@ namespace Brainiac
 			return null;
 		}
 
-		public static string Save(BehaviourTree behaviourTree)
+		public static string SaveTree(BehaviourTree behaviourTree)
 		{
 			try
 			{
@@ -38,8 +38,7 @@ namespace Brainiac
 				settings.Converters.Add(new Vector2Converter());
 				settings.Converters.Add(new Vector3Converter());
 
-				string serializedData = JsonConvert.SerializeObject(behaviourTree, settings);
-				return serializedData;
+				return JsonConvert.SerializeObject(behaviourTree, settings);
 			}
 			catch(Exception ex)
 			{
@@ -48,7 +47,7 @@ namespace Brainiac
 			}
 		}
 
-		public static BehaviourTree Load(string btData)
+		public static BehaviourTree LoadTree(string btData)
 		{
 			try
 			{
@@ -66,6 +65,71 @@ namespace Brainiac
 			{
 				Debug.LogException(ex);
 				return new BehaviourTree();
+			}
+		}
+
+		public static string SaveNode(BehaviourNode behaviourNode)
+		{
+			try
+			{
+				if(behaviourNode == null)
+					return "";
+
+				JsonSerializerSettings settings = new JsonSerializerSettings();
+				settings.TypeNameHandling = TypeNameHandling.Objects;
+				settings.Converters.Add(new Vector2Converter());
+				settings.Converters.Add(new Vector3Converter());
+
+				return JsonConvert.SerializeObject(new object[] { behaviourNode }, settings);
+			}
+			catch(Exception ex)
+			{
+				Debug.LogException(ex);
+				return "";
+			}
+		}
+
+		public static BehaviourNode LoadNode(string nodeData)
+		{
+			try
+			{
+				if(string.IsNullOrEmpty(nodeData))
+					return null;
+
+				JsonSerializerSettings settings = new JsonSerializerSettings();
+				settings.TypeNameHandling = TypeNameHandling.Objects;
+				settings.Converters.Add(new Vector2Converter());
+				settings.Converters.Add(new Vector3Converter());
+
+				object[] obj = JsonConvert.DeserializeObject<object[]>(nodeData, settings);
+				return (obj != null && obj.Length > 0) ? obj[0] as BehaviourNode : null;
+			}
+			catch(Exception ex)
+			{
+				Debug.LogException(ex);
+				return null;
+			}
+		}
+
+		public static T LoadNode<T>(string nodeData) where T : BehaviourNode
+		{
+			try
+			{
+				if(string.IsNullOrEmpty(nodeData))
+					return null;
+
+				JsonSerializerSettings settings = new JsonSerializerSettings();
+				settings.TypeNameHandling = TypeNameHandling.Objects;
+				settings.Converters.Add(new Vector2Converter());
+				settings.Converters.Add(new Vector3Converter());
+
+				object[] obj = JsonConvert.DeserializeObject<object[]>(nodeData, settings);
+				return (obj != null && obj.Length > 0) ? obj[0] as T : null;
+			}
+			catch(Exception ex)
+			{
+				Debug.LogException(ex);
+				return null;
 			}
 		}
 	}
