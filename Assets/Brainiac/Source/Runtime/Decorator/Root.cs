@@ -14,7 +14,14 @@ namespace Brainiac
 
 		protected override BehaviourNodeStatus OnExecute(Agent agent)
 		{
-			return m_child.Run(agent);
+			if(m_child != null)
+			{
+				return m_child.Run(agent);
+			}
+			else
+			{
+				return BehaviourNodeStatus.Success;
+			}
 		}
 	}
 }

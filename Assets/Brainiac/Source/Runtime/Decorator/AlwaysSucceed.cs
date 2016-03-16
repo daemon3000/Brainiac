@@ -15,6 +15,9 @@ namespace Brainiac
 
 		protected override BehaviourNodeStatus OnExecute(Agent agent)
 		{
+			if(m_child == null)
+				return BehaviourNodeStatus.Success;
+
 			BehaviourNodeStatus status = m_child.Run(agent);
 			if(status == BehaviourNodeStatus.Running)
 			{
