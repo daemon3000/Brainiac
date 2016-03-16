@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using Brainiac;
-using UnityEditor.Callbacks;
+using System;
 
 namespace BrainiacEditor
 {
@@ -47,9 +47,7 @@ namespace BrainiacEditor
 
 			if(m_btAsset != null)
 			{
-				m_btAsset.Dispose();
-				m_btAsset.Deserialize();
-				m_graph.SetBehaviourTree(m_btAsset.BehaviourTree);
+				m_graph.SetBehaviourTree(m_btAsset.GetEditModeTree());
 				m_canvas.Position = m_btAsset.CanvasPosition;
 				m_canvas.Size = m_btAsset.CanvasSize;
 			}
@@ -60,15 +58,15 @@ namespace BrainiacEditor
 
 		private void OnDisable()
 		{
-			Disposed();
+			Dispose();
 		}
 
 		private void OnDestroy()
 		{
-			Disposed();
+			Dispose();
 		}
 
-		private void Disposed()
+		private void Dispose()
 		{
 			if(!m_isDisposed)
 			{
@@ -77,39 +75,34 @@ namespace BrainiacEditor
 					BTEditorGraph.DestroyImmediate(m_graph);
 					m_graph = null;
 				}
-				if(m_btAsset != null)
-				{
-					m_btAsset.CanvasPosition = m_canvas.Position;
-					m_btAsset.CanvasSize = m_canvas.Size;
-					m_btAsset.Serialize();
-					m_btAsset.Dispose();
-					EditorUtility.SetDirty(m_btAsset);
-				}
 
+				SaveBehaviourTree();
 				m_isDisposed = true;
 			}
 		}
 
 		private void SetBTAsset(BTAsset asset)
 		{
-			if(asset != m_btAsset)
+			if(asset != null && asset != m_btAsset)
 			{
-				if(m_btAsset != null)
-				{
-					m_btAsset.Serialize();
-					m_btAsset.Dispose();
-					EditorUtility.SetDirty(m_btAsset);
-				}
+				SaveBehaviourTree();
 
 				m_btAsset = asset;
-				if(m_btAsset != null)
-				{
-					m_btAsset.Dispose();
-					m_btAsset.Deserialize();
-					m_graph.SetBehaviourTree(m_btAsset.BehaviourTree);
-					m_canvas.Position = m_btAsset.CanvasPosition;
-					m_canvas.Size = m_btAsset.CanvasSize;
-				}
+				m_graph.SetBehaviourTree(m_btAsset.GetEditModeTree());
+				m_canvas.Position = m_btAsset.CanvasPosition;
+				m_canvas.Size = m_btAsset.CanvasSize;
+			}
+		}
+
+		private void SaveBehaviourTree()
+		{
+			if(m_btAsset != null)
+			{
+				m_btAsset.CanvasPosition = m_canvas.Position;
+				m_btAsset.CanvasSize = m_canvas.Size;
+				m_btAsset.Serialize();
+				m_btAsset.Dispose();
+				EditorUtility.SetDirty(m_btAsset);
 			}
 		}
 
@@ -126,21 +119,8 @@ namespace BrainiacEditor
 
 		public static void Open(BTAsset behaviourTree)
 		{
-			var window = EditorWindow.GetWindow<BehaviourTreeEditor>("Braniac");
+			var window = EditorWindow.GetWindow<BehaviourTreeEditor>("Brainiac");
 			window.SetBTAsset(behaviourTree);
 		}
-
-		//[OnOpenAsset(0)]
-		//private static bool Open(int instanceID, int line)
-		//{
-		//	var asset = EditorUtility.InstanceIDToObject(instanceID);
-		//	if(asset is BTAsset)
-		//	{
-		//		Open(asset as BTAsset);
-		//		return true;
-		//	}
-
-		//	return false;
-		//}
 	}
 }

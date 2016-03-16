@@ -13,15 +13,11 @@ namespace Brainiac
 		[SerializeField]
 		private Vector2 m_canvasSize;
 
-		private BehaviourTree m_behaviourTree;
+		private BehaviourTree m_runtimeTree;
 
-		public BehaviourTree BehaviourTree
-		{
-			get
-			{
-				return m_behaviourTree;
-			}
-		}
+#if UNITY_EDITOR
+		private BehaviourTree m_editModeTree;
+#endif
 
 		public Vector2 CanvasPosition
 		{
@@ -49,29 +45,36 @@ namespace Brainiac
 			}
 		}
 
+#if UNITY_EDITOR
+		public BehaviourTree GetEditModeTree()
+		{
+			if(m_editModeTree == null)
+			{
+				m_editModeTree = BTUtils.LoadTree(m_serializedData);
+			}
+
+			return m_editModeTree;
+		}
+
 		public void Serialize()
 		{
-			m_serializedData = BTUtils.SaveTree(m_behaviourTree);
-		}
-
-		public void Deserialize()
-		{
-			m_behaviourTree = BTUtils.LoadTree(m_serializedData);
-		}
-
-		public BehaviourTree DeserializeAsCopy()
-		{
-			return BTUtils.LoadTree(m_serializedData);
+			m_serializedData = BTUtils.SaveTree(m_editModeTree);
 		}
 
 		public void Dispose()
 		{
-			m_behaviourTree = null;
+			m_editModeTree = null;
 		}
+#endif
 
-		private void OnDestroy()
+		public BehaviourTree GetRuntimeTree()
 		{
-			Dispose();
+			if(m_runtimeTree == null)
+			{
+				m_runtimeTree = BTUtils.LoadTree(m_serializedData);
+			}
+
+			return m_runtimeTree;
 		}
 	}
 }

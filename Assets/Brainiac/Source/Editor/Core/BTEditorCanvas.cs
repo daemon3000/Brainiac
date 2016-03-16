@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 using UnityEditor;
-using System.Collections.Generic;
 
 namespace BrainiacEditor
 {
@@ -43,9 +42,9 @@ namespace BrainiacEditor
 			}
 		}
 		
-		public bool CanEdit
+		public bool ReadOnly
 		{
-			get { return !EditorApplication.isPlaying && !IsDebuging; }
+			get { return IsDebuging || EditorApplication.isPlaying; }
 		}
 
 		public int SnapSize

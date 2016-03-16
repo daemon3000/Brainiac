@@ -97,7 +97,7 @@ namespace BrainiacEditor
 			}
 			else if(BTEditorCanvas.Current.Event.type == EventType.MouseDown && BTEditorCanvas.Current.Event.button == CONTEXT_MOUSE_BUTTON)
 			{
-				if(BTEditorCanvas.Current.CanEdit && position.Contains(mousePosition))
+				if(!BTEditorCanvas.Current.ReadOnly && position.Contains(mousePosition))
 				{
 					ShowContextMenu();
 					BTEditorCanvas.Current.Event.Use();
@@ -113,7 +113,7 @@ namespace BrainiacEditor
 			}
 			else if(BTEditorCanvas.Current.Event.type == EventType.MouseDrag && BTEditorCanvas.Current.Event.button == DRAG_MOUSE_BUTTON)
 			{
-				if(BTEditorCanvas.Current.CanEdit && !m_isDragging && position.Contains(mousePosition))
+				if(!BTEditorCanvas.Current.ReadOnly && !m_isDragging && position.Contains(mousePosition))
 				{
 					m_graph.OnNodeBeginDrag(this, mousePosition);
 					BTEditorCanvas.Current.Event.Use();
@@ -427,7 +427,7 @@ namespace BrainiacEditor
 			return graphNode;
 		}
 
-		public static BTEditorGraphNode Create(BTEditorGraph graph, BehaviourNode node)
+		public static BTEditorGraphNode Create(BTEditorGraph graph, Root node)
 		{
 			BTEditorGraphNode graphNode = CreateEmptyNode();
 			graphNode.m_graph = graph;

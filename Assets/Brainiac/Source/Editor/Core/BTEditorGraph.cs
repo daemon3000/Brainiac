@@ -84,7 +84,7 @@ namespace BrainiacEditor
 					BTEditorCanvas.Current.Event.Use();
 				}
 			}
-			if(BTEditorCanvas.Current.CanEdit)
+			if(!BTEditorCanvas.Current.ReadOnly)
 			{
 				if(BTEditorCanvas.Current.Event.type == EventType.MouseDrag && BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
 				{
@@ -246,7 +246,7 @@ namespace BrainiacEditor
 			}
 		}
 
-		public string GetNodePath(BTEditorGraphNode node)
+		public string GetNodeHash(BTEditorGraphNode node)
 		{
 			List<byte> path = new List<byte>();
 			for(BTEditorGraphNode n = node; n != null && n.Parent != null; n = n.Parent)
@@ -258,7 +258,7 @@ namespace BrainiacEditor
 			return Convert.ToBase64String(path.ToArray());
 		}
 
-		public BTEditorGraphNode GetNodeAtPath(string path)
+		public BTEditorGraphNode GetNodeByHash(string path)
 		{
 			byte[] actualPath = Convert.FromBase64String(path);
 			if(actualPath != null)

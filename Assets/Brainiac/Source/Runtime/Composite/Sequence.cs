@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Brainiac
 {
-	[AddBehaviourNodeMenu("Composite/Sequence")]
+	[AddNodeMenu("Composite/Sequence")]
 	public class Sequence : Composite
 	{
 		private int m_currentChild;

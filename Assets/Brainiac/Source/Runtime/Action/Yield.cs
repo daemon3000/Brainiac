@@ -2,10 +2,10 @@
 
 namespace Brainiac
 {
-	[AddBehaviourNodeMenu("Action/Yield")]
+	[AddNodeMenu("Action/Yield")]
 	public class Yield : Action
 	{
-		private bool m_yield;
+		private bool m_canYield;
 
 		public override string Title
 		{
@@ -17,9 +17,9 @@ namespace Brainiac
 
 		protected override BehaviourNodeStatus OnExecute(Agent agent)
 		{
-			if(m_yield)
+			if(m_canYield)
 			{
-				m_yield = false;
+				m_canYield = false;
 				return BehaviourNodeStatus.Running;
 			}
 
@@ -29,7 +29,7 @@ namespace Brainiac
 		protected override void OnStart(Agent agent)
 		{
 			base.OnStart(agent);
-			m_yield = true;
+			m_canYield = true;
 		}
 	}
 }

@@ -2,7 +2,7 @@
 
 namespace Brainiac
 {
-	[AddBehaviourNodeMenu("Decorator/Invert")]
+	[AddNodeMenu("Decorator/Invert")]
 	public class Invert : Decorator
 	{
 		public override string Title

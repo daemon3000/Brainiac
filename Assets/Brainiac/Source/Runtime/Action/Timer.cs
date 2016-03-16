@@ -1,12 +1,12 @@
-﻿using UnityEngine;
+﻿using Newtonsoft.Json;
+using UnityEngine;
 
 namespace Brainiac
 {
-	[AddBehaviourNodeMenu("Action/Timer")]
+	[AddNodeMenu("Action/Timer")]
 	public class Timer : Action
 	{
 		private float m_duration;
-
 		private float m_startTime;
 
 		public float Duration

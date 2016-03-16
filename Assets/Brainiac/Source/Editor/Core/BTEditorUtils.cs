@@ -150,10 +150,10 @@ namespace BrainiacEditor
 			Assembly assembly = nodeType.Assembly;
 			foreach(Type type in assembly.GetTypes().Where(t => t.IsSubclassOf(nodeType)))
 			{
-				object[] attributes = type.GetCustomAttributes(typeof(AddBehaviourNodeMenuAttribute), false);
+				object[] attributes = type.GetCustomAttributes(typeof(AddNodeMenuAttribute), false);
 				if(attributes.Length > 0)
 				{
-					AddBehaviourNodeMenuAttribute attribute = attributes[0] as AddBehaviourNodeMenuAttribute;
+					AddNodeMenuAttribute attribute = attributes[0] as AddNodeMenuAttribute;
 					m_nodeMenuPaths.Add(new BTContextMenuPath(attribute.MenuPath, type));
 				}
 			}

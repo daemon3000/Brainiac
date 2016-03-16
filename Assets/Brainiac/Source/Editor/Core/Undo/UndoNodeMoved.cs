@@ -7,7 +7,7 @@ namespace BrainiacEditor
 	public class UndoNodeMoved : BTUndoState
 	{
 		private BTEditorGraph m_graph;
-		private string m_nodePath;
+		private string m_nodeHash;
 		private Vector2 m_startPosition;
 		private Vector2 m_endPosition;
 
@@ -15,7 +15,7 @@ namespace BrainiacEditor
 		{
 			get
 			{
-				return m_nodePath != null;
+				return m_nodeHash != null;
 			}
 		}
 
@@ -23,14 +23,14 @@ namespace BrainiacEditor
 		{
 			get
 			{
-				return m_nodePath != null;
+				return m_nodeHash != null;
 			}
 		}
 
 		public UndoNodeMoved(BTEditorGraphNode node)
 		{
 			m_graph = node.Graph;
-			m_nodePath = m_graph.GetNodePath(node);
+			m_nodeHash = m_graph.GetNodeHash(node);
 			m_startPosition = node.Node.Position;
 			m_endPosition = Vector2.zero;
 		}
@@ -39,7 +39,7 @@ namespace BrainiacEditor
 		{
 			if(CanUndo)
 			{
-				var node = m_graph.GetNodeAtPath(m_nodePath);
+				var node = m_graph.GetNodeByHash(m_nodeHash);
 				m_endPosition = node.Node.Position;
 				node.Node.Position = m_startPosition;
 			}
@@ -49,7 +49,7 @@ namespace BrainiacEditor
 		{
 			if(CanRedo)
 			{
-				var node = m_graph.GetNodeAtPath(m_nodePath);
+				var node = m_graph.GetNodeByHash(m_nodeHash);
 				node.Node.Position = m_endPosition;
 			}
 		}

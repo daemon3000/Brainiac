@@ -45,14 +45,7 @@ namespace Brainiac
 		[JsonIgnore]
 		public abstract Vector2 Size { get; }
 
-		public virtual void OnInitialize()
-		{
-			m_status = BehaviourNodeStatus.Success;
-		}
-
-		public virtual void OnReset() { }
 		protected abstract BehaviourNodeStatus OnExecute(Agent agent);
-		protected virtual void OnDestroy() { }
 		protected virtual void OnStop(Agent agent) { }
 
 		protected virtual void OnStart(Agent agent)

@@ -31,23 +31,6 @@ namespace Brainiac
 			m_children = new List<BehaviourNode>();
 		}
 
-		public override void OnInitialize()
-		{
-			base.OnInitialize();
-			foreach(var child in m_children)
-			{
-				child.OnInitialize();
-			}
-		}
-
-		public override void OnReset()
-		{
-			for(int i = 0; i < m_children.Count; i++)
-			{
-				m_children[i].OnReset();
-			}
-		}
-
 		public void AddChild(BehaviourNode child)
 		{
 			if(child != null)

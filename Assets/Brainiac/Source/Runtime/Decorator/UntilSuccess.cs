@@ -2,7 +2,7 @@
 
 namespace Brainiac
 {
-	[AddBehaviourNodeMenu("Decorator/Until Success")]
+	[AddNodeMenu("Decorator/Until Success")]
 	public class UntilSuccess : Decorator
 	{
 		public override string Title

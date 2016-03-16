@@ -2,7 +2,7 @@
 
 namespace Brainiac
 {
-	[AddBehaviourNodeMenu("Decorator/Always Succeed")]
+	[AddNodeMenu("Decorator/Always Succeed")]
 	public class AlwaysSucceed : Decorator
 	{
 		public override string Title

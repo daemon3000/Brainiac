@@ -4,11 +4,11 @@ using System.Collections;
 
 namespace Brainiac
 {
-	public class AddBehaviourNodeMenuAttribute : Attribute
+	public class AddNodeMenuAttribute : Attribute
 	{
 		public readonly string MenuPath;
 
-		public AddBehaviourNodeMenuAttribute(string menuPath)
+		public AddNodeMenuAttribute(string menuPath)
 		{
 			MenuPath = menuPath;
 		}
