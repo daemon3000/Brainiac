@@ -28,6 +28,7 @@ namespace Brainiac
 
 		protected override void OnStart(AIController ai)
 		{
+			base.OnStart(ai);
 			m_yield = true;
 		}
 	}

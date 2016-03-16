@@ -2,14 +2,14 @@
 
 namespace Brainiac
 {
-	[AddBehaviourNodeMenu("Decorator/Succeder")]
-	public class Succeder : Decorator
+	[AddBehaviourNodeMenu("Decorator/Always Succeed")]
+	public class AlwaysSucceed : Decorator
 	{
 		public override string Title
 		{
 			get
 			{
-				return "Succeder";
+				return "Always Succeed";
 			}
 		}
 

@@ -32,6 +32,7 @@ namespace Brainiac
 
 		protected override void OnStart(AIController ai)
 		{
+			base.OnStart(ai);
 			m_currentChild = 0;
 		}
 	}

@@ -55,6 +55,7 @@ namespace Brainiac
 
 		protected override void OnStart(AIController ai)
 		{
+			base.OnStart(ai);
 			m_isMoving = false;
 			m_destinationValue = ai.Memory.GetVector3(m_destination, Vector3.zero);
 		}

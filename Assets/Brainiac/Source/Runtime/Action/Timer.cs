@@ -39,6 +39,7 @@ namespace Brainiac
 
 		protected override void OnStart(AIController ai)
 		{
+			base.OnStart(ai);
 			m_startTime = Time.time;
 		}
 
