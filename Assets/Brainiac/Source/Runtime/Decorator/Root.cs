@@ -12,9 +12,9 @@ namespace Brainiac
 			}
 		}
 
-		protected override BehaviourNodeStatus OnExecute(AIController ai)
+		protected override BehaviourNodeStatus OnExecute(Agent agent)
 		{
-			return m_child.Run(ai);
+			return m_child.Run(agent);
 		}
 	}
 }

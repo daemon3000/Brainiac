@@ -13,9 +13,9 @@ namespace Brainiac
 			}
 		}
 
-		protected override BehaviourNodeStatus OnExecute(AIController ai)
+		protected override BehaviourNodeStatus OnExecute(Agent agent)
 		{
-			BehaviourNodeStatus status = m_child.Run(ai);
+			BehaviourNodeStatus status = m_child.Run(agent);
 			if(status != BehaviourNodeStatus.Failure)
 			{
 				status = BehaviourNodeStatus.Running;

@@ -51,27 +51,27 @@ namespace Brainiac
 		}
 
 		public virtual void OnReset() { }
-		protected abstract BehaviourNodeStatus OnExecute(AIController ai);
+		protected abstract BehaviourNodeStatus OnExecute(Agent agent);
 		protected virtual void OnDestroy() { }
-		protected virtual void OnStop(AIController ai) { }
+		protected virtual void OnStop(Agent agent) { }
 
-		protected virtual void OnStart(AIController ai)
+		protected virtual void OnStart(Agent agent)
 		{
 			m_status = BehaviourNodeStatus.Failure;
 		}
 
-		public BehaviourNodeStatus Run(AIController ai)
+		public BehaviourNodeStatus Run(Agent agent)
 		{
 			if(m_status != BehaviourNodeStatus.Running)
 			{
-				OnStart(ai);
+				OnStart(agent);
 			}
 
-			m_status = OnExecute(ai);
+			m_status = OnExecute(agent);
 
 			if(m_status != BehaviourNodeStatus.Running)
 			{
-				OnStop(ai);
+				OnStop(agent);
 			}
 
 			return m_status;

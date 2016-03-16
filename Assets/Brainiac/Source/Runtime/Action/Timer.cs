@@ -29,7 +29,7 @@ namespace Brainiac
 			}
 		}
 
-		protected override BehaviourNodeStatus OnExecute(AIController ai)
+		protected override BehaviourNodeStatus OnExecute(Agent agent)
 		{
 			if(Time.time < m_startTime + m_duration)
 				return BehaviourNodeStatus.Running;
@@ -37,9 +37,9 @@ namespace Brainiac
 			return BehaviourNodeStatus.Success;
 		}
 
-		protected override void OnStart(AIController ai)
+		protected override void OnStart(Agent agent)
 		{
-			base.OnStart(ai);
+			base.OnStart(agent);
 			m_startTime = Time.time;
 		}
 

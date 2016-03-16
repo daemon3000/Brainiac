@@ -15,7 +15,7 @@ namespace Brainiac
 			}
 		}
 
-		protected override BehaviourNodeStatus OnExecute(AIController ai)
+		protected override BehaviourNodeStatus OnExecute(Agent agent)
 		{
 			if(m_yield)
 			{
@@ -26,9 +26,9 @@ namespace Brainiac
 			return BehaviourNodeStatus.Success;
 		}
 
-		protected override void OnStart(AIController ai)
+		protected override void OnStart(Agent agent)
 		{
-			base.OnStart(ai);
+			base.OnStart(agent);
 			m_yield = true;
 		}
 	}

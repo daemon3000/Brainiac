@@ -45,7 +45,7 @@ namespace Brainiac
 			}
 		}
 
-		protected override BehaviourNodeStatus OnExecute(AIController ai)
+		protected override BehaviourNodeStatus OnExecute(Agent agent)
 		{
 			switch (m_level)
 			{

@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace Brainiac
 {
-	public class AIController : MonoBehaviour 
+	public class Agent : MonoBehaviour 
 	{
 		[SerializeField]
 		private GameObject m_avatar;
@@ -11,8 +11,6 @@ namespace Brainiac
 		private Mind m_mind;
 		[SerializeField]
 		private Memory m_memory;
-		[SerializeField]
-		private Navigator m_navigator;
 
 
 		public GameObject Avatar
@@ -31,18 +29,12 @@ namespace Brainiac
 			}
 		}
 
-		public Navigator Navigator
-		{
-			get
-			{
-				return m_navigator;
-			}
-		}
-
 		private void Update()
 		{
-			if (m_mind != null)
+			if(m_mind != null)
+			{
 				m_mind.Tick(this);
+			}
 		}
 	}
 }
