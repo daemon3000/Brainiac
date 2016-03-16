@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System;
 
 namespace Brainiac
@@ -7,9 +6,11 @@ namespace Brainiac
 	[Serializable]
 	public class MemoryItem
 	{
+		//	The enum values should start at zero and have incremental values so they can be easily retreived
+		//	from a SerializedProperty in editor scripts.
 		public enum ItemType
 		{
-			Boolean, Integer, Float, String, Vector3, UnityObject
+			Boolean = 0, Integer, Float, String, Vector2, Vector3, GameObject, Asset
 		}
 
 		[SerializeField]
@@ -25,9 +26,13 @@ namespace Brainiac
 		[SerializeField]
 		private string m_valueString;
 		[SerializeField]
+		private Vector2 m_valueVector2;
+		[SerializeField]
 		private Vector3 m_valueVector3;
 		[SerializeField]
-		private UnityEngine.Object m_valueReference;
+		private GameObject m_valueGameObject;
+		[SerializeField]
+		private UnityEngine.Object m_valueAsset;
 
 		public string Name
 		{
@@ -57,10 +62,14 @@ namespace Brainiac
 				return m_valueFloat;
 			case ItemType.String:
 				return m_valueString;
+			case ItemType.Vector2:
+				return m_valueVector2;
 			case ItemType.Vector3:
 				return m_valueVector3;
-			case ItemType.UnityObject:
-				return m_valueReference;
+			case ItemType.GameObject:
+				return m_valueGameObject;
+			case ItemType.Asset:
+				return m_valueAsset;
 			}
 
 			return null;
@@ -97,11 +106,17 @@ namespace Brainiac
 			case ItemType.String:
 				m_valueString = (string)value;
 				break;
+			case ItemType.Vector2:
+				m_valueVector2 = (Vector2)value;
+				break;
 			case ItemType.Vector3:
 				m_valueVector3 = (Vector3)value;
 				break;
-			case ItemType.UnityObject:
-				m_valueReference = (UnityEngine.Object)value;
+			case ItemType.GameObject:
+				m_valueGameObject = (GameObject)value;
+				break;
+			case ItemType.Asset:
+				m_valueAsset = (UnityEngine.Object)value;
 				break;
 			}
 		}
@@ -112,8 +127,10 @@ namespace Brainiac
 			m_valueInteger = 0;
 			m_valueFloat = 0.0f;
 			m_valueString = null;
+			m_valueVector2.Set(0, 0);
 			m_valueVector3.Set(0, 0, 0);
-			m_valueReference = null;
+			m_valueGameObject = null;
+			m_valueAsset = null;
 		}
 	}
 }
