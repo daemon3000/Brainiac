@@ -13,8 +13,6 @@ namespace Brainiac
 		[SerializeField]
 		private Vector2 m_canvasSize;
 
-		private BehaviourTree m_runtimeTree;
-
 #if UNITY_EDITOR
 		private BehaviourTree m_editModeTree;
 #endif
@@ -67,14 +65,9 @@ namespace Brainiac
 		}
 #endif
 
-		public BehaviourTree GetRuntimeTree()
+		public BehaviourTree CreateRuntimeTree()
 		{
-			if(m_runtimeTree == null)
-			{
-				m_runtimeTree = BTUtils.LoadTree(m_serializedData);
-			}
-
-			return m_runtimeTree;
+			return BTUtils.LoadTree(m_serializedData);
 		}
 	}
 }

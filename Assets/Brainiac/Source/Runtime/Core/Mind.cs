@@ -24,7 +24,7 @@ namespace Brainiac
 		{
 			m_tickCount = 0L;
 			m_lastTickTime = 0.0f;
-			m_btInstance = m_behaviourTree.GetRuntimeTree();
+			m_btInstance = m_behaviourTree.CreateRuntimeTree();
 		}
 
 		public void Tick(Agent agent)
