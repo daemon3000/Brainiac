@@ -15,14 +15,24 @@ namespace BrainiacEditor
 		private BTEditorGraphNode m_root;
 
 		private bool m_drawSelectionBox;
+		private bool m_isBehaviourTreeReadOnly;
 		private Vector2 m_selectionBoxStartPos;
-		
+
+		public bool ReadOnly
+		{
+			get
+			{
+				return m_isBehaviourTreeReadOnly || EditorApplication.isPlaying;
+			}
+		}
+
 		public Rect? SelectionBox { get; set; }
 
 		private void OnCreated()
 		{
 			m_root = null;
 			m_drawSelectionBox = false;
+			m_isBehaviourTreeReadOnly = false;
 			m_selectionBoxStartPos = Vector2.zero;
 			SelectionBox = null;
 		}
@@ -35,6 +45,7 @@ namespace BrainiacEditor
 				m_root = null;
 			}
 
+			m_isBehaviourTreeReadOnly = behaviourTree.ReadOnly;
 			m_root = BTEditorGraphNode.Create(this, behaviourTree.Root);
 		}
 
@@ -84,7 +95,7 @@ namespace BrainiacEditor
 					BTEditorCanvas.Current.Event.Use();
 				}
 			}
-			if(!BTEditorCanvas.Current.ReadOnly)
+			if(!ReadOnly)
 			{
 				if(BTEditorCanvas.Current.Event.type == EventType.MouseDrag && BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
 				{

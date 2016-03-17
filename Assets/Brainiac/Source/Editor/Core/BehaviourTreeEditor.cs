@@ -45,15 +45,10 @@ namespace BrainiacEditor
 				m_grid = new BTEditorGrid(m_gridTexture);
 			}
 
-			if(m_btAsset != null)
-			{
-				m_graph.SetBehaviourTree(m_btAsset.GetEditModeTree());
-				m_canvas.Position = m_btAsset.CanvasPosition;
-				m_canvas.Size = m_btAsset.CanvasSize;
-			}
-
+			ReloadBehaviourTree();
 			m_isDisposed = false;
-			m_canvas.OnRepaint += Repaint;
+			m_canvas.OnRepaint += OnRepaint;
+			EditorApplication.playmodeStateChanged += HandlePlayModeChanged;
 		}
 
 		private void OnDisable()
@@ -75,8 +70,13 @@ namespace BrainiacEditor
 					BTEditorGraph.DestroyImmediate(m_graph);
 					m_graph = null;
 				}
+				if(m_btAsset != null)
+				{
+					SaveBehaviourTree();
+					m_btAsset.Dispose();
+				}
 
-				SaveBehaviourTree();
+				EditorApplication.playmodeStateChanged -= HandlePlayModeChanged;
 				m_isDisposed = true;
 			}
 		}
@@ -85,12 +85,29 @@ namespace BrainiacEditor
 		{
 			if(asset != null && asset != m_btAsset)
 			{
-				SaveBehaviourTree();
+				if(m_btAsset != null)
+				{
+					SaveBehaviourTree();
+					m_btAsset.Dispose();
+				}
 
 				m_btAsset = asset;
 				m_graph.SetBehaviourTree(m_btAsset.GetEditModeTree());
 				m_canvas.Position = m_btAsset.CanvasPosition;
 				m_canvas.Size = m_btAsset.CanvasSize;
+				m_canvas.IsDebuging = false;
+			}
+		}
+
+		private void SetBTAssetDebug(BTAsset asset, BehaviourTree btInstance)
+		{
+			if(asset != null && btInstance != null)
+			{
+				m_btAsset = asset;
+				m_graph.SetBehaviourTree(btInstance);
+				m_canvas.Position = m_btAsset.CanvasPosition;
+				m_canvas.Size = m_btAsset.CanvasSize;
+				m_canvas.IsDebuging = true;
 			}
 		}
 
@@ -101,8 +118,33 @@ namespace BrainiacEditor
 				m_btAsset.CanvasPosition = m_canvas.Position;
 				m_btAsset.CanvasSize = m_canvas.Size;
 				m_btAsset.Serialize();
-				m_btAsset.Dispose();
 				EditorUtility.SetDirty(m_btAsset);
+			}
+		}
+
+		private void ReloadBehaviourTree()
+		{
+			if(m_btAsset != null)
+			{
+				m_graph.SetBehaviourTree(m_btAsset.GetEditModeTree());
+				m_canvas.Position = m_btAsset.CanvasPosition;
+				m_canvas.Size = m_btAsset.CanvasSize;
+				m_canvas.IsDebuging = false;
+			}
+		}
+
+		private void HandlePlayModeChanged()
+		{
+			if(!EditorApplication.isPlaying)
+			{
+				if(EditorApplication.isPlayingOrWillChangePlaymode)
+				{
+					SaveBehaviourTree();
+				}
+				else
+				{
+					ReloadBehaviourTree();
+				}
 			}
 		}
 
@@ -114,13 +156,29 @@ namespace BrainiacEditor
 				m_grid.DrawGUI();
 				m_graph.DrawGUI();
 				m_canvas.HandleEvents(this);
+
+				if(m_canvas.IsDebuging)
+				{
+					OnRepaint();
+				}
 			}
+		}
+
+		public void OnRepaint()
+		{
+			Repaint();
 		}
 
 		public static void Open(BTAsset behaviourTree)
 		{
 			var window = EditorWindow.GetWindow<BehaviourTreeEditor>("Brainiac");
 			window.SetBTAsset(behaviourTree);
+		}
+
+		public static void StartDebug(BTAsset btAsset, BehaviourTree btInstance)
+		{
+			var window = EditorWindow.GetWindow<BehaviourTreeEditor>("Brainiac");
+			window.SetBTAssetDebug(btAsset, btInstance);
 		}
 	}
 }

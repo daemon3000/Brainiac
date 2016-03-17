@@ -15,6 +15,9 @@ namespace Brainiac
 			}
 		}
 
+		[JsonIgnore]
+		public bool ReadOnly { get; set; }
+
 		public BehaviourTree()
 		{
 			m_root = new Root();

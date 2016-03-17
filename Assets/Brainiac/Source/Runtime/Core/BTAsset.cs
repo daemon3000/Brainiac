@@ -49,6 +49,7 @@ namespace Brainiac
 			if(m_editModeTree == null)
 			{
 				m_editModeTree = BTUtils.LoadTree(m_serializedData);
+				m_editModeTree.ReadOnly = false;
 			}
 
 			return m_editModeTree;
@@ -56,7 +57,10 @@ namespace Brainiac
 
 		public void Serialize()
 		{
-			m_serializedData = BTUtils.SaveTree(m_editModeTree);
+			if(m_editModeTree != null)
+			{
+				m_serializedData = BTUtils.SaveTree(m_editModeTree);
+			}
 		}
 
 		public void Dispose()
@@ -67,7 +71,10 @@ namespace Brainiac
 
 		public BehaviourTree CreateRuntimeTree()
 		{
-			return BTUtils.LoadTree(m_serializedData);
+			BehaviourTree tree = BTUtils.LoadTree(m_serializedData);
+			tree.ReadOnly = true;
+
+			return tree;
 		}
 	}
 }

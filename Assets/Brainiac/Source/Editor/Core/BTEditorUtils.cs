@@ -27,19 +27,19 @@ namespace BrainiacEditor
 
 		private static List<BTContextMenuPath> m_nodeMenuPaths;
 
-		public static void DrawBezier(Rect a, Rect b)
+		public static void DrawBezier(Rect a, Rect b, Color color)
 		{
 			Handles.DrawBezier(a.center, b.center,
 							   new Vector3(a.center.x + BEZIER_H_OFFSET, a.center.y, 0),
 							   new Vector3(b.center.x - BEZIER_H_OFFSET, b.center.y, 0),
-							   Color.white, null, BEZIER_WIDTH);
+							   color, null, BEZIER_WIDTH);
 		}
 
-		public static void DrawBezier(Vector2 a, Vector2 b)
+		public static void DrawBezier(Vector2 a, Vector2 b, Color color)
 		{
 			Handles.DrawBezier(a, b, new Vector3(a.x + BEZIER_H_OFFSET, a.y, 0),
 							   new Vector3(b.x - BEZIER_H_OFFSET, b.y, 0),
-							   Color.white, null, BEZIER_WIDTH);
+							   color, null, BEZIER_WIDTH);
 		}
 
 		public static GenericMenu CreateNodeContextMenu(BTEditorGraphNode m_node)

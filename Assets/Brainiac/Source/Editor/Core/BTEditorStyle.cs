@@ -11,7 +11,7 @@ namespace BrainiacEditor
 		private static BTGraphNodeStyle m_decoratorStyle;
 		private static BTGraphNodeStyle m_actionStyle;
 		private static GUIStyle m_selectionBoxStyle;
-
+		
 		public static GUIStyle SelectionBox
 		{
 			get
@@ -24,15 +24,24 @@ namespace BrainiacEditor
 		{
 			if(m_compositeStyle == null)
 			{
-				m_compositeStyle = new BTGraphNodeStyle("flow node hex 1", "flow node hex 1 on");
+				m_compositeStyle = new BTGraphNodeStyle("flow node hex 1", "flow node hex 1 on",
+														"flow node hex 6 on", "flow node hex 6 on",
+														"flow node hex 5 on", "flow node hex 5 on",
+														"flow node hex 3 on", "flow node hex 3 on");
 			}
 			if(m_decoratorStyle == null)
 			{
-				m_decoratorStyle = new BTGraphNodeStyle("flow node hex 1", "flow node hex 1 on");
+				m_decoratorStyle = new BTGraphNodeStyle("flow node hex 1", "flow node hex 1 on",
+														"flow node hex 6 on", "flow node hex 6 on",
+														"flow node hex 5 on", "flow node hex 5 on",
+														"flow node hex 3 on", "flow node hex 3 on");
 			}
 			if(m_actionStyle == null)
 			{
-				m_actionStyle = new BTGraphNodeStyle("flow node 0", "flow node 0 on");
+				m_actionStyle = new BTGraphNodeStyle("flow node 0", "flow node 0 on",
+													"flow node 6 on", "flow node 6 on",
+													"flow node 5 on", "flow node 5 on",
+													"flow node 3 on", "flow node 3 on");
 			}
 			if(m_selectionBoxStyle == null)
 			{
@@ -60,6 +69,24 @@ namespace BrainiacEditor
 			}
 
 			return null;
+		}
+
+		public static Color GetTransitionColor(BehaviourNodeStatus? status)
+		{
+			if(status.HasValue)
+			{
+				switch(status)
+				{
+				case BehaviourNodeStatus.Failure:
+					return Color.red;
+				case BehaviourNodeStatus.Running:
+					return new Color32(248, 138, 29, 255);
+				case BehaviourNodeStatus.Success:
+					return Color.green;
+				}
+			}
+
+			return Color.white;
 		}
 	}
 }

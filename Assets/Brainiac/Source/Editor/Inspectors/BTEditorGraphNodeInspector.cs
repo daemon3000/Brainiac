@@ -13,7 +13,7 @@ namespace BrainiacEditor
 			{
 				bool prevGUIState = GUI.enabled;
 
-				GUI.enabled = !BTEditorCanvas.Current.ReadOnly;
+				GUI.enabled = !graphNode.Graph.ReadOnly;
 				graphNode.Node.OnGUI();
 				GUI.enabled = prevGUIState;
 

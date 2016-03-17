@@ -20,6 +20,16 @@ namespace Brainiac
 			get { return m_tickCount; }
 		}
 
+		public BTAsset BehaviourTree
+		{
+			get { return m_behaviourTree; }
+		}
+
+		public BehaviourTree BehaviourTreeInstance
+		{
+			get { return m_btInstance; }
+		}
+
 		private void Awake()
 		{
 			m_tickCount = 0L;

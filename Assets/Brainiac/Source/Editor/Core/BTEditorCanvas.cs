@@ -42,11 +42,6 @@ namespace BrainiacEditor
 			}
 		}
 		
-		public bool ReadOnly
-		{
-			get { return IsDebuging || EditorApplication.isPlaying; }
-		}
-
 		public int SnapSize
 		{
 			get { return m_snapSize; }

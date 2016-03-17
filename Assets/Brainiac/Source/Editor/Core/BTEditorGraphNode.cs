@@ -18,7 +18,9 @@ namespace BrainiacEditor
 		private BTEditorGraph m_graph;
 		private bool m_isSelected;
 		private bool m_isDragging;
+		private bool m_canBeginDragging;
 		private Vector2 m_dragOffset;
+		private BehaviourNodeStatus? m_status;
 
 		public BehaviourNode Node
 		{
@@ -40,6 +42,29 @@ namespace BrainiacEditor
 			get { return m_children.Count; }
 		}
 
+		private BehaviourNodeStatus? Status
+		{
+			get
+			{
+				if(!BTEditorCanvas.Current.IsDebuging)
+				{
+					return null;
+				}
+				else if(m_node is Root)
+				{
+					return BehaviourNodeStatus.Running;
+				}
+				else
+				{
+					return m_status;
+				}
+			}
+			set
+			{
+				m_status = value;
+			}
+		}
+
 		private void OnCreated()
 		{
 			if(m_children == null)
@@ -47,17 +72,56 @@ namespace BrainiacEditor
 				m_children = new List<BTEditorGraphNode>();
 			}
 
+			m_status = null;
 			m_isSelected = false;
 			m_isDragging = false;
+			m_canBeginDragging = false;
 			m_dragOffset = Vector2.zero;
 		}
 
 		public void DrawGUI()
 		{
+			UpdateChildrenStatus();
 			DrawTransitions();
 			DrawNode();
 			HandleEvents();
 			DrawChildren();
+		}
+
+		private void UpdateChildrenStatus()
+		{
+			bool siblingIsRunning = false;
+
+			foreach(var child in m_children)
+			{
+				if(Status == null)
+				{
+					child.Status = null;
+					continue;
+				}
+
+				if(BTEditorCanvas.Current.IsDebuging)
+				{
+					if(siblingIsRunning)
+					{
+						//	If a previous sibling is running then this child has not run so it has no status.
+						child.Status = null;
+					}
+					else
+					{
+						child.Status = child.Node.Status;
+					}
+				}
+				else
+				{
+					child.Status = null;
+				}
+
+				if(!siblingIsRunning)
+				{
+					siblingIsRunning = child.Node.Status == BehaviourNodeStatus.Running;
+				}
+			}
 		}
 
 		private void DrawTransitions()
@@ -67,7 +131,7 @@ namespace BrainiacEditor
 			foreach(var child in m_children)
 			{
 				Rect childPosition = new Rect(child.Node.Position + BTEditorCanvas.Current.Position, child.Node.Size);
-				BTEditorUtils.DrawBezier(position, childPosition);
+				BTEditorUtils.DrawBezier(position, childPosition, BTEditorStyle.GetTransitionColor(child.Status));
 			}
 		}
 
@@ -75,7 +139,7 @@ namespace BrainiacEditor
 		{
 			BTGraphNodeStyle nodeStyle = BTEditorStyle.GetNodeStyle(m_node.GetType());
 			Rect position = new Rect(m_node.Position + BTEditorCanvas.Current.Position, m_node.Size);
-			EditorGUI.LabelField(position, m_node.Title, nodeStyle.GetStyle(m_isSelected));
+			EditorGUI.LabelField(position, m_node.Title, nodeStyle.GetStyle(Status, m_isSelected));
 		}
 
 		private void HandleEvents()
@@ -91,13 +155,14 @@ namespace BrainiacEditor
 					{
 						m_graph.OnNodeSelected(this);
 					}
-					
+
+					m_canBeginDragging = true;
 					BTEditorCanvas.Current.Event.Use();
 				}
 			}
 			else if(BTEditorCanvas.Current.Event.type == EventType.MouseDown && BTEditorCanvas.Current.Event.button == CONTEXT_MOUSE_BUTTON)
 			{
-				if(!BTEditorCanvas.Current.ReadOnly && position.Contains(mousePosition))
+				if(!m_graph.ReadOnly && position.Contains(mousePosition))
 				{
 					ShowContextMenu();
 					BTEditorCanvas.Current.Event.Use();
@@ -110,10 +175,11 @@ namespace BrainiacEditor
 					m_graph.OnNodeEndDrag(this);
 					BTEditorCanvas.Current.Event.Use();
 				}
+				m_canBeginDragging = false;
 			}
 			else if(BTEditorCanvas.Current.Event.type == EventType.MouseDrag && BTEditorCanvas.Current.Event.button == DRAG_MOUSE_BUTTON)
 			{
-				if(!BTEditorCanvas.Current.ReadOnly && !m_isDragging && position.Contains(mousePosition))
+				if(!m_graph.ReadOnly && !m_isDragging && m_canBeginDragging && position.Contains(mousePosition))
 				{
 					m_graph.OnNodeBeginDrag(this, mousePosition);
 					BTEditorCanvas.Current.Event.Use();
