@@ -13,7 +13,7 @@ namespace Brainiac
 		{
 			get
 			{
-				return new Vector2(120, 40);
+				return new Vector2(180, 35);
 			}
 		}
 

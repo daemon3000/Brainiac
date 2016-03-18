@@ -10,21 +10,10 @@ namespace Brainiac
 	[AddNodeMenu("Action/Debug")]
 	public class DebugLog : Action
 	{
-		private string m_message;
 		private LogLevel m_level;
+		private string m_message;
 
-		public string Message
-		{
-			get
-			{
-				return m_message;
-			}
-			set
-			{
-				m_message = value;
-			}
-		}
-		
+		[BTProperty]
 		public LogLevel Level
 		{
 			get
@@ -34,6 +23,19 @@ namespace Brainiac
 			set
 			{
 				m_level = value;
+			}
+		}
+
+		[BTProperty]
+		public string Message
+		{
+			get
+			{
+				return m_message;
+			}
+			set
+			{
+				m_message = value;
 			}
 		}
 
@@ -61,15 +63,6 @@ namespace Brainiac
 			}
 
 			return BehaviourNodeStatus.Success;
-		}
-
-		public override void OnGUI()
-		{
-			base.OnGUI();
-#if UNITY_EDITOR
-			m_level = (LogLevel)UnityEditor.EditorGUILayout.EnumPopup("Level", m_level);
-			m_message = UnityEditor.EditorGUILayout.TextField("Message", m_message);
-#endif
 		}
 	}
 }

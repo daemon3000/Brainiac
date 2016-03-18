@@ -139,7 +139,9 @@ namespace BrainiacEditor
 		{
 			BTGraphNodeStyle nodeStyle = BTEditorStyle.GetNodeStyle(m_node.GetType());
 			Rect position = new Rect(m_node.Position + BTEditorCanvas.Current.Position, m_node.Size);
-			EditorGUI.LabelField(position, m_node.Title, nodeStyle.GetStyle(Status, m_isSelected));
+			string label = string.IsNullOrEmpty(m_node.Name) ? m_node.Title : m_node.Name;
+
+			EditorGUI.LabelField(position, label, nodeStyle.GetStyle(Status, m_isSelected));
 		}
 
 		private void HandleEvents()

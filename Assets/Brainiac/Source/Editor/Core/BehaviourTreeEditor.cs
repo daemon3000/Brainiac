@@ -10,8 +10,6 @@ namespace BrainiacEditor
 		[SerializeField]
 		private Texture m_gridTexture;
 		[SerializeField]
-		private GUISkin m_editorSkin;
-		[SerializeField]
 		private BTAsset m_btAsset;
 
 		private BTEditorGrid m_grid;
@@ -25,11 +23,7 @@ namespace BrainiacEditor
 			{
 				m_gridTexture = Resources.Load<Texture>("Brainiac/background");
 			}
-			if(m_editorSkin == null)
-			{
-				m_editorSkin = Resources.Load<GUISkin>("Brainiac/editor_style");
-			}
-
+			
 			if(m_graph == null)
 			{
 				m_graph = BTEditorGraph.Create();
@@ -152,7 +146,7 @@ namespace BrainiacEditor
 		{
 			if(m_btAsset != null)
 			{
-				BTEditorStyle.EnsureStyle(m_editorSkin);
+				BTEditorStyle.EnsureStyle();
 				m_grid.DrawGUI();
 				m_graph.DrawGUI();
 				m_canvas.HandleEvents(this);

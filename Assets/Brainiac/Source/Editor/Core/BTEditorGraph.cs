@@ -83,7 +83,7 @@ namespace BrainiacEditor
 
 		private void HandleEvents()
 		{
-			Rect windowPosition = new Rect(0, 0, BTEditorCanvas.Current.Window.position.width, BTEditorCanvas.Current.Window.position.height);
+			Rect windowPosition = new Rect(0, 10, BTEditorCanvas.Current.Window.position.width, BTEditorCanvas.Current.Window.position.height);
 
 			if(BTEditorCanvas.Current.Event.type == EventType.MouseDown && BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
 			{

@@ -6,18 +6,18 @@ namespace Brainiac
 	[AddNodeMenu("Action/Timer")]
 	public class Timer : Action
 	{
-		private float m_duration;
+		[JsonProperty]
+		[BTProperty(PropertyName = "Duration")]
+		private MemoryVar m_duration;
+
 		private float m_startTime;
 
-		public float Duration
+		[JsonIgnore]
+		public MemoryVar Duration
 		{
 			get
 			{
 				return m_duration;
-			}
-			set
-			{
-				m_duration = value;
 			}
 		}
 
@@ -29,9 +29,16 @@ namespace Brainiac
 			}
 		}
 
+		public Timer()
+		{
+			m_duration = new MemoryVar();
+		}
+
 		protected override BehaviourNodeStatus OnExecute(Agent agent)
 		{
-			if(Time.time < m_startTime + m_duration)
+			float duration = m_duration.AsFloat.HasValue ? m_duration.AsFloat.Value : m_duration.Evaluate<float>(agent.Memory, 0.0f);
+
+			if(Time.time < m_startTime + duration)
 				return BehaviourNodeStatus.Running;
 
 			return BehaviourNodeStatus.Success;
@@ -41,14 +48,6 @@ namespace Brainiac
 		{
 			base.OnStart(agent);
 			m_startTime = Time.time;
-		}
-
-		public override void OnGUI()
-		{
-			base.OnGUI();
-#if UNITY_EDITOR
-			m_duration = UnityEditor.EditorGUILayout.FloatField("Duration", m_duration);
-#endif
 		}
 	}
 }

@@ -13,7 +13,7 @@ namespace Brainiac
 		{
 			get
 			{
-				return new Vector2(120, 40);
+				return new Vector2(180, 35);
 			}
 		}
 
@@ -66,6 +66,26 @@ namespace Brainiac
 		public void RemoveAllChildren()
 		{
 			m_children.Clear();
+		}
+
+		public void MoveChildPriorityUp(int index)
+		{
+			if(index > 0 && index < m_children.Count)
+			{
+				var temp = m_children[index];
+				m_children[index] = m_children[index - 1];
+				m_children[index - 1] = temp;
+			}
+		}
+
+		public void MoveChildPriorityDown(int index)
+		{
+			if(index >= 0 && index < m_children.Count - 1)
+			{
+				var temp = m_children[index];
+				m_children[index] = m_children[index + 1];
+				m_children[index + 1] = temp;
+			}
 		}
 
 		public BehaviourNode GetChild(int index)

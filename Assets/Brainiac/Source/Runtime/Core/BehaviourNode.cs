@@ -7,6 +7,7 @@ namespace Brainiac
 	{
 		private Vector2 m_position;
 		private string m_description;
+		private string m_name;
 		private BehaviourNodeStatus m_status;
 
 		public Vector2 Position
@@ -21,13 +22,24 @@ namespace Brainiac
 			}
 		}
 
+		public string Name
+		{
+			get
+			{
+				return m_name;
+			}
+			set
+			{
+				m_name = value;
+			}
+		}
+
 		public string Description
 		{
 			get
 			{
 				return m_description;
 			}
-
 			set
 			{
 				m_description = value;
@@ -40,10 +52,11 @@ namespace Brainiac
 			get { return m_status; }
 		}
 
-		public abstract string Title { get; }
-
 		[JsonIgnore]
 		public abstract Vector2 Size { get; }
+
+		[JsonIgnore]
+		public abstract string Title { get; }
 
 		protected abstract BehaviourNodeStatus OnExecute(Agent agent);
 		protected virtual void OnStop(Agent agent) { }
@@ -68,17 +81,6 @@ namespace Brainiac
 			}
 
 			return m_status;
-		}
-
-		public virtual void OnGUI()
-		{
-#if UNITY_EDITOR
-			UnityEditor.EditorStyles.textField.wordWrap = true;
-
-			UnityEditor.EditorGUILayout.LabelField("Description");
-			m_description = UnityEditor.EditorGUILayout.TextArea(m_description);
-			UnityEditor.EditorGUILayout.Space();
-#endif
 		}
 	}
 }

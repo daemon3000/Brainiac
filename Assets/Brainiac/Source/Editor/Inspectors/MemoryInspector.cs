@@ -25,6 +25,7 @@ namespace BrainiacEditor
 
 		public override void OnInspectorGUI()
 		{
+			BTEditorStyle.EnsureStyle();
 			m_inspector.DrawGUI();
 		}
 	}

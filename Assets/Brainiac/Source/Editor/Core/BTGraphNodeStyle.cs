@@ -47,37 +47,45 @@ namespace BrainiacEditor
 			if(m_standardNormalStyle == null)
 			{
 				m_standardNormalStyle = (GUIStyle)m_standardNormalStyleName;
+				m_standardNormalStyle.wordWrap = true;
 			}
 			if(m_standardSelectedStyle == null)
 			{
 				m_standardSelectedStyle = (GUIStyle)m_standardSelectedStyleName;
+				m_standardSelectedStyle.wordWrap = true;
 			}
 
 			if(m_failNormalStyle == null)
 			{
 				m_failNormalStyle = (GUIStyle)m_failNormalStyleName;
+				m_failNormalStyle.wordWrap = true;
 			}
 			if(m_failSelectedStyle == null)
 			{
 				m_failSelectedStyle = (GUIStyle)m_failSelectedStyleName;
+				m_failSelectedStyle.wordWrap = true;
 			}
 
 			if(m_runninfNormalStyle == null)
 			{
 				m_runninfNormalStyle = (GUIStyle)m_runninfNormalStyleName;
+				m_runninfNormalStyle.wordWrap = true;
 			}
 			if(m_runningSelectedStyle == null)
 			{
 				m_runningSelectedStyle = (GUIStyle)m_runningSelectedStyleName;
+				m_runningSelectedStyle.wordWrap = true;
 			}
 
 			if(m_successNormalStyle == null)
 			{
 				m_successNormalStyle = (GUIStyle)m_successNormalStyleName;
+				m_successNormalStyle.wordWrap = true;
 			}
 			if(m_successSelectedStyle == null)
 			{
 				m_successSelectedStyle = (GUIStyle)m_successSelectedStyleName;
+				m_successSelectedStyle.wordWrap = true;
 			}
 		}
 

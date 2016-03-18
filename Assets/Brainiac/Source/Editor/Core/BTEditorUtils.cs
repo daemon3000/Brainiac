@@ -10,22 +10,11 @@ namespace BrainiacEditor
 {
 	public static class BTEditorUtils
 	{
-		private class BTContextMenuPath
-		{
-			public readonly string menuPath;
-			public readonly Type nodeType;
-
-			public BTContextMenuPath(string menuPath, Type nodeType)
-			{
-				this.menuPath = menuPath;
-				this.nodeType = nodeType;
-			}
-		}
-
 		private const int BEZIER_H_OFFSET = 0;
 		private const int BEZIER_WIDTH = 3;
 
-		private static List<BTContextMenuPath> m_nodeMenuPaths;
+		private static List<Tuple<Type, string>> m_nodeMenuPaths;
+		private static Dictionary<Type, Type> m_nodeInspectors;
 
 		public static void DrawBezier(Rect a, Rect b, Color color)
 		{
@@ -40,6 +29,31 @@ namespace BrainiacEditor
 			Handles.DrawBezier(a, b, new Vector3(a.x + BEZIER_H_OFFSET, a.y, 0),
 							   new Vector3(b.x - BEZIER_H_OFFSET, b.y, 0),
 							   color, null, BEZIER_WIDTH);
+		}
+
+		public static Type GetInspectorTypeForNode(Type nodeType)
+		{
+			if(m_nodeInspectors == null)
+			{
+				BuildNodeInspectorTable();
+			}
+
+			Type inspectorType = null;
+			if(m_nodeInspectors.TryGetValue(nodeType, out inspectorType))
+			{
+				return inspectorType;
+			}
+			else
+			{
+				if(nodeType.IsSameOrSubclass(typeof(Composite)))
+				{
+					return typeof(GenericCompositeInspector);
+				}
+				else
+				{
+					return typeof(GenericNodeInspector);
+				}
+			}
 		}
 
 		public static GenericMenu CreateNodeContextMenu(BTEditorGraphNode m_node)
@@ -60,14 +74,14 @@ namespace BrainiacEditor
 			{
 				if(m_nodeMenuPaths == null)
 				{
-					BuildNodeMenuPaths();
+					BuildNodeMenuPathList();
 				}
 
 				GenericMenu.MenuFunction2 onCreateChild = t => m_node.Graph.OnNodeCreateChild(m_node, t as Type);
 
 				foreach(var item in m_nodeMenuPaths)
 				{
-					menu.AddItem(new GUIContent("Add Child/" + item.menuPath), false, onCreateChild, item.nodeType);
+					menu.AddItem(new GUIContent("Add Child/" + item.Item2), false, onCreateChild, item.Item1);
 				}
 
 				menu.AddSeparator("");
@@ -135,11 +149,11 @@ namespace BrainiacEditor
 			return menu;
 		}
 
-		private static void BuildNodeMenuPaths()
+		private static void BuildNodeMenuPathList()
 		{
 			if(m_nodeMenuPaths == null)
 			{
-				m_nodeMenuPaths = new List<BTContextMenuPath>();
+				m_nodeMenuPaths = new List<Tuple<Type, string>>();
 			}
 			else
 			{
@@ -154,7 +168,34 @@ namespace BrainiacEditor
 				if(attributes.Length > 0)
 				{
 					AddNodeMenuAttribute attribute = attributes[0] as AddNodeMenuAttribute;
-					m_nodeMenuPaths.Add(new BTContextMenuPath(attribute.MenuPath, type));
+					m_nodeMenuPaths.Add(new Tuple<Type, string>(type, attribute.MenuPath));
+				}
+			}
+		}
+
+		private static void BuildNodeInspectorTable()
+		{
+			if(m_nodeInspectors == null)
+			{
+				m_nodeInspectors = new Dictionary<Type, Type>();
+			}
+			else
+			{
+				m_nodeInspectors.Clear();
+			}
+
+			Assembly assembly = Assembly.GetExecutingAssembly();
+
+			foreach(Type type in assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(INodeInspector))))
+			{
+				object[] attributes = type.GetCustomAttributes(typeof(CustomNodeInspectorAttribute), false);
+				if(attributes.Length > 0)
+				{
+					CustomNodeInspectorAttribute attribute = attributes[0] as CustomNodeInspectorAttribute;
+					if(!m_nodeInspectors.ContainsKey(attribute.NodeType))
+					{
+						m_nodeInspectors.Add(attribute.NodeType, type);
+					}
 				}
 			}
 		}

@@ -18,7 +18,7 @@ namespace BrainiacEditor
 			GUI.enabled = mind.BehaviourTree != null;
 			if(EditorApplication.isPlaying)
 			{
-				if(GUILayout.Button("Live Preview", GUILayout.Height(24.0f)))
+				if(GUILayout.Button("Preview", GUILayout.Height(24.0f)))
 				{
 					BehaviourTreeEditor.StartDebug(mind.BehaviourTree, mind.BehaviourTreeInstance);
 				}

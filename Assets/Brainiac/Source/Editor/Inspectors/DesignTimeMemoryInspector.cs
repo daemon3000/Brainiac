@@ -18,8 +18,6 @@ namespace BrainiacEditor
 		
 		private SerializedObject m_serializedObject;
 		private SerializedProperty m_startMemory;
-		private GUIStyle m_headerStyle;
-		private GUIStyle m_footerButtonStyle;
 		private GUIContent m_plusButtonContent;
 		private GUIContent m_minusButtonContent;
 		private GUIContent m_itemValueContent;
@@ -44,8 +42,7 @@ namespace BrainiacEditor
 				CreateNewMemoryItem(m_itemToAdd.Value);
 				m_itemToAdd = null;
 			}
-
-			EnsureGUIStyles();
+			
 			DrawMemory();
 
 			m_serializedObject.ApplyModifiedProperties();
@@ -66,8 +63,8 @@ namespace BrainiacEditor
 
 			GUI.BeginGroup(groupRect);
 
-			EditorGUI.LabelField(headerRect, "Start Memory", m_headerStyle);
-			GUI.Box(bgRect, "", (GUIStyle)"RL Background");
+			EditorGUI.LabelField(headerRect, "Start Memory", BTEditorStyle.ListHeader);
+			GUI.Box(bgRect, "", BTEditorStyle.ListBackground);
 
 			GUI.BeginGroup(itemRect);
 
@@ -84,8 +81,8 @@ namespace BrainiacEditor
 
 			GUI.EndGroup();
 
-			EditorGUI.LabelField(buttonRect, "", (GUIStyle)"RL Background");
-			if(GUI.Button(buttonRect, m_plusButtonContent, m_footerButtonStyle))
+			EditorGUI.LabelField(buttonRect, "", BTEditorStyle.ListBackground);
+			if(GUI.Button(buttonRect, m_plusButtonContent, BTEditorStyle.ListButton))
 			{
 				ShowCreateItemMenu();
 			}
@@ -106,8 +103,8 @@ namespace BrainiacEditor
 			
 			GUI.BeginGroup(position);
 			
-			EditorGUI.LabelField(headerRect, label, m_headerStyle);
-			GUI.Box(bgRect, "", (GUIStyle)"RL Background");
+			EditorGUI.LabelField(headerRect, label, BTEditorStyle.ListHeader);
+			GUI.Box(bgRect, "", BTEditorStyle.ListBackground);
 
 			GUI.BeginGroup(fieldRect);
 
@@ -116,8 +113,8 @@ namespace BrainiacEditor
 
 			GUI.EndGroup();
 
-			EditorGUI.LabelField(buttonRect, "", (GUIStyle)"RL Background");
-			remove = GUI.Button(buttonRect, m_minusButtonContent, m_footerButtonStyle);
+			EditorGUI.LabelField(buttonRect, "", BTEditorStyle.ListBackground);
+			remove = GUI.Button(buttonRect, m_minusButtonContent, BTEditorStyle.ListButton);
 
 			GUI.EndGroup();
 		}
@@ -162,23 +159,6 @@ namespace BrainiacEditor
 		{
 			int fieldCount = 2;
 			return HEADER_HEIGHT + fieldCount * FIELD_HEIGHT + FIELD_SPACING_VERT * 2 + BUTTON_HEIGHT;
-		}
-
-		private void EnsureGUIStyles()
-		{
-			if(m_headerStyle == null)
-			{
-				m_headerStyle = new GUIStyle(Array.Find<GUIStyle>(GUI.skin.customStyles, obj => obj.name == "RL Header"));
-				m_headerStyle.normal.textColor = Color.black;
-				m_headerStyle.alignment = TextAnchor.MiddleLeft;
-				m_headerStyle.contentOffset = new Vector2(10, 0);
-				m_headerStyle.fontSize = 11;
-			}
-			if(m_footerButtonStyle == null)
-			{
-				m_footerButtonStyle = new GUIStyle(Array.Find<GUIStyle>(GUI.skin.customStyles, obj => obj.name == "RL FooterButton"));
-				m_footerButtonStyle.alignment = TextAnchor.MiddleCenter;
-			}
 		}
 
 		private void ShowCreateItemMenu()
