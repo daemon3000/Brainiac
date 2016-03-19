@@ -26,7 +26,7 @@ namespace Brainiac
 			return null;
 		}
 
-		public static string SaveTree(BehaviourTree behaviourTree)
+		public static string SerializeTree(BehaviourTree behaviourTree)
 		{
 			try
 			{
@@ -47,7 +47,7 @@ namespace Brainiac
 			}
 		}
 
-		public static BehaviourTree LoadTree(string btData)
+		public static BehaviourTree DeserializeTree(string btData)
 		{
 			try
 			{
@@ -68,7 +68,7 @@ namespace Brainiac
 			}
 		}
 
-		public static string SaveNode(BehaviourNode behaviourNode)
+		public static string SerializeNode(BehaviourNode behaviourNode)
 		{
 			try
 			{
@@ -89,7 +89,7 @@ namespace Brainiac
 			}
 		}
 
-		public static BehaviourNode LoadNode(string nodeData)
+		public static BehaviourNode DeserializeNode(string nodeData)
 		{
 			try
 			{

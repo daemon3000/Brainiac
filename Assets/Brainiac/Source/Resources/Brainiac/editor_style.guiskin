@@ -1253,7 +1253,7 @@ MonoBehaviour:
     m_StretchHeight: 0
   - m_Name: arrow_up
     m_Normal:
-      m_Background: {fileID: 2800000, guid: 78d67115302832f4eac7c77a5e3edb29, type: 3}
+      m_Background: {fileID: 2800000, guid: 01fc65b0dd848cb46a6583686a51a76c, type: 3}
       m_TextColor: {r: 0, g: 0, b: 0, a: 0}
     m_Hover:
       m_Background: {fileID: 0}
@@ -1311,7 +1311,7 @@ MonoBehaviour:
     m_StretchHeight: 0
   - m_Name: arrow_down
     m_Normal:
-      m_Background: {fileID: 2800000, guid: b70a93af05e87fe449ab215716dd7be2, type: 3}
+      m_Background: {fileID: 2800000, guid: d104c065f3b85a74785867484fc3c411, type: 3}
       m_TextColor: {r: 0, g: 0, b: 0, a: 0}
     m_Hover:
       m_Background: {fileID: 0}

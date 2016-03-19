@@ -32,7 +32,7 @@ namespace BrainiacEditor
 		{
 			m_graph = node.Graph;
 			m_parentNodeHash = m_graph.GetNodeHash(node.Parent);
-			m_serializedNode = BTUtils.SaveNode(node.Node);
+			m_serializedNode = BTUtils.SerializeNode(node.Node);
 			m_childIndex = node.Parent.GetChildIndex(node);
 			Title = "Deleted " + node.Node.Title;
 
@@ -43,7 +43,7 @@ namespace BrainiacEditor
 		{
 			m_graph = node.Graph;
 			m_parentNodeHash = m_graph.GetNodeHash(node.Parent);
-			m_serializedNode = BTUtils.SaveNode(node.Node);
+			m_serializedNode = BTUtils.SerializeNode(node.Node);
 			m_childIndex = childIndex;
 			Title = "Deleted " + node.Node.Title;
 
@@ -54,7 +54,7 @@ namespace BrainiacEditor
 		{
 			if(CanUndo)
 			{
-				BehaviourNode node = BTUtils.LoadNode(m_serializedNode);
+				BehaviourNode node = BTUtils.DeserializeNode(m_serializedNode);
 				if(m_childIndex >= 0)
 				{
 					var parentNode = m_graph.GetNodeByHash(m_parentNodeHash);
@@ -79,7 +79,7 @@ namespace BrainiacEditor
 			{
 				var createdNode = m_graph.GetNodeByHash(m_createdNodeHash);
 				m_parentNodeHash = m_graph.GetNodeHash(createdNode.Parent);
-				m_serializedNode = BTUtils.SaveNode(createdNode.Node);
+				m_serializedNode = BTUtils.SerializeNode(createdNode.Node);
 				m_childIndex = createdNode.Parent.GetChildIndex(createdNode);
 
 				createdNode.OnDelete();

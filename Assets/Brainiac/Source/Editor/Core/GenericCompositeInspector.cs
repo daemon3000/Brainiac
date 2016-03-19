@@ -55,29 +55,29 @@ namespace BrainiacEditor
 			for(int i = 0; i < composite.ChildCount; i++)
 			{
 				Rect handleRect = new Rect(0, i * itemHeight + itemHeight / 4, 10, itemHeight);
-				Rect childRect = new Rect(15, i * itemHeight, itemRect.width - 55, itemHeight);
-				Rect upButtonRect = new Rect(childRect.xMax + 5, childRect.y + 5, 10, 10);
-				Rect downButtonRect = new Rect(upButtonRect.xMax + 5, childRect.y + 5, 10, 10);
+				Rect childRect = new Rect(15, i * itemHeight, itemRect.width - 65, itemHeight);
+				Rect upButtonRect = new Rect(childRect.xMax + 5, childRect.y, 20, FIELD_HEIGHT - 2);
+				Rect downButtonRect = new Rect(upButtonRect.xMax + 2, childRect.y, 20, FIELD_HEIGHT - 2);
 				BehaviourNode child = composite.GetChild(i);
 				string childName = string.IsNullOrEmpty(child.Name) ? child.Title : child.Name;
+				bool previousGUIState = GUI.enabled;
 
 				EditorGUI.LabelField(handleRect, "", BTEditorStyle.ListDragHandle);
 				EditorGUI.LabelField(childRect, childName);
 
-				if(i > 0)
+				GUI.enabled = i > 0;
+				if(GUI.Button(upButtonRect, BTEditorStyle.ArrowUp))
 				{
-					if(GUI.Button(upButtonRect, "", BTEditorStyle.ArrowUp))
-					{
-						composite.MoveChildPriorityUp(i);
-					}
+					composite.MoveChildPriorityUp(i);
 				}
-				if(i < composite.ChildCount - 1)
+
+				GUI.enabled = i < composite.ChildCount - 1;
+				if(GUI.Button(downButtonRect, BTEditorStyle.ArrowDown))
 				{
-					if(GUI.Button(downButtonRect, "", BTEditorStyle.ArrowDown))
-					{
-						composite.MoveChildPriorityDown(i);
-					}
+					composite.MoveChildPriorityDown(i);
 				}
+
+				GUI.enabled = previousGUIState;
 			}
 
 			GUI.EndGroup();

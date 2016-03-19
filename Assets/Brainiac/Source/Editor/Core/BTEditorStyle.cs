@@ -8,17 +8,21 @@ namespace BrainiacEditor
 	public static class BTEditorStyle
 	{
 		private static GUISkin m_editorSkin;
+		private static Texture m_arrowUp;
+		private static Texture m_arrowDown;
+
 		private static BTGraphNodeStyle m_compositeStyle;
 		private static BTGraphNodeStyle m_decoratorStyle;
 		private static BTGraphNodeStyle m_actionStyle;
+
 		private static GUIStyle m_selectionBoxStyle;
 		private static GUIStyle m_multilineTextAreaStyle;
 		private static GUIStyle m_listHeaderStyle;
 		private static GUIStyle m_listBackgroundStyle;
 		private static GUIStyle m_listButtonStyle;
 		private static GUIStyle m_listDragHandleStyle;
-		private static GUIStyle m_arrowUpStyle;
-		private static GUIStyle m_arrowDownStyle;
+		private static GUIStyle m_arrowUpButtonStyle;
+		private static GUIStyle m_arrowDownButtonStyle;
 
 		public static GUIStyle SelectionBox
 		{
@@ -68,19 +72,35 @@ namespace BrainiacEditor
 			}
 		}
 
-		public static GUIStyle ArrowUp
+		public static GUIStyle ArrowUpButton
 		{
 			get
 			{
-				return m_arrowUpStyle;
+				return m_arrowUpButtonStyle;
 			}
 		}
 
-		public static GUIStyle ArrowDown
+		public static GUIStyle ArrowDownButton
 		{
 			get
 			{
-				return m_arrowDownStyle;
+				return m_arrowDownButtonStyle;
+			}
+		}
+
+		public static Texture ArrowUp
+		{
+			get
+			{
+				return m_arrowUp;
+			}
+		}
+
+		public static Texture ArrowDown
+		{
+			get
+			{
+				return m_arrowDown;
 			}
 		}
 
@@ -89,6 +109,15 @@ namespace BrainiacEditor
 			if(m_editorSkin == null)
 			{
 				m_editorSkin = Resources.Load<GUISkin>("Brainiac/editor_style");
+			}
+
+			if(m_arrowUp == null)
+			{
+				m_arrowUp = Resources.Load<Texture>("Brainiac/arrow_2_up");
+			}
+			if(m_arrowDown == null)
+			{
+				m_arrowDown = Resources.Load<Texture>("Brainiac/arrow_2_down");
 			}
 
 			if(m_compositeStyle == null)
@@ -153,13 +182,13 @@ namespace BrainiacEditor
 				m_listDragHandleStyle = new GUIStyle("RL DragHandle");
 			}
 
-			if(m_arrowUpStyle == null)
+			if(m_arrowUpButtonStyle == null)
 			{
-				m_arrowUpStyle = m_editorSkin.FindStyle("arrow_up");
+				m_arrowUpButtonStyle = m_editorSkin.FindStyle("arrow_up");
 			}
-			if(m_arrowDownStyle == null)
+			if(m_arrowDownButtonStyle == null)
 			{
-				m_arrowDownStyle = m_editorSkin.FindStyle("arrow_down");
+				m_arrowDownButtonStyle = m_editorSkin.FindStyle("arrow_down");
 			}
 		}
 

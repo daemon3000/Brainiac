@@ -13,7 +13,7 @@ namespace BrainiacEditor
 
 		private List<BTEditorGraphNode> m_selection;
 		private BTEditorGraphNode m_root;
-
+		private string m_serializedCopyTarget;
 		private bool m_drawSelectionBox;
 		private bool m_isBehaviourTreeReadOnly;
 		private Vector2 m_selectionBoxStartPos;
@@ -238,6 +238,52 @@ namespace BrainiacEditor
 					childIndex++;
 				}
 				BTUndoSystem.EndUndoGroup();
+			}
+		}
+
+		public bool CanCopy(BTEditorGraphNode source)
+		{
+			return source != null && source.Node != null;
+		}
+
+		public void OnCopyNode(BTEditorGraphNode source)
+		{
+			if(CanCopy(source))
+			{
+				m_serializedCopyTarget = BTUtils.SerializeNode(source.Node);
+			}
+		}
+
+		public bool CanPaste(BTEditorGraphNode destination)
+		{
+			if(destination != null && destination.Node != null && !string.IsNullOrEmpty(m_serializedCopyTarget))
+			{
+				if(destination.Node is Composite)
+				{
+					return true;
+				}
+				else if(destination.Node is Decorator)
+				{
+					return destination.ChildCount == 0;
+				}
+			}
+
+			return false;
+		}
+
+		public void OnPasteNode(BTEditorGraphNode destination)
+		{
+			if(CanPaste(destination))
+			{
+				BehaviourNode node = BTUtils.DeserializeNode(m_serializedCopyTarget);
+				BTEditorGraphNode child = BTEditorGraphNode.Create(destination, node);
+				if(child != null)
+				{
+					var undoState = new UndoNodeCreated(child);
+					undoState.Title = "Pasted " + child.Node.Title;
+
+					BTUndoSystem.RegisterUndo(undoState);
+				}
 			}
 		}
 

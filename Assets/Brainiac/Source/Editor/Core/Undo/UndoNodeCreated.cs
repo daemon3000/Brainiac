@@ -43,7 +43,7 @@ namespace BrainiacEditor
 				BTEditorGraphNode createdNode = m_graph.GetNodeByHash(m_createdNodeHash);
 
 				m_parentNodeHash = m_graph.GetNodeHash(createdNode.Parent);
-				m_serializedNode = BTUtils.SaveNode(createdNode.Node);
+				m_serializedNode = BTUtils.SerializeNode(createdNode.Node);
 
 				createdNode.OnDelete();
 				m_createdNodeHash = null;
@@ -55,7 +55,7 @@ namespace BrainiacEditor
 			if(CanRedo)
 			{
 				BTEditorGraphNode parentNode = m_graph.GetNodeByHash(m_parentNodeHash);
-				BehaviourNode node = BTUtils.LoadNode(m_serializedNode);
+				BehaviourNode node = BTUtils.DeserializeNode(m_serializedNode);
 				BTEditorGraphNode createdNode = BTEditorGraphNode.Create(parentNode, node);
 
 				m_createdNodeHash = m_graph.GetNodeHash(createdNode);

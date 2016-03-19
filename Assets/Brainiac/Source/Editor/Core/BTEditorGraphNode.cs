@@ -308,12 +308,6 @@ namespace BrainiacEditor
 				BehaviourNode node = BTUtils.CreateNode(type);
 				if(node != null)
 				{
-					Vector2 nodePos = m_node.Position + node.Size * 1.5f;
-					nodePos.x = Mathf.Max(nodePos.x, 0.0f);
-					nodePos.y = Mathf.Max(nodePos.y, 0.0f);
-
-					node.Position = nodePos;
-
 					return OnCreateChild(node);
 				}
 			}
@@ -340,6 +334,12 @@ namespace BrainiacEditor
 
 				BTEditorGraphNode graphNode = BTEditorGraphNode.CreateExistingNode(this, node);
 				m_children.Add(graphNode);
+
+				Vector2 nodePos = m_node.Position + node.Size * 1.5f;
+				nodePos.x = Mathf.Max(nodePos.x, 0.0f);
+				nodePos.y = Mathf.Max(nodePos.y, 0.0f);
+
+				node.Position = nodePos;
 
 				Vector2 canvasSize = BTEditorCanvas.Current.Size;
 				canvasSize.x = Mathf.Max(node.Position.x + 250.0f, canvasSize.x);
@@ -497,22 +497,37 @@ namespace BrainiacEditor
 
 		public static BTEditorGraphNode Create(BTEditorGraph graph, Root node)
 		{
-			BTEditorGraphNode graphNode = CreateEmptyNode();
-			graphNode.m_graph = graph;
-			graphNode.m_parent = null;
-			graphNode.SetExistingNode(node);
+			if(graph != null && node != null)
+			{
+				BTEditorGraphNode graphNode = CreateEmptyNode();
+				graphNode.m_graph = graph;
+				graphNode.m_parent = null;
+				graphNode.SetExistingNode(node);
 
-			return graphNode;
+				return graphNode;
+			}
+
+			return null;
 		}
 
 		public static BTEditorGraphNode Create(BTEditorGraphNode parent, BehaviourNode node)
 		{
-			return parent.OnCreateChild(node);
+			if(parent != null && node != null)
+			{
+				return parent.OnCreateChild(node);
+			}
+
+			return null;
 		}
 
 		public static BTEditorGraphNode Create(BTEditorGraphNode parent, BehaviourNode node, int index)
 		{
-			return parent.OnInsertChild(index, node);
+			if(parent != null && node != null)
+			{
+				return parent.OnInsertChild(index, node);
+			}
+
+			return null;
 		}
 	}
 }

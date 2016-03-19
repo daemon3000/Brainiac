@@ -23,11 +23,9 @@ namespace BrainiacEditor
 		{
 			Type nodeType = node.GetType();
 			var fields = from fi in nodeType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-						 where fi.FieldType.IsValueType || fi.FieldType == typeof(MemoryVar)
 						 select fi;
 			var properties = from pi in nodeType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-							 where pi.PropertyType.IsValueType || pi.PropertyType == typeof(MemoryVar)
-			select pi;
+							 select pi;
 
 			foreach(var field in fields)
 			{
@@ -38,17 +36,17 @@ namespace BrainiacEditor
 				BTPropertyAttribute attribute = attributes[0] as BTPropertyAttribute;
 				string label = string.IsNullOrEmpty(attribute.PropertyName) ? field.Name : attribute.PropertyName;
 
-				if(field.FieldType.IsValueType)
+				if(field.FieldType == typeof(MemoryVar))
 				{
-					object value = null;
-					if(TryToDrawValueTypeField(label, field.GetValue(node), field.FieldType, out value))
-					{
-						field.SetValue(node, value);
-					}	
+					DrawMemoryVarField(label, (MemoryVar)field.GetValue(node));
 				}
 				else
 				{
-					DrawMemoryVarField(label, (MemoryVar)field.GetValue(node));
+					object value = null;
+					if(TryToDrawField(label, field.GetValue(node), field.FieldType, out value))
+					{
+						field.SetValue(node, value);
+					}	
 				}
 			}
 			foreach(var property in properties)
@@ -60,22 +58,22 @@ namespace BrainiacEditor
 				BTPropertyAttribute attribute = attributes[0] as BTPropertyAttribute;
 				string label = string.IsNullOrEmpty(attribute.PropertyName) ? property.Name : attribute.PropertyName;
 
-				if(property.PropertyType.IsValueType)
+				if(property.PropertyType == typeof(MemoryVar))
+				{
+					DrawMemoryVarField(label, (MemoryVar)property.GetValue(node, null));
+				}
+				else
 				{
 					object value = null;
-					if(TryToDrawValueTypeField(label, property.GetValue(node, null), property.PropertyType, out value))
+					if(TryToDrawField(label, property.GetValue(node, null), property.PropertyType, out value))
 					{
 						property.SetValue(node, value, null);
 					}
 				}
-				else
-				{
-					DrawMemoryVarField(label, (MemoryVar)property.GetValue(node, null));
-				}
 			}
 		}
 
-		private bool TryToDrawValueTypeField(string label, object currentValue, Type type, out object value)
+		private bool TryToDrawField(string label, object currentValue, Type type, out object value)
 		{
 			bool success = true;
 
