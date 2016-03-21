@@ -53,7 +53,8 @@ namespace BrainiacEditor
 		{
 			if(m_root != null)
 			{
-				m_root.DrawGUI();
+				m_root.Update();
+				m_root.Draw();
 				DrawSelectionBox();
 				HandleEvents();
 			}
@@ -279,6 +280,9 @@ namespace BrainiacEditor
 				BTEditorGraphNode child = BTEditorGraphNode.Create(destination, node);
 				if(child != null)
 				{
+					ClearSelection();
+					SelectNodeHierarchy(child);
+
 					var undoState = new UndoNodeCreated(child);
 					undoState.Title = "Pasted " + child.Node.Title;
 
@@ -335,6 +339,17 @@ namespace BrainiacEditor
 			}
 
 			return null;
+		}
+
+		private void SelectNodeHierarchy(BTEditorGraphNode node)
+		{
+			m_selection.Add(node);
+			node.OnSelected();
+
+			for(int i = 0; i < node.ChildCount; i++)
+			{
+				SelectNodeHierarchy(node.GetChild(i));
+			}
 		}
 
 		private void ClearSelection()

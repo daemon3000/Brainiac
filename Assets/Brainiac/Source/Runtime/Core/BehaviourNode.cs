@@ -47,6 +47,12 @@ namespace Brainiac
 		}
 
 		[JsonIgnore]
+		public virtual string Title
+		{
+			get { return GetType().Name; }
+		}
+
+		[JsonIgnore]
 		public BehaviourNodeStatus Status
 		{
 			get { return m_status; }
@@ -54,9 +60,6 @@ namespace Brainiac
 
 		[JsonIgnore]
 		public abstract Vector2 Size { get; }
-
-		[JsonIgnore]
-		public abstract string Title { get; }
 
 		protected abstract BehaviourNodeStatus OnExecute(Agent agent);
 		protected virtual void OnStop(Agent agent) { }

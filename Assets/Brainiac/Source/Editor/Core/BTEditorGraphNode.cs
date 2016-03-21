@@ -79,13 +79,11 @@ namespace BrainiacEditor
 			m_dragOffset = Vector2.zero;
 		}
 
-		public void DrawGUI()
+		public void Update()
 		{
 			UpdateChildrenStatus();
-			DrawTransitions();
-			DrawNode();
+			HandleChildrenEvents();
 			HandleEvents();
-			DrawChildren();
 		}
 
 		private void UpdateChildrenStatus()
@@ -124,24 +122,12 @@ namespace BrainiacEditor
 			}
 		}
 
-		private void DrawTransitions()
+		private void HandleChildrenEvents()
 		{
-			Rect position = new Rect(m_node.Position + BTEditorCanvas.Current.Position, m_node.Size);
-
-			foreach(var child in m_children)
+			for(int i = m_children.Count - 1; i >= 0; i--)
 			{
-				Rect childPosition = new Rect(child.Node.Position + BTEditorCanvas.Current.Position, child.Node.Size);
-				BTEditorUtils.DrawBezier(position, childPosition, BTEditorStyle.GetTransitionColor(child.Status));
+				m_children[i].Update();
 			}
-		}
-
-		private void DrawNode()
-		{
-			BTGraphNodeStyle nodeStyle = BTEditorStyle.GetNodeStyle(m_node.GetType());
-			Rect position = new Rect(m_node.Position + BTEditorCanvas.Current.Position, m_node.Size);
-			string label = string.IsNullOrEmpty(m_node.Name) ? m_node.Title : m_node.Name;
-
-			EditorGUI.LabelField(position, label, nodeStyle.GetStyle(Status, m_isSelected));
 		}
 
 		private void HandleEvents()
@@ -211,11 +197,38 @@ namespace BrainiacEditor
 			}
 		}
 
-		private void DrawChildren()
+		public void Draw()
 		{
+			DrawTransitions();
+			DrawSelf();
+			DrawChildren();
+		}
+
+		private void DrawTransitions()
+		{
+			Rect position = new Rect(m_node.Position + BTEditorCanvas.Current.Position, m_node.Size);
+
 			foreach(var child in m_children)
 			{
-				child.DrawGUI();
+				Rect childPosition = new Rect(child.Node.Position + BTEditorCanvas.Current.Position, child.Node.Size);
+				BTEditorUtils.DrawBezier(position, childPosition, BTEditorStyle.GetTransitionColor(child.Status));
+			}
+		}
+
+		private void DrawSelf()
+		{
+			BTGraphNodeStyle nodeStyle = BTEditorStyle.GetNodeStyle(m_node.GetType());
+			Rect position = new Rect(m_node.Position + BTEditorCanvas.Current.Position, m_node.Size);
+			string label = string.IsNullOrEmpty(m_node.Name) ? m_node.Title : m_node.Name;
+
+			EditorGUI.LabelField(position, label, nodeStyle.GetStyle(Status, m_isSelected));
+		}
+
+		private void DrawChildren()
+		{
+			for(int i = 0; i < m_children.Count; i++)
+			{
+				m_children[i].Draw();
 			}
 		}
 
@@ -308,6 +321,12 @@ namespace BrainiacEditor
 				BehaviourNode node = BTUtils.CreateNode(type);
 				if(node != null)
 				{
+					Vector2 nodePos = m_node.Position + node.Size * 1.5f;
+					nodePos.x = Mathf.Max(nodePos.x, 0.0f);
+					nodePos.y = Mathf.Max(nodePos.y, 0.0f);
+
+					node.Position = nodePos;
+
 					return OnCreateChild(node);
 				}
 			}
@@ -334,12 +353,6 @@ namespace BrainiacEditor
 
 				BTEditorGraphNode graphNode = BTEditorGraphNode.CreateExistingNode(this, node);
 				m_children.Add(graphNode);
-
-				Vector2 nodePos = m_node.Position + node.Size * 1.5f;
-				nodePos.x = Mathf.Max(nodePos.x, 0.0f);
-				nodePos.y = Mathf.Max(nodePos.y, 0.0f);
-
-				node.Position = nodePos;
 
 				Vector2 canvasSize = BTEditorCanvas.Current.Size;
 				canvasSize.x = Mathf.Max(node.Position.x + 250.0f, canvasSize.x);

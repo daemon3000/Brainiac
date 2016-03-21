@@ -17,6 +17,11 @@ namespace BrainiacEditor
 
 			EditorGUILayout.Space();
 			DrawProperties(node);
+
+			if(BTEditorCanvas.Current != null)
+			{
+				BTEditorCanvas.Current.Repaint();
+			}
 		}
 
 		protected void DrawProperties(BehaviourNode node)
@@ -35,7 +40,7 @@ namespace BrainiacEditor
 
 				BTPropertyAttribute attribute = attributes[0] as BTPropertyAttribute;
 				string label = string.IsNullOrEmpty(attribute.PropertyName) ? field.Name : attribute.PropertyName;
-
+				
 				if(field.FieldType == typeof(MemoryVar))
 				{
 					DrawMemoryVarField(label, (MemoryVar)field.GetValue(node));
@@ -57,7 +62,7 @@ namespace BrainiacEditor
 
 				BTPropertyAttribute attribute = attributes[0] as BTPropertyAttribute;
 				string label = string.IsNullOrEmpty(attribute.PropertyName) ? property.Name : attribute.PropertyName;
-
+				
 				if(property.PropertyType == typeof(MemoryVar))
 				{
 					DrawMemoryVarField(label, (MemoryVar)property.GetValue(node, null));
@@ -116,7 +121,10 @@ namespace BrainiacEditor
 
 		private void DrawMemoryVarField(string label, MemoryVar memVar)
 		{
-			memVar.Content = EditorGUILayout.TextField(label, memVar.Content);
+			if(memVar != null)
+			{
+				memVar.Content = EditorGUILayout.TextField(label, memVar.Content);
+			}
 		}
 	}
 }
