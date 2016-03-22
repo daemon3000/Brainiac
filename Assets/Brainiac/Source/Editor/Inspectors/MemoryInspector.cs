@@ -15,7 +15,8 @@ namespace BrainiacEditor
 		{
 			if(EditorApplication.isPlaying)
 			{
-				m_inspector = new PlayTimeMemoryInspector();
+				Memory memory = (Memory)target;
+				m_inspector = new PlayTimeMemoryInspector(memory.GetMemory());
 			}
 			else
 			{

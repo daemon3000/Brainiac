@@ -47,5 +47,12 @@ namespace Brainiac
 			object value = GetItem(name);
 			return (value != null && value is T) ? (T)value : defaultValue;
 		}
+
+#if UNITY_EDITOR
+		public IDictionary<string, object> GetMemory()
+		{
+			return m_globalMemory;
+		}
+#endif
 	}
 }
