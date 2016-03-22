@@ -148,21 +148,24 @@ namespace BrainiacEditor
 				m_compositeStyle = new BTGraphNodeStyle("flow node hex 1", "flow node hex 1 on",
 														"flow node hex 6 on", "flow node hex 6 on",
 														"flow node hex 5 on", "flow node hex 5 on",
-														"flow node hex 3 on", "flow node hex 3 on");
+														"flow node hex 3 on", "flow node hex 3 on", 
+														new Vector2(180, 35));
 			}
 			if(m_decoratorStyle == null)
 			{
 				m_decoratorStyle = new BTGraphNodeStyle("flow node hex 1", "flow node hex 1 on",
 														"flow node hex 6 on", "flow node hex 6 on",
 														"flow node hex 5 on", "flow node hex 5 on",
-														"flow node hex 3 on", "flow node hex 3 on");
+														"flow node hex 3 on", "flow node hex 3 on",
+														new Vector2(180, 35));
 			}
 			if(m_actionStyle == null)
 			{
 				m_actionStyle = new BTGraphNodeStyle("flow node 0", "flow node 0 on",
 													"flow node 6 on", "flow node 6 on",
 													"flow node 5 on", "flow node 5 on",
-													"flow node 3 on", "flow node 3 on");
+													"flow node 3 on", "flow node 3 on",
+													new Vector2(180, 40));
 			}
 
 			if(m_editorFooter == null)
@@ -238,6 +241,24 @@ namespace BrainiacEditor
 			}
 
 			return null;
+		}
+
+		public static Vector2 GetNodeSize(Type nodeType)
+		{
+			if(nodeType.IsSameOrSubclass(typeof(Composite)))
+			{
+				return m_compositeStyle.Size;
+			}
+			else if(nodeType.IsSameOrSubclass(typeof(Decorator)))
+			{
+				return m_decoratorStyle.Size;
+			}
+			else if(nodeType.IsSameOrSubclass(typeof(Brainiac.Action)))
+			{
+				return m_actionStyle.Size;
+			}
+
+			return new Vector2(180, 40);
 		}
 
 		public static Color GetTransitionColor(BehaviourNodeStatus? status)

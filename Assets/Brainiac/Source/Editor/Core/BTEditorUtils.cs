@@ -83,9 +83,34 @@ namespace BrainiacEditor
 				{
 					menu.AddItem(new GUIContent("Add Child/" + item.Item2), false, onCreateChild, item.Item1);
 				}
-
-				menu.AddSeparator("");
 			}
+
+			foreach(DebugOptions item in Enum.GetValues(typeof(DebugOptions)))
+			{
+				menu.AddItem(new GUIContent("Debug/" + item.ToString()), targetNode.Node.DebugOptions.Has(item), (obj) =>
+				{
+					DebugOptions option = (DebugOptions)obj;
+					if(option == DebugOptions.None)
+					{
+						targetNode.Node.DebugOptions = DebugOptions.None;
+					}
+					else
+					{
+						if(targetNode.Node.DebugOptions.Has(option))
+						{
+							targetNode.Node.DebugOptions = targetNode.Node.DebugOptions.Remove(option);
+						}
+						else
+						{
+							if(targetNode.Node.DebugOptions == DebugOptions.None)
+								targetNode.Node.DebugOptions = option;
+							else
+								targetNode.Node.DebugOptions = targetNode.Node.DebugOptions.Add(option);
+						}
+					}
+				}, item);
+			}
+			menu.AddSeparator("");
 
 			if(targetNode.Node is Root)
 			{
@@ -135,33 +160,6 @@ namespace BrainiacEditor
 				{
 					menu.AddDisabledItem(new GUIContent("Delete Child"));
 				}
-			}
-
-			menu.AddSeparator("");
-			foreach(DebugOptions item in Enum.GetValues(typeof(DebugOptions)))
-			{
-				menu.AddItem(new GUIContent("Debug/" + item.ToString()), targetNode.Node.DebugOptions.Has(item), (obj) =>
-				{
-					DebugOptions option = (DebugOptions)obj;
-					if(option == DebugOptions.None)
-					{
-						targetNode.Node.DebugOptions = DebugOptions.None;
-					}
-					else
-					{
-						if(targetNode.Node.DebugOptions.Has(option))
-						{
-							targetNode.Node.DebugOptions = targetNode.Node.DebugOptions.Remove(option);
-						}
-						else
-						{
-							if(targetNode.Node.DebugOptions == DebugOptions.None)
-								targetNode.Node.DebugOptions = option;
-							else
-								targetNode.Node.DebugOptions = targetNode.Node.DebugOptions.Add(option);
-						}
-					}
-				}, item);
 			}
 
 			return menu;

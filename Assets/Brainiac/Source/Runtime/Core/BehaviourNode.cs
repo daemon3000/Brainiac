@@ -71,9 +71,6 @@ namespace Brainiac
 			get { return m_status; }
 		}
 
-		[JsonIgnore]
-		public abstract Vector2 Size { get; }
-
 		public BehaviourNode()
 		{
 			m_debugOptions = DebugOptions.None;

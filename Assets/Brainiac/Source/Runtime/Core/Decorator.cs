@@ -9,14 +9,6 @@ namespace Brainiac
 		[JsonProperty(PropertyName = "Child")]
 		protected BehaviourNode m_child;
 
-		public override Vector2 Size
-		{
-			get
-			{
-				return new Vector2(180, 35);
-			}
-		}
-
 		public void ReplaceChild(BehaviourNode node)
 		{
 			m_child = node;

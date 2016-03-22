@@ -25,10 +25,12 @@ namespace BrainiacEditor
 		private string m_successNormalStyleName;
 		private string m_successSelectedStyleName;
 
+		public Vector2 Size { get; private set; }
+
 		public BTGraphNodeStyle(string standardNormalStyleName, string standardSelectedStyleName, 
 								string failNormalStyleName, string failSelectedStyleName,
 								string runninfNormalStyleName, string runningSelectedStyleName, 
-								string successNormalStyleName, string successSelectedStyleName)
+								string successNormalStyleName, string successSelectedStyleName, Vector2 size)
 		{
 			m_standardNormalStyleName = standardNormalStyleName;
 			m_standardSelectedStyleName = standardSelectedStyleName;
@@ -38,6 +40,7 @@ namespace BrainiacEditor
 			m_runningSelectedStyleName = runningSelectedStyleName;
 			m_successNormalStyleName = successNormalStyleName;
 			m_successSelectedStyleName = successSelectedStyleName;
+			Size = size;
 
 			EnsureStyle();
 		}
