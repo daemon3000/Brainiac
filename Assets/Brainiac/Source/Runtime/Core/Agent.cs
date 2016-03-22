@@ -11,7 +11,8 @@ namespace Brainiac
 		private Mind m_mind;
 		[SerializeField]
 		private Memory m_memory;
-
+		[SerializeField]
+		private bool m_debugMode;
 
 		public GameObject Avatar
 		{
@@ -26,6 +27,18 @@ namespace Brainiac
 			get
 			{
 				return m_memory;
+			}
+		}
+
+		public bool DebugMode
+		{
+			get
+			{
+				return m_debugMode;
+			}
+			set
+			{
+				m_debugMode = value;
 			}
 		}
 

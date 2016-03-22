@@ -12,13 +12,7 @@ namespace Brainiac
 		private float m_tickInterval = 0.0f;
 
 		private float m_lastTickTime;
-		private long m_tickCount;
 		private BehaviourTree m_btInstance;
-
-		public long TickCount
-		{
-			get { return m_tickCount; }
-		}
 
 		public BTAsset BehaviourTree
 		{
@@ -32,7 +26,6 @@ namespace Brainiac
 
 		private void Awake()
 		{
-			m_tickCount = 0L;
 			m_lastTickTime = 0.0f;
 			m_btInstance = m_behaviourTree.CreateRuntimeTree();
 		}
@@ -45,7 +38,6 @@ namespace Brainiac
 				{
 					m_btInstance.Root.Run(agent);
 					m_lastTickTime = Time.time;
-					m_tickCount++;
 				}
 			}
 		}

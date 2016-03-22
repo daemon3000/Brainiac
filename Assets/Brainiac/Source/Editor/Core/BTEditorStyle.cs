@@ -10,11 +10,13 @@ namespace BrainiacEditor
 		private static GUISkin m_editorSkin;
 		private static Texture m_arrowUp;
 		private static Texture m_arrowDown;
+		private static Texture m_breakpoint;
 
 		private static BTGraphNodeStyle m_compositeStyle;
 		private static BTGraphNodeStyle m_decoratorStyle;
 		private static BTGraphNodeStyle m_actionStyle;
 
+		private static GUIStyle m_editorFooter;
 		private static GUIStyle m_selectionBoxStyle;
 		private static GUIStyle m_multilineTextAreaStyle;
 		private static GUIStyle m_listHeaderStyle;
@@ -104,6 +106,22 @@ namespace BrainiacEditor
 			}
 		}
 
+		public static Texture Breakpoint
+		{
+			get
+			{
+				return m_breakpoint;
+			}
+		}
+
+		public static GUIStyle EditorFooter
+		{
+			get
+			{
+				return m_editorFooter;
+			}
+		}
+
 		public static void EnsureStyle()
 		{
 			if(m_editorSkin == null)
@@ -118,6 +136,11 @@ namespace BrainiacEditor
 			if(m_arrowDown == null)
 			{
 				m_arrowDown = Resources.Load<Texture>("Brainiac/arrow_2_down");
+			}
+
+			if(m_breakpoint == null)
+			{
+				m_breakpoint = Resources.Load<Texture>("Brainiac/breakpoint");
 			}
 
 			if(m_compositeStyle == null)
@@ -140,6 +163,13 @@ namespace BrainiacEditor
 													"flow node 6 on", "flow node 6 on",
 													"flow node 5 on", "flow node 5 on",
 													"flow node 3 on", "flow node 3 on");
+			}
+
+			if(m_editorFooter == null)
+			{
+				m_editorFooter = new GUIStyle("ProjectBrowserHeaderBgTop");
+				m_editorFooter.alignment = TextAnchor.MiddleRight;
+				m_editorFooter.contentOffset = new Vector2(-10, 0);
 			}
 
 			if(m_selectionBoxStyle == null)

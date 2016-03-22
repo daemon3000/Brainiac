@@ -27,21 +27,25 @@ namespace Brainiac
 			}
 		}
 
+		[JsonIgnore]
 		public bool? AsBool
 		{
 			get { return m_valueAsBool; }
 		}
 
+		[JsonIgnore]
 		public int? AsInt
 		{
 			get { return m_valueAsInt; }
 		}
 
+		[JsonIgnore]
 		public float? AsFloat
 		{
 			get { return m_valueAsFloat; }
 		}
 
+		[JsonIgnore]
 		public string AsString
 		{
 			get { return m_content; }

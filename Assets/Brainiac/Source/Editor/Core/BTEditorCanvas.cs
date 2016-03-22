@@ -25,8 +25,6 @@ namespace BrainiacEditor
 			}
 		}
 
-		public EditorWindow Window { get; set; }
-
 		public Event Event
 		{
 			get
@@ -70,28 +68,31 @@ namespace BrainiacEditor
 			}
 		}
 
-		public void HandleEvents(EditorWindow window)
+		public void HandleEvents(Rect screenRect)
 		{
 			Vector2 canvasPosition = Position;
 			Vector2 canvasSize = Size;
 
-			if(canvasSize.x < window.position.width)
+			if(canvasSize.x < screenRect.width)
 			{
-				canvasSize.x = window.position.width;
+				canvasSize.x = screenRect.width;
 			}
-			if(canvasSize.y < window.position.height)
+			if(canvasSize.y < screenRect.height)
 			{
-				canvasSize.y = window.position.height;
+				canvasSize.y = screenRect.height;
 			}
 
 			if(Event.current.type == EventType.MouseDrag && Event.current.button == DRAG_MOUSE_BUTTON)
 			{
-				canvasPosition += Event.current.delta;
-				Event.current.Use();
+				if(screenRect.Contains(Event.current.mousePosition))
+				{
+					canvasPosition += Event.current.delta;
+					Event.current.Use();
+				}
 			}
 
-			canvasPosition.x = Mathf.Clamp(canvasPosition.x, -(canvasSize.x - window.position.width), 0.0f);
-			canvasPosition.y = Mathf.Clamp(canvasPosition.y, -(canvasSize.y - window.position.height), 0.0f);
+			canvasPosition.x = Mathf.Clamp(canvasPosition.x, -(canvasSize.x - screenRect.width), 0.0f);
+			canvasPosition.y = Mathf.Clamp(canvasPosition.y, -(canvasSize.y - screenRect.height), 0.0f);
 
 			Position = canvasPosition;
 			Size = canvasSize;

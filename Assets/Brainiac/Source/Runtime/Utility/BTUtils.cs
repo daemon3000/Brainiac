@@ -18,7 +18,7 @@ namespace Brainiac
 
 		public static BehaviourNode CreateNode(Type nodeType)
 		{
-			if(nodeType.IsSubclassOf(typeof(BehaviourNode)) && !nodeType.IsAbstract)
+			if(nodeType != null && nodeType.IsSubclassOf(typeof(BehaviourNode)) && !nodeType.IsAbstract)
 			{
 				return Activator.CreateInstance(nodeType) as BehaviourNode;
 			}

@@ -222,6 +222,21 @@ namespace BrainiacEditor
 			string label = string.IsNullOrEmpty(m_node.Name) ? m_node.Title : m_node.Name;
 
 			EditorGUI.LabelField(position, label, nodeStyle.GetStyle(Status, m_isSelected));
+
+			if(m_node.DebugOptions != DebugOptions.None)
+			{
+				Rect imgPosition;
+				if(m_node is Brainiac.Action)
+				{
+					imgPosition = new Rect(position.x + 4, position.yMax - 20, 16, 16);
+				}
+				else
+				{
+					imgPosition = new Rect(position.x + 22, position.yMax - 14, 16, 16);
+				}
+				
+				GUI.DrawTexture(imgPosition, BTEditorStyle.Breakpoint);
+			}
 		}
 
 		private void DrawChildren()

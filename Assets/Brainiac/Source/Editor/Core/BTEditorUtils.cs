@@ -137,6 +137,33 @@ namespace BrainiacEditor
 				}
 			}
 
+			menu.AddSeparator("");
+			foreach(DebugOptions item in Enum.GetValues(typeof(DebugOptions)))
+			{
+				menu.AddItem(new GUIContent("Debug/" + item.ToString()), targetNode.Node.DebugOptions.Has(item), (obj) =>
+				{
+					DebugOptions option = (DebugOptions)obj;
+					if(option == DebugOptions.None)
+					{
+						targetNode.Node.DebugOptions = DebugOptions.None;
+					}
+					else
+					{
+						if(targetNode.Node.DebugOptions.Has(option))
+						{
+							targetNode.Node.DebugOptions = targetNode.Node.DebugOptions.Remove(option);
+						}
+						else
+						{
+							if(targetNode.Node.DebugOptions == DebugOptions.None)
+								targetNode.Node.DebugOptions = option;
+							else
+								targetNode.Node.DebugOptions = targetNode.Node.DebugOptions.Add(option);
+						}
+					}
+				}, item);
+			}
+
 			return menu;
 		}
 

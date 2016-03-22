@@ -31,7 +31,6 @@ namespace BrainiacEditor
 			if(m_canvas == null)
 			{
 				m_canvas = new BTEditorCanvas();
-				m_canvas.Window = this;
 				BTEditorCanvas.Current = m_canvas;
 			}
 			if(m_grid == null)
@@ -146,10 +145,17 @@ namespace BrainiacEditor
 		{
 			if(m_btAsset != null)
 			{
+				Rect footerRect = new Rect(-5.0f, position.height - 18, position.width + 5, 20);
+				Rect graphRect = new Rect(0.0f, 0.0f, position.width, position.height - footerRect.height);
+				Rect canvasRect = new Rect(0.0f, 0.0f, position.width, position.height - footerRect.height);
+				string behaviourTreePath = AssetDatabase.GetAssetPath(m_btAsset).Substring(7);
+
 				BTEditorStyle.EnsureStyle();
 				m_grid.DrawGUI();
-				m_graph.DrawGUI();
-				m_canvas.HandleEvents(this);
+				m_graph.DrawGUI(graphRect);
+				m_canvas.HandleEvents(canvasRect);
+				
+				EditorGUI.LabelField(footerRect, behaviourTreePath, BTEditorStyle.EditorFooter);
 
 				if(m_canvas.IsDebuging)
 				{

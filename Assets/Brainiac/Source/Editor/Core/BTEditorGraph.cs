@@ -49,14 +49,14 @@ namespace BrainiacEditor
 			m_root = BTEditorGraphNode.Create(this, behaviourTree.Root);
 		}
 
-		public void DrawGUI()
+		public void DrawGUI(Rect screenRect)
 		{
 			if(m_root != null)
 			{
 				m_root.Update();
 				m_root.Draw();
 				DrawSelectionBox();
-				HandleEvents();
+				HandleEvents(screenRect);
 			}
 		}
 
@@ -82,13 +82,11 @@ namespace BrainiacEditor
 			}
 		}
 
-		private void HandleEvents()
+		private void HandleEvents(Rect screenRect)
 		{
-			Rect windowPosition = new Rect(0, 10, BTEditorCanvas.Current.Window.position.width, BTEditorCanvas.Current.Window.position.height);
-
 			if(BTEditorCanvas.Current.Event.type == EventType.MouseDown && BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
 			{
-				if(windowPosition.Contains(BTEditorCanvas.Current.Event.mousePosition))
+				if(screenRect.Contains(BTEditorCanvas.Current.Event.mousePosition))
 				{
 					ClearSelection();
 
@@ -100,7 +98,7 @@ namespace BrainiacEditor
 			{
 				if(BTEditorCanvas.Current.Event.type == EventType.MouseDrag && BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
 				{
-					if(windowPosition.Contains(BTEditorCanvas.Current.Event.mousePosition))	
+					if(screenRect.Contains(BTEditorCanvas.Current.Event.mousePosition))	
 					{
 						if(!m_drawSelectionBox)
 						{
@@ -113,7 +111,7 @@ namespace BrainiacEditor
 				}
 				else if(BTEditorCanvas.Current.Event.type == EventType.MouseUp)
 				{
-					if(windowPosition.Contains(BTEditorCanvas.Current.Event.mousePosition))
+					if(screenRect.Contains(BTEditorCanvas.Current.Event.mousePosition))
 					{
 						if(BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
 						{
