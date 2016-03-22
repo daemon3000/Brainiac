@@ -9,6 +9,12 @@ namespace Brainiac
 		[JsonProperty(PropertyName = "Child")]
 		protected BehaviourNode m_child;
 
+		public override void OnAwake()
+		{
+			base.OnAwake();
+			m_child.OnAwake();
+		}
+
 		public void ReplaceChild(BehaviourNode node)
 		{
 			m_child = node;

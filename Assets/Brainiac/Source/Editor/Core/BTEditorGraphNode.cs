@@ -46,18 +46,7 @@ namespace BrainiacEditor
 		{
 			get
 			{
-				if(!BTEditorCanvas.Current.IsDebuging)
-				{
-					return null;
-				}
-				else if(m_node is Root)
-				{
-					return BehaviourNodeStatus.Running;
-				}
-				else
-				{
-					return m_status;
-				}
+				return m_status;
 			}
 			set
 			{
@@ -81,6 +70,18 @@ namespace BrainiacEditor
 
 		public void Update()
 		{
+			if(m_node is Root)
+			{
+				if(BTEditorCanvas.Current.IsDebuging)
+				{
+					Status = m_node.Status;
+				}
+				else
+				{
+					Status = null;
+				}
+			}
+
 			UpdateChildrenStatus();
 			HandleChildrenEvents();
 			HandleEvents();
@@ -213,7 +214,9 @@ namespace BrainiacEditor
 			{
 				Vector2 childNodeSize = BTEditorStyle.GetNodeSize(child.GetType());
 				Rect childPosition = new Rect(child.Node.Position + BTEditorCanvas.Current.Position, childNodeSize);
-				BTEditorUtils.DrawBezier(position, childPosition, BTEditorStyle.GetTransitionColor(child.Status));
+				BehaviourNodeStatus? childStatus = BTEditorCanvas.Current.IsDebuging ? child.Status : null;
+
+				BTEditorUtils.DrawBezier(position, childPosition, BTEditorStyle.GetTransitionColor(childStatus));
 			}
 		}
 
@@ -222,8 +225,9 @@ namespace BrainiacEditor
 			BTGraphNodeStyle nodeStyle = BTEditorStyle.GetNodeStyle(m_node.GetType());
 			Rect position = new Rect(m_node.Position + BTEditorCanvas.Current.Position, nodeStyle.Size);
 			string label = string.IsNullOrEmpty(m_node.Name) ? m_node.Title : m_node.Name;
+			BehaviourNodeStatus? status = BTEditorCanvas.Current.IsDebuging ? Status : null;
 
-			EditorGUI.LabelField(position, label, nodeStyle.GetStyle(Status, m_isSelected));
+			EditorGUI.LabelField(position, label, nodeStyle.GetStyle(status, m_isSelected));
 
 			if(m_node.DebugOptions != DebugOptions.None)
 			{

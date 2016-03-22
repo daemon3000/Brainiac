@@ -146,25 +146,25 @@ namespace BrainiacEditor
 			if(m_compositeStyle == null)
 			{
 				m_compositeStyle = new BTGraphNodeStyle("flow node hex 1", "flow node hex 1 on",
-														"flow node hex 6 on", "flow node hex 6 on",
-														"flow node hex 5 on", "flow node hex 5 on",
-														"flow node hex 3 on", "flow node hex 3 on", 
+														"flow node hex 6", "flow node hex 6 on",
+														"flow node hex 4", "flow node hex 4 on",
+														"flow node hex 3", "flow node hex 3 on", 
 														new Vector2(180, 35));
 			}
 			if(m_decoratorStyle == null)
 			{
 				m_decoratorStyle = new BTGraphNodeStyle("flow node hex 1", "flow node hex 1 on",
-														"flow node hex 6 on", "flow node hex 6 on",
-														"flow node hex 5 on", "flow node hex 5 on",
-														"flow node hex 3 on", "flow node hex 3 on",
+														"flow node hex 6", "flow node hex 6 on",
+														"flow node hex 4", "flow node hex 4 on",
+														"flow node hex 3", "flow node hex 3 on",
 														new Vector2(180, 35));
 			}
 			if(m_actionStyle == null)
 			{
 				m_actionStyle = new BTGraphNodeStyle("flow node 0", "flow node 0 on",
-													"flow node 6 on", "flow node 6 on",
-													"flow node 5 on", "flow node 5 on",
-													"flow node 3 on", "flow node 3 on",
+													"flow node 6", "flow node 6 on",
+													"flow node 4", "flow node 4 on",
+													"flow node 3", "flow node 3 on",
 													new Vector2(180, 40));
 			}
 
@@ -270,7 +270,7 @@ namespace BrainiacEditor
 				case BehaviourNodeStatus.Failure:
 					return Color.red;
 				case BehaviourNodeStatus.Running:
-					return new Color32(248, 138, 29, 255);
+					return new Color32(221, 186, 19, 255);
 				case BehaviourNodeStatus.Success:
 					return Color.green;
 				}

@@ -31,6 +31,31 @@ namespace BrainiacEditor
 							   color, null, BEZIER_WIDTH);
 		}
 
+		public static string GetResourcePath(UnityEngine.Object target)
+		{
+			string finalPath = "";
+
+			if(target != null)
+			{
+				string path = AssetDatabase.GetAssetPath(target);
+				int i = path.IndexOf("Resources");
+
+				if(i >= 0 && i + 10 < path.Length)
+				{
+					path = path.Substring(i + 10);
+					i = path.LastIndexOf('.');
+					if(i > 0)
+					{
+						path = path.Substring(0, i);
+					}
+
+					finalPath = path;
+				}
+			}
+
+			return finalPath;
+		}
+
 		public static Type GetInspectorTypeForNode(Type nodeType)
 		{
 			if(m_nodeInspectors == null)
@@ -47,11 +72,11 @@ namespace BrainiacEditor
 			{
 				if(nodeType.IsSameOrSubclass(typeof(Composite)))
 				{
-					return typeof(GenericCompositeInspector);
+					return typeof(CompositeInspector);
 				}
 				else
 				{
-					return typeof(GenericNodeInspector);
+					return typeof(NodeInspector);
 				}
 			}
 		}
@@ -229,7 +254,7 @@ namespace BrainiacEditor
 
 			Assembly assembly = Assembly.GetExecutingAssembly();
 
-			foreach(Type type in assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(INodeInspector))))
+			foreach(Type type in assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(NodeInspector))))
 			{
 				object[] attributes = type.GetCustomAttributes(typeof(CustomNodeInspectorAttribute), false);
 				if(attributes.Length > 0)

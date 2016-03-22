@@ -29,14 +29,14 @@ namespace BrainiacEditor
 
 		public BTGraphNodeStyle(string standardNormalStyleName, string standardSelectedStyleName, 
 								string failNormalStyleName, string failSelectedStyleName,
-								string runninfNormalStyleName, string runningSelectedStyleName, 
+								string runningNormalStyleName, string runningSelectedStyleName, 
 								string successNormalStyleName, string successSelectedStyleName, Vector2 size)
 		{
 			m_standardNormalStyleName = standardNormalStyleName;
 			m_standardSelectedStyleName = standardSelectedStyleName;
 			m_failNormalStyleName = failNormalStyleName;
 			m_failSelectedStyleName = failSelectedStyleName;
-			m_runninfNormalStyleName = runninfNormalStyleName;
+			m_runninfNormalStyleName = runningNormalStyleName;
 			m_runningSelectedStyleName = runningSelectedStyleName;
 			m_successNormalStyleName = successNormalStyleName;
 			m_successSelectedStyleName = successSelectedStyleName;

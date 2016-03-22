@@ -23,6 +23,15 @@ namespace Brainiac
 			m_children = new List<BehaviourNode>();
 		}
 
+		public override void OnAwake()
+		{
+			base.OnAwake();
+			for(int i = 0; i < m_children.Count; i++)
+			{
+				m_children[i].OnAwake();
+			}
+		}
+
 		public void AddChild(BehaviourNode child)
 		{
 			if(child != null)

@@ -14,6 +14,7 @@ namespace Brainiac
 		private float m_lastTickTime;
 		private BehaviourTree m_btInstance;
 
+#if UNITY_EDITOR
 		public BTAsset BehaviourTree
 		{
 			get { return m_behaviourTree; }
@@ -23,6 +24,7 @@ namespace Brainiac
 		{
 			get { return m_btInstance; }
 		}
+#endif
 
 		private void Awake()
 		{

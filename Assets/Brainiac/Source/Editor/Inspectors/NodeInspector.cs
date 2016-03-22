@@ -7,26 +7,41 @@ using Brainiac;
 
 namespace BrainiacEditor
 {
-	public class GenericNodeInspector : INodeInspector
+	public class NodeInspector
 	{
-		public virtual void OnInspectorGUI(BehaviourNode node)
+		private BehaviourNode m_target;
+
+		protected BehaviourNode Target
 		{
-			node.Name = EditorGUILayout.TextField("Name", node.Name);
-			EditorGUILayout.LabelField("Description");
-			node.Description = EditorGUILayout.TextArea(node.Description, BTEditorStyle.MultilineTextArea);
+			get { return m_target; }
+		}
 
-			EditorGUILayout.Space();
-			DrawProperties(node);
+		public virtual void SetTarget(BehaviourNode target)
+		{
+			m_target = target;
+		}
 
-			if(BTEditorCanvas.Current != null)
+		public virtual void OnInspectorGUI()
+		{
+			if(m_target != null)
 			{
-				BTEditorCanvas.Current.Repaint();
+				m_target.Name = EditorGUILayout.TextField("Name", m_target.Name);
+				EditorGUILayout.LabelField("Description");
+				m_target.Description = EditorGUILayout.TextArea(m_target.Description, BTEditorStyle.MultilineTextArea);
+
+				EditorGUILayout.Space();
+				DrawProperties();
+
+				if(BTEditorCanvas.Current != null)
+				{
+					BTEditorCanvas.Current.Repaint();
+				}
 			}
 		}
 
-		protected void DrawProperties(BehaviourNode node)
+		protected void DrawProperties()
 		{
-			Type nodeType = node.GetType();
+			Type nodeType = m_target.GetType();
 			var fields = from fi in nodeType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
 						 select fi;
 			var properties = from pi in nodeType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
@@ -43,14 +58,14 @@ namespace BrainiacEditor
 				
 				if(field.FieldType == typeof(MemoryVar))
 				{
-					DrawMemoryVarField(label, (MemoryVar)field.GetValue(node));
+					DrawMemoryVarField(label, (MemoryVar)field.GetValue(m_target));
 				}
 				else
 				{
 					object value = null;
-					if(TryToDrawField(label, field.GetValue(node), field.FieldType, out value))
+					if(TryToDrawField(label, field.GetValue(m_target), field.FieldType, out value))
 					{
-						field.SetValue(node, value);
+						field.SetValue(m_target, value);
 					}	
 				}
 			}
@@ -65,14 +80,14 @@ namespace BrainiacEditor
 				
 				if(property.PropertyType == typeof(MemoryVar))
 				{
-					DrawMemoryVarField(label, (MemoryVar)property.GetValue(node, null));
+					DrawMemoryVarField(label, (MemoryVar)property.GetValue(m_target, null));
 				}
 				else
 				{
 					object value = null;
-					if(TryToDrawField(label, property.GetValue(node, null), property.PropertyType, out value))
+					if(TryToDrawField(label, property.GetValue(m_target, null), property.PropertyType, out value))
 					{
-						property.SetValue(node, value, null);
+						property.SetValue(m_target, value, null);
 					}
 				}
 			}

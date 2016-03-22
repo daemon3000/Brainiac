@@ -1,22 +1,21 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using System;
 using Brainiac;
 
 namespace BrainiacEditor
 {
-	public class GenericCompositeInspector : GenericNodeInspector
+	public class CompositeInspector : NodeInspector
 	{
 		protected const int HEADER_HEIGHT = 18;
 		protected const int ITEM_SPACING_VERT = 5;
 		protected const int ITEM_SPACING_HORZ = 4;
 		protected const int FIELD_HEIGHT = 20;
 
-		public override void OnInspectorGUI(BehaviourNode node)
+		public override void OnInspectorGUI()
 		{
-			if(node is Composite)
+			if(Target != null && Target is Composite)
 			{
-				Composite composite = (Composite)node;
+				Composite composite = (Composite)Target;
 
 				composite.Name = EditorGUILayout.TextField("Name", composite.Name);
 				EditorGUILayout.LabelField("Description");
@@ -26,7 +25,7 @@ namespace BrainiacEditor
 				DrawChildren(composite);
 
 				EditorGUILayout.Space();
-				DrawProperties(composite);
+				DrawProperties();
 
 				if(BTEditorCanvas.Current != null)
 				{
@@ -56,32 +55,36 @@ namespace BrainiacEditor
 			{
 				Rect handleRect = new Rect(0, i * itemHeight + itemHeight / 4, 10, itemHeight);
 				Rect childRect = new Rect(15, i * itemHeight, itemRect.width - 65, itemHeight);
-				Rect upButtonRect = new Rect(childRect.xMax + 5, childRect.y, 20, FIELD_HEIGHT - 2);
-				Rect downButtonRect = new Rect(upButtonRect.xMax + 2, childRect.y, 20, FIELD_HEIGHT - 2);
 				BehaviourNode child = composite.GetChild(i);
 				string childName = string.IsNullOrEmpty(child.Name) ? child.Title : child.Name;
-				bool previousGUIState = GUI.enabled;
+				
 
 				EditorGUI.LabelField(handleRect, "", BTEditorStyle.ListDragHandle);
 				EditorGUI.LabelField(childRect, childName);
 
-				GUI.enabled = i > 0;
-				if(GUI.Button(upButtonRect, BTEditorStyle.ArrowUp))
+				if(!BTEditorCanvas.Current.ReadOnly)
 				{
-					composite.MoveChildPriorityUp(i);
-				}
+					Rect upButtonRect = new Rect(childRect.xMax + 5, childRect.y, 20, FIELD_HEIGHT - 2);
+					Rect downButtonRect = new Rect(upButtonRect.xMax + 2, childRect.y, 20, FIELD_HEIGHT - 2);
+					bool previousGUIState = GUI.enabled;
 
-				GUI.enabled = i < composite.ChildCount - 1;
-				if(GUI.Button(downButtonRect, BTEditorStyle.ArrowDown))
-				{
-					composite.MoveChildPriorityDown(i);
-				}
+					GUI.enabled = i > 0;
+					if(GUI.Button(upButtonRect, BTEditorStyle.ArrowUp))
+					{
+						composite.MoveChildPriorityUp(i);
+					}
 
-				GUI.enabled = previousGUIState;
+					GUI.enabled = i < composite.ChildCount - 1;
+					if(GUI.Button(downButtonRect, BTEditorStyle.ArrowDown))
+					{
+						composite.MoveChildPriorityDown(i);
+					}
+
+					GUI.enabled = previousGUIState;
+				}
 			}
 
 			GUI.EndGroup();
-
 			GUI.EndGroup();
 		}
 

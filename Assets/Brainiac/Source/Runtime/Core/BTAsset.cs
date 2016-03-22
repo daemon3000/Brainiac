@@ -72,6 +72,7 @@ namespace Brainiac
 		public BehaviourTree CreateRuntimeTree()
 		{
 			BehaviourTree tree = BTUtils.DeserializeTree(m_serializedData);
+			tree.Root.OnAwake();
 			tree.ReadOnly = true;
 
 			return tree;

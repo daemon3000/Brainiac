@@ -76,14 +76,15 @@ namespace Brainiac
 			m_debugOptions = DebugOptions.None;
 		}
 
-		protected abstract BehaviourNodeStatus OnExecute(Agent agent);
+		public virtual void OnAwake() { }
 		protected virtual void OnStop(Agent agent) { }
+		protected abstract BehaviourNodeStatus OnExecute(Agent agent);
 
 		protected virtual void OnStart(Agent agent)
 		{
 			m_status = BehaviourNodeStatus.Failure;	
 		}
-
+		
 		public BehaviourNodeStatus Run(Agent agent)
 		{
 			if(m_status != BehaviourNodeStatus.Running)
