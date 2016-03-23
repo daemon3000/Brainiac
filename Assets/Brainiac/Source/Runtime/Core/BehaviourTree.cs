@@ -20,7 +20,11 @@ namespace Brainiac
 
 		public BehaviourTree()
 		{
-			m_root = new Root();
+			if(m_root == null)
+			{
+				m_root = new Root();
+				m_root.Position = new Vector2(50, 50);
+			}
 		}
 	}
 }

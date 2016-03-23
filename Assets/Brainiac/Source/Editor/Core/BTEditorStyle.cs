@@ -11,6 +11,7 @@ namespace BrainiacEditor
 		private static Texture m_arrowUp;
 		private static Texture m_arrowDown;
 		private static Texture m_breakpoint;
+		private static Texture m_optionsIcon;
 
 		private static BTGraphNodeStyle m_compositeStyle;
 		private static BTGraphNodeStyle m_decoratorStyle;
@@ -25,6 +26,42 @@ namespace BrainiacEditor
 		private static GUIStyle m_listDragHandleStyle;
 		private static GUIStyle m_arrowUpButtonStyle;
 		private static GUIStyle m_arrowDownButtonStyle;
+		private static GUIStyle m_breadcrumbLeftStyle;
+		private static GUIStyle m_breadcrumbLeftActiveStyle;
+		private static GUIStyle m_breadcrumbMidStyle;
+		private static GUIStyle m_breadcrumbMidActiveStyle;
+
+		public static Texture ArrowUp
+		{
+			get
+			{
+				return m_arrowUp;
+			}
+		}
+
+		public static Texture ArrowDown
+		{
+			get
+			{
+				return m_arrowDown;
+			}
+		}
+
+		public static Texture Breakpoint
+		{
+			get
+			{
+				return m_breakpoint;
+			}
+		}
+
+		public static Texture OptionsIcon
+		{
+			get
+			{
+				return m_optionsIcon;
+			}
+		}
 
 		public static GUIStyle SelectionBox
 		{
@@ -90,35 +127,43 @@ namespace BrainiacEditor
 			}
 		}
 
-		public static Texture ArrowUp
-		{
-			get
-			{
-				return m_arrowUp;
-			}
-		}
-
-		public static Texture ArrowDown
-		{
-			get
-			{
-				return m_arrowDown;
-			}
-		}
-
-		public static Texture Breakpoint
-		{
-			get
-			{
-				return m_breakpoint;
-			}
-		}
-
 		public static GUIStyle EditorFooter
 		{
 			get
 			{
 				return m_editorFooter;
+			}
+		}
+
+		public static GUIStyle BreadcrumbLeft
+		{
+			get
+			{
+				return m_breadcrumbLeftStyle;
+			}
+		}
+
+		public static GUIStyle BreadcrumbLeftActive
+		{
+			get
+			{
+				return m_breadcrumbLeftActiveStyle;
+			}
+		}
+
+		public static GUIStyle BreadcrumbMiddle
+		{
+			get
+			{
+				return m_breadcrumbMidStyle;
+			}
+		}
+
+		public static GUIStyle BreadcrumbMiddleActive
+		{
+			get
+			{
+				return m_breadcrumbMidActiveStyle;
 			}
 		}
 
@@ -141,6 +186,11 @@ namespace BrainiacEditor
 			if(m_breakpoint == null)
 			{
 				m_breakpoint = Resources.Load<Texture>("Brainiac/breakpoint");
+			}
+
+			if(m_optionsIcon == null)
+			{
+				m_optionsIcon = Resources.Load<Texture>("Brainiac/options_icon");
 			}
 
 			if(m_compositeStyle == null)
@@ -222,6 +272,25 @@ namespace BrainiacEditor
 			if(m_arrowDownButtonStyle == null)
 			{
 				m_arrowDownButtonStyle = m_editorSkin.FindStyle("arrow_down");
+			}
+
+			if(m_breadcrumbLeftStyle == null)
+			{
+				m_breadcrumbLeftStyle = new GUIStyle("GUIEditor.BreadcrumbLeft");
+			}
+			if(m_breadcrumbLeftActiveStyle == null)
+			{
+				m_breadcrumbLeftActiveStyle = new GUIStyle("GUIEditor.BreadcrumbLeft");
+				m_breadcrumbLeftActiveStyle.normal.background = m_breadcrumbLeftActiveStyle.active.background;
+			}
+			if(m_breadcrumbMidStyle == null)
+			{
+				m_breadcrumbMidStyle = new GUIStyle("GUIEditor.BreadcrumbMid");
+			}
+			if(m_breadcrumbMidActiveStyle == null)
+			{
+				m_breadcrumbMidActiveStyle = new GUIStyle("GUIEditor.BreadcrumbMid");
+				m_breadcrumbMidActiveStyle.normal.background = m_breadcrumbMidActiveStyle.active.background;
 			}
 		}
 

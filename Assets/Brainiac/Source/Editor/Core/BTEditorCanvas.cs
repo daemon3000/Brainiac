@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 using UnityEditor;
+using Brainiac;
 
 namespace BrainiacEditor
 {
@@ -59,7 +60,7 @@ namespace BrainiacEditor
 		public BTEditorCanvas()
 		{
 			Position = Vector2.zero;
-			Size = new Vector2(1000, 1000);
+			Size = Vector2.zero;
 			IsDebuging = false;
 			SnapToGrid = true;
 			SnapSize = 10;
@@ -73,18 +74,18 @@ namespace BrainiacEditor
 			}
 		}
 
-		public void HandleEvents(Rect screenRect)
+		public void HandleEvents(Rect screenRect, Vector2 windowSize)
 		{
 			Vector2 canvasPosition = Position;
 			Vector2 canvasSize = Size;
 
-			if(canvasSize.x < screenRect.width)
+			if(canvasSize.x < windowSize.x)
 			{
-				canvasSize.x = screenRect.width;
+				canvasSize.x = windowSize.x;
 			}
-			if(canvasSize.y < screenRect.height)
+			if(canvasSize.y < windowSize.y)
 			{
-				canvasSize.y = screenRect.height;
+				canvasSize.y = windowSize.y;
 			}
 
 			if(Event.current.type == EventType.MouseDrag && Event.current.button == DRAG_MOUSE_BUTTON)
@@ -96,10 +97,19 @@ namespace BrainiacEditor
 				}
 			}
 
-			canvasPosition.x = Mathf.Clamp(canvasPosition.x, -(canvasSize.x - screenRect.width), 0.0f);
-			canvasPosition.y = Mathf.Clamp(canvasPosition.y, -(canvasSize.y - screenRect.height), 0.0f);
+			canvasPosition.x = Mathf.Clamp(canvasPosition.x, -(canvasSize.x - windowSize.x), 0.0f);
+			canvasPosition.y = Mathf.Clamp(canvasPosition.y, -(canvasSize.y - windowSize.y), 0.0f);
 
 			Position = canvasPosition;
+			Size = canvasSize;
+		}
+
+		public void RecalculateSize(Vector2 referencePosition)
+		{
+			Vector2 canvasSize = Size;
+			canvasSize.x = Mathf.Max(referencePosition.x + 250.0f, canvasSize.x);
+			canvasSize.y = Mathf.Max(referencePosition.y + 250.0f, canvasSize.y);
+
 			Size = canvasSize;
 		}
 

@@ -62,7 +62,7 @@ namespace BrainiacEditor
 					GUI.enabled = true;
 					if(GUILayout.Button("Preview", GUILayout.Height(26.0f)))
 					{
-						BehaviourTreeEditor.StartDebug(m_btAsset, target.BehaviourTree);
+						BehaviourTreeEditor.OpenSubtreeDebug(m_btAsset, target.BehaviourTree);
 					}
 				}
 				else
@@ -70,11 +70,10 @@ namespace BrainiacEditor
 					GUI.enabled = m_btAsset != null;
 					if(GUILayout.Button("Open", GUILayout.Height(26.0f)))
 					{
-						BehaviourTreeEditor.Open(m_btAsset);
+						BehaviourTreeEditor.OpenSubtree(m_btAsset);
 					}
 				}
-
-
+				
 				GUI.enabled = prevGUIState;
 
 				if(BTEditorCanvas.Current != null)

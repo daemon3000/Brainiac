@@ -141,5 +141,11 @@ namespace BrainiacEditor
 		{
 			return m_redoStack.Peek();
 		}
+
+		public static void Clear()
+		{
+			m_undoStack.Clear();
+			m_redoStack.Clear();
+		}
 	}
 }

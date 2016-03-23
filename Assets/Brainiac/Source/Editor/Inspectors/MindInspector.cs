@@ -20,7 +20,7 @@ namespace BrainiacEditor
 			{
 				if(GUILayout.Button("Preview", GUILayout.Height(24.0f)))
 				{
-					BehaviourTreeEditor.StartDebug(mind.BehaviourTree, mind.BehaviourTreeInstance);
+					BehaviourTreeEditor.OpenDebug(mind.BehaviourTree, mind.BehaviourTreeInstance);
 				}
 			}
 			else

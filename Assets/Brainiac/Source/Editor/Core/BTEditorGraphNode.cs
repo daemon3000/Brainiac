@@ -287,11 +287,12 @@ namespace BrainiacEditor
 				nodePos.y = (float)Math.Round(nodePos.y / snapSize) * snapSize;
 			}
 
-			nodePos.x = Mathf.Max(nodePos.x, 0.0f);
-			nodePos.y = Mathf.Max(nodePos.y, 0.0f);
+			nodePos.x = Mathf.Max(nodePos.x, m_graph.MinNodePosition.x);
+			nodePos.y = Mathf.Max(nodePos.y, m_graph.MinNodePosition.y);
 
 			m_node.Position = nodePos;
 
+			BTEditorCanvas.Current.RecalculateSize(m_node.Position);
 			BTEditorCanvas.Current.Repaint();
 		}
 
@@ -376,12 +377,7 @@ namespace BrainiacEditor
 				BTEditorGraphNode graphNode = BTEditorGraphNode.CreateExistingNode(this, node);
 				m_children.Add(graphNode);
 
-				Vector2 canvasSize = BTEditorCanvas.Current.Size;
-				canvasSize.x = Mathf.Max(node.Position.x + 250.0f, canvasSize.x);
-				canvasSize.y = Mathf.Max(node.Position.y + 250.0f, canvasSize.y);
-
-				BTEditorCanvas.Current.Size = canvasSize;
-
+				BTEditorCanvas.Current.RecalculateSize(node.Position);
 				return graphNode;
 			}
 
@@ -413,12 +409,7 @@ namespace BrainiacEditor
 					m_children.Add(graphNode);
 				}
 
-				Vector2 canvasSize = BTEditorCanvas.Current.Size;
-				canvasSize.x = Mathf.Max(node.Position.x + 250.0f, canvasSize.x);
-				canvasSize.y = Mathf.Max(node.Position.y + 250.0f, canvasSize.y);
-
-				BTEditorCanvas.Current.Size = canvasSize;
-
+				BTEditorCanvas.Current.RecalculateSize(node.Position);
 				return graphNode;
 			}
 

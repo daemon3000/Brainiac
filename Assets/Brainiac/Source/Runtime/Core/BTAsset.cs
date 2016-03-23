@@ -17,13 +17,17 @@ namespace Brainiac
 		private BehaviourTree m_editModeTree;
 #endif
 
+		public static Vector2 DEFAULT_CANVAS_SIZE
+		{
+			get { return new Vector2(1000, 1000); }
+		}
+
 		public Vector2 CanvasPosition
 		{
 			get
 			{
 				return m_canvasPosition;
 			}
-
 			set
 			{
 				m_canvasPosition = value;
@@ -36,7 +40,6 @@ namespace Brainiac
 			{
 				return m_canvasSize;
 			}
-
 			set
 			{
 				m_canvasSize = value;
@@ -44,6 +47,14 @@ namespace Brainiac
 		}
 
 #if UNITY_EDITOR
+		private void OnEnable()
+		{
+			if(m_canvasSize == Vector2.zero)
+			{
+				m_canvasSize = DEFAULT_CANVAS_SIZE;
+			}
+		}
+
 		public BehaviourTree GetEditModeTree()
 		{
 			if(m_editModeTree == null)

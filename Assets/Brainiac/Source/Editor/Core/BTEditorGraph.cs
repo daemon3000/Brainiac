@@ -16,6 +16,7 @@ namespace BrainiacEditor
 		private string m_serializedCopyTarget;
 		private bool m_drawSelectionBox;
 		private bool m_isBehaviourTreeReadOnly;
+		private bool m_canBeginBoxSelection;
 		private Vector2 m_selectionBoxStartPos;
 
 		public bool ReadOnly
@@ -27,6 +28,7 @@ namespace BrainiacEditor
 		}
 
 		public Rect? SelectionBox { get; set; }
+		public Vector2 MinNodePosition { get; private set; }
 
 		private void OnCreated()
 		{
@@ -47,12 +49,15 @@ namespace BrainiacEditor
 
 			m_isBehaviourTreeReadOnly = behaviourTree.ReadOnly;
 			m_root = BTEditorGraphNode.Create(this, behaviourTree.Root);
+			BTUndoSystem.Clear();
 		}
 
 		public void DrawGUI(Rect screenRect)
 		{
 			if(m_root != null)
 			{
+				MinNodePosition = screenRect.min;
+
 				m_root.Update();
 				m_root.Draw();
 				DrawSelectionBox();
@@ -90,6 +95,7 @@ namespace BrainiacEditor
 				{
 					ClearSelection();
 
+					m_canBeginBoxSelection = true;
 					m_selectionBoxStartPos = BTEditorCanvas.Current.Event.mousePosition;
 					BTEditorCanvas.Current.Event.Use();
 				}
@@ -100,10 +106,9 @@ namespace BrainiacEditor
 				{
 					if(screenRect.Contains(BTEditorCanvas.Current.Event.mousePosition))	
 					{
-						if(!m_drawSelectionBox)
+						if(!m_drawSelectionBox && m_canBeginBoxSelection)
 						{
 							m_drawSelectionBox = true;
-							BTUndoSystem.BeginUndoGroup("Selection changed");
 						}
 
 						BTEditorCanvas.Current.Event.Use();
@@ -118,7 +123,6 @@ namespace BrainiacEditor
 							if(m_drawSelectionBox)
 							{
 								m_drawSelectionBox = false;
-								BTUndoSystem.EndUndoGroup();
 							}
 
 							BTEditorCanvas.Current.Event.Use();
@@ -131,6 +135,8 @@ namespace BrainiacEditor
 							BTEditorCanvas.Current.Event.Use();
 						}
 					}
+
+					m_canBeginBoxSelection = false;
 				}
 			}
 		}
@@ -189,17 +195,12 @@ namespace BrainiacEditor
 		{
 			if(m_selection.Contains(node))
 			{
-				Vector2 canvasSize = BTEditorCanvas.Current.Size;
-
 				for(int i = 0; i < m_selection.Count; i++)
 				{
-					canvasSize.x = Mathf.Max(m_selection[i].Node.Position.x + 250.0f, canvasSize.x);
-					canvasSize.y = Mathf.Max(m_selection[i].Node.Position.y + 250.0f, canvasSize.y);
 					m_selection[i].OnEndDrag();
 				}
 
 				BTUndoSystem.EndUndoGroup();
-				BTEditorCanvas.Current.Size = canvasSize;
 			}
 		}
 
