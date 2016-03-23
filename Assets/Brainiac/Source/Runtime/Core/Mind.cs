@@ -7,41 +7,41 @@ namespace Brainiac
 		[SerializeField]
 		private BTAsset m_behaviourTree;
 		[SerializeField]
-		private TickMode m_tickMode = TickMode.EveryFrame;
+		private UpdateMode m_updateMode;
 		[SerializeField]
-		private float m_tickInterval = 0.0f;
+		private float m_updateInterval;
 
-		private float m_lastTickTime;
+		private float m_lastUpdateTime;
 		private BehaviourTree m_btInstance;
-
-#if UNITY_EDITOR
-		public BTAsset BehaviourTree
-		{
-			get { return m_behaviourTree; }
-		}
-
-		public BehaviourTree BehaviourTreeInstance
-		{
-			get { return m_btInstance; }
-		}
-#endif
 
 		private void Awake()
 		{
-			m_lastTickTime = 0.0f;
+			m_lastUpdateTime = 0.0f;
 			m_btInstance = m_behaviourTree.CreateRuntimeTree();
 		}
 
-		public void Tick(Agent agent)
+		public void OnUpdate(Agent agent)
 		{
 			if(m_btInstance != null)
 			{
-				if(m_tickMode == TickMode.EveryFrame || Time.time >= m_lastTickTime + m_tickInterval)
+				if(m_updateMode == UpdateMode.EveryFrame || Time.time >= m_lastUpdateTime + m_updateInterval)
 				{
 					m_btInstance.Root.Run(agent);
-					m_lastTickTime = Time.time;
+					m_lastUpdateTime = Time.time;
 				}
 			}
 		}
+
+#if UNITY_EDITOR
+		public BTAsset GetBehaviourTree()
+		{
+			return m_behaviourTree;
+		}
+
+		public BehaviourTree GetBehaviourTreeInstance()
+		{
+			return m_btInstance;
+		}
+#endif
 	}
 }

@@ -3,8 +3,8 @@ using System.Collections;
 
 namespace Brainiac
 {
-	public enum TickMode
+	public enum UpdateMode
 	{
-		EveryFrame, AtInterval
+		EveryFrame = 0, AtInterval
 	}
 }

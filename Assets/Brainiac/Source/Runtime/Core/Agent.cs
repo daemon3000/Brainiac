@@ -1,12 +1,15 @@
 using UnityEngine;
-using System.Collections;
+using UnityEngine.Events;
 
 namespace Brainiac
 {
 	public class Agent : MonoBehaviour 
 	{
+		public event UnityAction BeforeUpdate;
+		public event UnityAction AfterUpdate;
+
 		[SerializeField]
-		private GameObject m_avatar;
+		private GameObject m_body;
 		[SerializeField]
 		private Mind m_mind;
 		[SerializeField]
@@ -14,11 +17,11 @@ namespace Brainiac
 		[SerializeField]
 		private bool m_debugMode;
 
-		public GameObject Avatar
+		public GameObject Body
 		{
 			get
 			{
-				return m_avatar;
+				return m_body != null ? m_body : gameObject;
 			}
 		}
 
@@ -29,7 +32,7 @@ namespace Brainiac
 				return m_memory;
 			}
 		}
-
+		
 		public bool DebugMode
 		{
 			get
@@ -42,11 +45,37 @@ namespace Brainiac
 			}
 		}
 
+		private void Start()
+		{
+			if(m_memory == null)
+			{
+				m_memory = gameObject.AddComponent<Memory>();
+			}
+		}
+
 		private void Update()
 		{
 			if(m_mind != null)
 			{
-				m_mind.Tick(this);
+				RaiseBeforeUpdateEvent();
+				m_mind.OnUpdate(this);
+				RaiseAfterUpdateEvent();
+			}
+		}
+
+		private void RaiseBeforeUpdateEvent()
+		{
+			if(BeforeUpdate != null)
+			{
+				BeforeUpdate();
+			}
+		}
+
+		private void RaiseAfterUpdateEvent()
+		{
+			if(AfterUpdate != null)
+			{
+				AfterUpdate();
 			}
 		}
 	}

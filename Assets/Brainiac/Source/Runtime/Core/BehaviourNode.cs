@@ -90,7 +90,7 @@ namespace Brainiac
 			if(m_status != BehaviourNodeStatus.Running)
 			{
 				OnStart(agent);
-
+#if UNITY_EDITOR
 				if(agent.DebugMode)
 				{
 					if(m_debugOptions.Has(DebugOptions.BreakOnEnter))
@@ -98,6 +98,7 @@ namespace Brainiac
 						Debug.Break();
 					}
 				}
+#endif
 			}
 
 			m_status = OnExecute(agent);
@@ -105,7 +106,7 @@ namespace Brainiac
 			if(m_status != BehaviourNodeStatus.Running)
 			{
 				OnStop(agent);
-
+#if UNITY_EDITOR
 				if(agent.DebugMode)
 				{
 					if((m_status == BehaviourNodeStatus.Success && m_debugOptions.Has(DebugOptions.BreakOnSuccess)) ||
@@ -115,6 +116,7 @@ namespace Brainiac
 						Debug.Break();
 					}
 				}
+#endif
 			}
 
 			return m_status;

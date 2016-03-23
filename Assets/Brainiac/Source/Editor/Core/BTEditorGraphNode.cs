@@ -83,7 +83,7 @@ namespace BrainiacEditor
 			}
 
 			UpdateChildrenStatus();
-			HandleChildrenEvents();
+			UpdateChildren();
 			HandleEvents();
 		}
 
@@ -123,7 +123,7 @@ namespace BrainiacEditor
 			}
 		}
 
-		private void HandleChildrenEvents()
+		private void UpdateChildren()
 		{
 			for(int i = m_children.Count - 1; i >= 0; i--)
 			{
