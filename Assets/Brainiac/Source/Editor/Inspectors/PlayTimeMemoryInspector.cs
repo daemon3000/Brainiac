@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using System;
 using System.Collections.Generic;
-using Brainiac;
 
 namespace BrainiacEditor
 {
@@ -38,7 +36,7 @@ namespace BrainiacEditor
 			Rect headerRect = new Rect(0.0f, 0.0f, groupRect.width, HEADER_HEIGHT);
 			Rect bgRect = new Rect(headerRect.x, headerRect.yMax, headerRect.width, itemCount * itemHeight + ITEM_SPACING_VERT * 2);
 			Rect itemRect = new Rect(bgRect.x + ITEM_SPACING_HORZ, bgRect.y + ITEM_SPACING_VERT, bgRect.width - ITEM_SPACING_HORZ * 2, bgRect.height - ITEM_SPACING_VERT);
-			
+
 			GUI.BeginGroup(groupRect);
 
 			EditorGUI.LabelField(headerRect, "Start Memory", BTEditorStyle.ListHeader);
@@ -46,10 +44,17 @@ namespace BrainiacEditor
 
 			GUI.BeginGroup(itemRect);
 
+			List<string> keys = new List<string>(m_memory.Keys);
 			int itemIndex = 0;
-			foreach(var entry in m_memory)
+
+			foreach(string key in keys)
 			{
-				DrawMemoryItem(new Rect(0.0f, itemIndex * itemHeight, itemRect.width, itemHeight), entry.Key, entry.Value);
+				object value = null;
+				if(TryDrawMemoryItem(new Rect(0.0f, itemIndex * itemHeight, itemRect.width, itemHeight), key, m_memory[key], out value))
+				{
+					m_memory[key] = value;
+				}
+
 				itemIndex++;
 			}
 
@@ -57,14 +62,15 @@ namespace BrainiacEditor
 			GUI.EndGroup();
 		}
 
-		private void DrawMemoryItem(Rect position, string memoryItemName, object memoryItemValue)
+		private bool TryDrawMemoryItem(Rect position, string memoryItemName, object memoryItemValue, out object newValue)
 		{
 			string label = !string.IsNullOrEmpty(memoryItemName) ? memoryItemName : "Item";
+			bool success = false;
 
 			Rect headerRect = new Rect(0.0f, 0.0f, position.width, HEADER_HEIGHT);
 			Rect bgRect = new Rect(headerRect.x, headerRect.yMax, headerRect.width, FIELD_HEIGHT * 2 + FIELD_SPACING_VERT * 2);
 			Rect fieldRect = new Rect(bgRect.x + FIELD_SPACING_HORZ, bgRect.y + FIELD_SPACING_VERT, bgRect.width - FIELD_SPACING_HORZ * 2, bgRect.height - FIELD_SPACING_VERT * 2);
-			
+
 			GUI.BeginGroup(position);
 
 			EditorGUI.LabelField(headerRect, label, BTEditorStyle.ListHeader);
@@ -73,47 +79,55 @@ namespace BrainiacEditor
 			GUI.BeginGroup(fieldRect);
 
 			EditorGUI.TextField(new Rect(0, 0, fieldRect.width, 16), "Name", memoryItemName);
-			TryToDrawField(new Rect(0, FIELD_HEIGHT, fieldRect.width, 16), "Value", memoryItemValue);
+			success = TryToDrawField(new Rect(0, FIELD_HEIGHT, fieldRect.width, 16), "Value", memoryItemValue, out newValue);
 
 			GUI.EndGroup();
 			GUI.EndGroup();
+
+			return success;
 		}
 
-		private void TryToDrawField(Rect position, string label, object value)
+		private bool TryToDrawField(Rect position, string label, object value, out object newValue)
 		{
+			bool success = true;
+
 			if(value is bool)
 			{
-				EditorGUI.Toggle(position, label, (bool)value);
+				newValue = EditorGUI.Toggle(position, label, (bool)value);
 			}
 			else if(value is int)
 			{
-				EditorGUI.IntField(position, label, (int)value);
+				newValue = EditorGUI.IntField(position, label, (int)value);
 			}
 			else if(value is float)
 			{
-				EditorGUI.FloatField(position, label, (float)value);
+				newValue = EditorGUI.FloatField(position, label, (float)value);
 			}
 			else if(value is string)
 			{
 				string val = (string)value;
-				EditorGUI.TextField(position, label, val != null ? val : "");
+				newValue = EditorGUI.TextField(position, label, val != null ? val : "");
 			}
 			else if(value is Vector2)
 			{
-				EditorGUI.Vector2Field(position, label, (Vector2)value);
+				newValue = EditorGUI.Vector2Field(position, label, (Vector2)value);
 			}
 			else if(value is Vector3)
 			{
-				EditorGUI.Vector3Field(position, label, (Vector3)value);
+				newValue = EditorGUI.Vector3Field(position, label, (Vector3)value);
 			}
 			else if(value is UnityEngine.Object)
 			{
-				EditorGUI.ObjectField(position, label, (UnityEngine.Object)value, value.GetType(), false);
+				newValue = EditorGUI.ObjectField(position, label, (UnityEngine.Object)value, value.GetType(), false);
 			}
 			else
 			{
 				EditorGUI.LabelField(position, label, "Item type mismatch!");
+				success = false;
+				newValue = null;
 			}
+
+			return success;
 		}
 
 		private float CalculateContentHeight()
