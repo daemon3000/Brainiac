@@ -100,34 +100,34 @@ namespace BrainiacEditor
 					BTEditorCanvas.Current.Event.Use();
 				}
 			}
-			if(!ReadOnly)
+			else if(BTEditorCanvas.Current.Event.type == EventType.MouseDrag && BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
 			{
-				if(BTEditorCanvas.Current.Event.type == EventType.MouseDrag && BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
+				if(screenRect.Contains(BTEditorCanvas.Current.Event.mousePosition))	
 				{
-					if(screenRect.Contains(BTEditorCanvas.Current.Event.mousePosition))	
+					if(!m_drawSelectionBox && m_canBeginBoxSelection)
 					{
-						if(!m_drawSelectionBox && m_canBeginBoxSelection)
+						m_drawSelectionBox = true;
+					}
+
+					BTEditorCanvas.Current.Event.Use();
+				}
+			}
+			else if(BTEditorCanvas.Current.Event.type == EventType.MouseUp)
+			{
+				if(screenRect.Contains(BTEditorCanvas.Current.Event.mousePosition))
+				{
+					if(BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
+					{
+						if(m_drawSelectionBox)
 						{
-							m_drawSelectionBox = true;
+							m_drawSelectionBox = false;
 						}
 
 						BTEditorCanvas.Current.Event.Use();
 					}
-				}
-				else if(BTEditorCanvas.Current.Event.type == EventType.MouseUp)
-				{
-					if(screenRect.Contains(BTEditorCanvas.Current.Event.mousePosition))
+					else if(BTEditorCanvas.Current.Event.button == CONTEXT_MOUSE_BUTTON)
 					{
-						if(BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
-						{
-							if(m_drawSelectionBox)
-							{
-								m_drawSelectionBox = false;
-							}
-
-							BTEditorCanvas.Current.Event.Use();
-						}
-						else if(BTEditorCanvas.Current.Event.button == CONTEXT_MOUSE_BUTTON)
+						if(!ReadOnly)
 						{
 							GenericMenu menu = BTEditorUtils.CreateGraphContextMenu();
 							menu.DropDown(new Rect(BTEditorCanvas.Current.Event.mousePosition, Vector2.zero));
@@ -135,9 +135,9 @@ namespace BrainiacEditor
 							BTEditorCanvas.Current.Event.Use();
 						}
 					}
-
-					m_canBeginBoxSelection = false;
 				}
+
+				m_canBeginBoxSelection = false;
 			}
 		}
 
@@ -338,6 +338,11 @@ namespace BrainiacEditor
 			}
 
 			return null;
+		}
+
+		public void SelectEntireGraph()
+		{
+			SelectNodeHierarchy(m_root);
 		}
 
 		private void SelectNodeHierarchy(BTEditorGraphNode node)

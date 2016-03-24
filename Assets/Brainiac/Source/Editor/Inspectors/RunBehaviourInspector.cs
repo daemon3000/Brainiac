@@ -32,11 +32,8 @@ namespace BrainiacEditor
 				BTAsset oldAsset = m_btAsset;
 				bool prevGUIState = GUI.enabled;
 
-				target.Name = EditorGUILayout.TextField("Name", target.Name);
-				EditorGUILayout.LabelField("Description");
-				target.Description = EditorGUILayout.TextArea(target.Description, BTEditorStyle.MultilineTextArea);
+				DrawHeader();
 
-				EditorGUILayout.Space();
 				m_btAsset = EditorGUILayout.ObjectField("Behaviour Tree", m_btAsset, typeof(BTAsset), false) as BTAsset;
 				if(m_btAsset != oldAsset)
 				{
@@ -76,10 +73,7 @@ namespace BrainiacEditor
 				
 				GUI.enabled = prevGUIState;
 
-				if(BTEditorCanvas.Current != null)
-				{
-					BTEditorCanvas.Current.Repaint();
-				}
+				RepaintCanvas();
 			}
 		}
 	}

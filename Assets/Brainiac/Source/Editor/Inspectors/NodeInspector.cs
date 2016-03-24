@@ -25,18 +25,22 @@ namespace BrainiacEditor
 		{
 			if(m_target != null)
 			{
-				m_target.Name = EditorGUILayout.TextField("Name", m_target.Name);
-				EditorGUILayout.LabelField("Description");
-				m_target.Description = EditorGUILayout.TextArea(m_target.Description, BTEditorStyle.MultilineTextArea);
-
-				EditorGUILayout.Space();
+				DrawHeader();
 				DrawProperties();
-
-				if(BTEditorCanvas.Current != null)
-				{
-					BTEditorCanvas.Current.Repaint();
-				}
+				RepaintCanvas();
 			}
+		}
+
+		protected void DrawHeader()
+		{
+			m_target.Name = EditorGUILayout.TextField("Name", m_target.Name);
+			EditorGUILayout.LabelField("Description");
+			m_target.Description = EditorGUILayout.TextArea(m_target.Description, BTEditorStyle.MultilineTextArea);
+
+			EditorGUILayout.Space();
+			m_target.Weight = EditorGUILayout.Slider("Random Weight", m_target.Weight, 0.0f, 1.0f);
+
+			EditorGUILayout.Space();
 		}
 
 		protected void DrawProperties()
@@ -139,6 +143,14 @@ namespace BrainiacEditor
 			if(memVar != null)
 			{
 				memVar.Content = EditorGUILayout.TextField(label, memVar.Content);
+			}
+		}
+
+		protected void RepaintCanvas()
+		{
+			if(BTEditorCanvas.Current != null)
+			{
+				BTEditorCanvas.Current.Repaint();
 			}
 		}
 	}

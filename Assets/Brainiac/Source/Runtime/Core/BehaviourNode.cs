@@ -8,6 +8,7 @@ namespace Brainiac
 		private Vector2 m_position;
 		private string m_description;
 		private string m_name;
+		private float m_weight;
 		private Breakpoint m_breakpoint;
 		private BehaviourNodeStatus m_status;
 
@@ -58,6 +59,18 @@ namespace Brainiac
 				m_breakpoint = value;
 			}
 		}
+		
+		public float Weight
+		{
+			get
+			{
+				return m_weight;
+			}
+			set
+			{
+				m_weight = value;
+			}
+		}
 
 		[JsonIgnore]
 		public virtual string Title
@@ -69,6 +82,7 @@ namespace Brainiac
 		public BehaviourNodeStatus Status
 		{
 			get { return m_status; }
+			protected set { m_status = value; }
 		}
 
 		public BehaviourNode()

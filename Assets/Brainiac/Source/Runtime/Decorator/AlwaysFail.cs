@@ -15,16 +15,17 @@ namespace Brainiac
 
 		protected override BehaviourNodeStatus OnExecute(Agent agent)
 		{
-			if(m_child == null)
-				return BehaviourNodeStatus.Failure;
-
-			BehaviourNodeStatus status = m_child.Run(agent);
-			if(status == BehaviourNodeStatus.Running)
+			BehaviourNodeStatus status = BehaviourNodeStatus.Failure;
+			if(m_child != null)
 			{
-				return BehaviourNodeStatus.Running;
+				status = m_child.Run(agent);
+				if(status != BehaviourNodeStatus.Running)
+				{
+					status = BehaviourNodeStatus.Failure;
+				}
 			}
 
-			return BehaviourNodeStatus.Failure;
+			return status;
 		}
 	}
 }

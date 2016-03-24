@@ -302,7 +302,6 @@ namespace BrainiacEditor
 
 			menu.AddItem(new GUIContent("New"), false, CreateNewBehaviourTree);
 			menu.AddItem(new GUIContent("Open"), false, OpenBehaviourTree);
-			menu.AddSeparator("");
 			if(m_canvas.ReadOnly)
 			{
 				menu.AddDisabledItem(new GUIContent("Save"));
@@ -311,6 +310,9 @@ namespace BrainiacEditor
 			{
 				menu.AddItem(new GUIContent("Save"), false, SaveBehaviourTree);
 			}
+
+			menu.AddSeparator("");
+			menu.AddItem(new GUIContent("Select All"), false, () => m_graph.SelectEntireGraph());
 
 			menu.DropDown(position);
 		}

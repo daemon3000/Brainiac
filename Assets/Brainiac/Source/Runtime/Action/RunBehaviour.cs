@@ -28,6 +28,14 @@ namespace Brainiac
 			}
 		}
 
+		public override string Title
+		{
+			get
+			{
+				return "Run Behaviour";
+			}
+		}
+
 		public override void OnAwake()
 		{
 			if(!string.IsNullOrEmpty(m_behaviourTreePath))

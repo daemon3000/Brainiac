@@ -17,20 +17,12 @@ namespace BrainiacEditor
 			{
 				Composite composite = (Composite)Target;
 
-				composite.Name = EditorGUILayout.TextField("Name", composite.Name);
-				EditorGUILayout.LabelField("Description");
-				composite.Description = EditorGUILayout.TextArea(composite.Description, BTEditorStyle.MultilineTextArea);
+				DrawHeader();
+				DrawProperties();
 
 				EditorGUILayout.Space();
 				DrawChildren(composite);
-
-				EditorGUILayout.Space();
-				DrawProperties();
-
-				if(BTEditorCanvas.Current != null)
-				{
-					BTEditorCanvas.Current.Repaint();
-				}
+				RepaintCanvas();
 			}
 		}
 

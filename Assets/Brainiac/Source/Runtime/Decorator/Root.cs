@@ -18,10 +18,8 @@ namespace Brainiac
 			{
 				return m_child.Run(agent);
 			}
-			else
-			{
-				return BehaviourNodeStatus.Success;
-			}
+
+			return BehaviourNodeStatus.Success;
 		}
 	}
 }
