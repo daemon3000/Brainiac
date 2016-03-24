@@ -371,7 +371,7 @@ namespace BrainiacEditor
 					Decorator decorator = m_node as Decorator;
 
 					DestroyChildren();
-					decorator.ReplaceChild(node);
+					decorator.SetChild(node);
 				}
 
 				BTEditorGraphNode graphNode = BTEditorGraphNode.CreateExistingNode(this, node);
@@ -403,7 +403,7 @@ namespace BrainiacEditor
 					Decorator decorator = m_node as Decorator;
 
 					DestroyChildren();
-					decorator.ReplaceChild(node);
+					decorator.SetChild(node);
 
 					graphNode = BTEditorGraphNode.CreateExistingNode(this, node);
 					m_children.Add(graphNode);
@@ -461,7 +461,7 @@ namespace BrainiacEditor
 				else if(m_node is Decorator)
 				{
 					Decorator decorator = m_node as Decorator;
-					decorator.RemoveChild();
+					decorator.SetChild(null);
 				}
 			}
 		}
@@ -479,7 +479,7 @@ namespace BrainiacEditor
 			}
 			else if(m_node is Decorator)
 			{
-				((Decorator)m_node).RemoveChild();
+				((Decorator)m_node).SetChild(null);
 			}
 
 			m_children.Clear();

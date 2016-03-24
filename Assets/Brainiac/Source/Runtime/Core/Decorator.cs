@@ -15,14 +15,9 @@ namespace Brainiac
 			m_child.OnAwake();
 		}
 
-		public void ReplaceChild(BehaviourNode node)
+		public void SetChild(BehaviourNode node)
 		{
 			m_child = node;
-		}
-
-		public void RemoveChild()
-		{
-			m_child = null;
 		}
 
 		public BehaviourNode GetChild()

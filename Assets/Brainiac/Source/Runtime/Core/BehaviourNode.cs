@@ -77,19 +77,15 @@ namespace Brainiac
 		}
 
 		public virtual void OnAwake() { }
-		protected virtual void OnStop(Agent agent) { }
+		protected virtual void OnEnter(Agent agent) { }
+		protected virtual void OnExit(Agent agent) { }
 		protected abstract BehaviourNodeStatus OnExecute(Agent agent);
-
-		protected virtual void OnStart(Agent agent)
-		{
-			m_status = BehaviourNodeStatus.Failure;	
-		}
 		
 		public BehaviourNodeStatus Run(Agent agent)
 		{
 			if(m_status != BehaviourNodeStatus.Running)
 			{
-				OnStart(agent);
+				OnEnter(agent);
 #if UNITY_EDITOR
 				if(agent.DebugMode)
 				{
@@ -105,7 +101,7 @@ namespace Brainiac
 
 			if(m_status != BehaviourNodeStatus.Running)
 			{
-				OnStop(agent);
+				OnExit(agent);
 #if UNITY_EDITOR
 				if(agent.DebugMode)
 				{

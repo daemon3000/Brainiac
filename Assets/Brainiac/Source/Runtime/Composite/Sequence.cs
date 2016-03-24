@@ -30,9 +30,8 @@ namespace Brainiac
 			return status;
 		}
 
-		protected override void OnStart(Agent agent)
+		protected override void OnEnter(Agent agent)
 		{
-			base.OnStart(agent);
 			m_currentChild = 0;
 		}
 	}

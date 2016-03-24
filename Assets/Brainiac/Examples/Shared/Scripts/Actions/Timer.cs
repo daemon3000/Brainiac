@@ -44,9 +44,8 @@ namespace Brainiac
 			return BehaviourNodeStatus.Success;
 		}
 
-		protected override void OnStart(Agent agent)
+		protected override void OnEnter(Agent agent)
 		{
-			base.OnStart(agent);
 			m_startTime = Time.time;
 		}
 	}
