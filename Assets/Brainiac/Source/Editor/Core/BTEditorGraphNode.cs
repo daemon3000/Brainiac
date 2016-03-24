@@ -11,15 +11,18 @@ namespace BrainiacEditor
 		private const int DRAG_MOUSE_BUTTON = 0;
 		private const int SELECT_MOUSE_BUTTON = 0;
 		private const int CONTEXT_MOUSE_BUTTON = 1;
+		private const float DOUBLE_CLICK_THRESHOLD = 0.4f;
 
 		private List<BTEditorGraphNode> m_children;
 		private BehaviourNode m_node;
 		private BTEditorGraphNode m_parent;
 		private BTEditorGraph m_graph;
+		private Vector2 m_dragOffset;
+		private float? m_lastClickTime;
 		private bool m_isSelected;
 		private bool m_isDragging;
 		private bool m_canBeginDragging;
-		private Vector2 m_dragOffset;
+		
 
 		public BehaviourNode Node
 		{
@@ -52,6 +55,7 @@ namespace BrainiacEditor
 			m_isDragging = false;
 			m_canBeginDragging = false;
 			m_dragOffset = Vector2.zero;
+			m_lastClickTime = null;
 		}
 
 		public void Update()
@@ -80,6 +84,19 @@ namespace BrainiacEditor
 					if(!m_isSelected)
 					{
 						m_graph.OnNodeSelected(this);
+					}
+
+					if(m_lastClickTime.HasValue)
+					{
+						if(Time.realtimeSinceStartup <= m_lastClickTime.Value + DOUBLE_CLICK_THRESHOLD)
+						{
+							OnDoubleClicked();
+						}
+						m_lastClickTime = null;
+					}
+					else
+					{
+						m_lastClickTime = Time.realtimeSinceStartup;
 					}
 
 					m_canBeginDragging = true;
@@ -236,6 +253,29 @@ namespace BrainiacEditor
 		public void OnEndDrag()
 		{
 			m_isDragging = false;
+		}
+
+		private void OnDoubleClicked()
+		{
+			if(m_node is RunBehaviour)
+			{
+				RunBehaviour rb = (RunBehaviour)m_node;
+				if(rb.BehaviourTreePath != null)
+				{
+					BTAsset asset = Resources.Load<BTAsset>(rb.BehaviourTreePath);
+					if(asset != null)
+					{
+						if(BTEditorCanvas.Current.IsDebuging && rb.BehaviourTree != null)
+						{
+							BehaviourTreeEditor.OpenSubtreeDebug(asset, rb.BehaviourTree);
+						}
+						else
+						{
+							BehaviourTreeEditor.OpenSubtree(asset);
+						}
+					}
+				}
+			}
 		}
 
 		private void SetExistingNode(BehaviourNode node)

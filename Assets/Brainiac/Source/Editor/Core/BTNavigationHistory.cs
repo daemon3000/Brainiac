@@ -13,7 +13,7 @@ namespace BrainiacEditor
 		[SerializeField]
 		private string m_serializedHistory;
 
-		private List<Tuple<BTAsset, BehaviourTree>> m_history;
+		private List<Tuple<string, BehaviourTree>> m_history;
 
 		public int Size
 		{
@@ -22,12 +22,12 @@ namespace BrainiacEditor
 
 		public BTNavigationHistory()
 		{
-			m_history = new List<Tuple<BTAsset, BehaviourTree>>();
+			m_history = new List<Tuple<string, BehaviourTree>>();
 		}
 		
 		public void Push(BTAsset asset, BehaviourTree instance)
 		{
-			m_history.Add(new Tuple<BTAsset, BehaviourTree>(asset, instance));
+			m_history.Add(new Tuple<string, BehaviourTree>(AssetDatabase.GetAssetPath(asset), instance));
 		}
 
 		public void Pop(out BTAsset asset, out BehaviourTree instance)
@@ -35,7 +35,7 @@ namespace BrainiacEditor
 			if(m_history.Count > 0)
 			{
 				var historyItem = m_history[m_history.Count - 1];
-				asset = historyItem.Item1;
+				asset = AssetDatabase.LoadAssetAtPath<BTAsset>(historyItem.Item1);
 				instance = historyItem.Item2;
 
 				m_history.RemoveAt(m_history.Count - 1);
@@ -64,14 +64,14 @@ namespace BrainiacEditor
 		{
 			for(int i = 0; i < m_history.Count; i++)
 			{
-				m_history[i] = new Tuple<BTAsset, BehaviourTree>(m_history[i].Item1, null);
+				m_history[i] = new Tuple<string, BehaviourTree>(m_history[i].Item1, null);
 			}
 		}
 
 		public BTAsset GetAssetAt(int index)
 		{
 			if(index >= 0 && index < m_history.Count)
-				return m_history[index].Item1;
+				return AssetDatabase.LoadAssetAtPath<BTAsset>(m_history[index].Item1);
 
 			return null;
 		}
@@ -80,7 +80,7 @@ namespace BrainiacEditor
 		{
 			if(index >= 0 && index < m_history.Count)
 			{
-				asset = m_history[index].Item1;
+				asset = AssetDatabase.LoadAssetAtPath<BTAsset>(m_history[index].Item1);
 				instance = m_history[index].Item2;
 			}
 			else
@@ -95,7 +95,7 @@ namespace BrainiacEditor
 			StringBuilder builder = new StringBuilder();
 			foreach(var item in m_history)
 			{
-				builder.Append(AssetDatabase.GetAssetPath(item.Item1));
+				builder.Append(item.Item1);
 				builder.Append(';');
 			}
 
@@ -114,7 +114,7 @@ namespace BrainiacEditor
 					BTAsset asset = AssetDatabase.LoadAssetAtPath<BTAsset>(path);
 					if(asset != null)
 					{
-						m_history.Add(new Tuple<BTAsset, BehaviourTree>(asset, null));
+						m_history.Add(new Tuple<string, BehaviourTree>(path, null));
 					}
 					else
 					{
