@@ -8,7 +8,7 @@ namespace Brainiac
 		private Vector2 m_position;
 		private string m_description;
 		private string m_name;
-		private DebugOptions m_debugOptions;
+		private Breakpoint m_breakpoint;
 		private BehaviourNodeStatus m_status;
 
 		public Vector2 Position
@@ -47,15 +47,15 @@ namespace Brainiac
 			}
 		}
 
-		public DebugOptions DebugOptions
+		public Breakpoint Breakpoint
 		{
 			get
 			{
-				return m_debugOptions;
+				return m_breakpoint;
 			}
 			set
 			{
-				m_debugOptions = value;
+				m_breakpoint = value;
 			}
 		}
 
@@ -73,7 +73,7 @@ namespace Brainiac
 
 		public BehaviourNode()
 		{
-			m_debugOptions = DebugOptions.None;
+			m_breakpoint = Breakpoint.None;
 			m_status = BehaviourNodeStatus.None;
 		}
 
@@ -95,7 +95,7 @@ namespace Brainiac
 #if UNITY_EDITOR
 				if(agent.DebugMode)
 				{
-					if(m_debugOptions.Has(DebugOptions.BreakOnEnter))
+					if(m_breakpoint.Has(Breakpoint.OnEnter))
 					{
 						Debug.Break();
 					}
@@ -111,9 +111,9 @@ namespace Brainiac
 #if UNITY_EDITOR
 				if(agent.DebugMode)
 				{
-					if((m_status == BehaviourNodeStatus.Success && m_debugOptions.Has(DebugOptions.BreakOnSuccess)) ||
-						(m_status == BehaviourNodeStatus.Failure && m_debugOptions.Has(DebugOptions.BreakOnFailure)) ||
-						m_debugOptions.Has(DebugOptions.BreakOnExit))
+					if((m_status == BehaviourNodeStatus.Success && m_breakpoint.Has(Breakpoint.OnSuccess)) ||
+						(m_status == BehaviourNodeStatus.Failure && m_breakpoint.Has(Breakpoint.OnFailure)) ||
+						m_breakpoint.Has(Breakpoint.OnExit))
 					{
 						Debug.Break();
 					}

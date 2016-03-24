@@ -88,7 +88,7 @@ namespace BrainiacEditor
 			}
 			else if(BTEditorCanvas.Current.Event.type == EventType.MouseDown && BTEditorCanvas.Current.Event.button == CONTEXT_MOUSE_BUTTON)
 			{
-				if(!m_graph.ReadOnly && position.Contains(mousePosition))
+				if(position.Contains(mousePosition))
 				{
 					ShowContextMenu();
 					BTEditorCanvas.Current.Event.Use();
@@ -166,7 +166,7 @@ namespace BrainiacEditor
 
 			EditorGUI.LabelField(position, label, nodeStyle.GetStyle(status, m_isSelected));
 
-			if(m_node.DebugOptions != DebugOptions.None)
+			if(m_node.Breakpoint != Breakpoint.None)
 			{
 				Rect imgPosition;
 				if(m_node is Brainiac.Action)

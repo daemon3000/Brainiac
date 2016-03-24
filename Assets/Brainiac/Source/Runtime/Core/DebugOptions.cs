@@ -1,11 +1,11 @@
 ﻿namespace Brainiac
 {
-	public enum DebugOptions
+	public enum Breakpoint
 	{
 		None = 1 << 1,
-		BreakOnEnter = 1 << 2,
-		BreakOnExit = 1 << 3,
-		BreakOnSuccess = 1 << 4,
-		BreakOnFailure = 1 << 5
+		OnEnter = 1 << 2,
+		OnExit = 1 << 3,
+		OnSuccess = 1 << 4,
+		OnFailure = 1 << 5
 	}
 }

@@ -95,96 +95,102 @@ namespace BrainiacEditor
 				canAddChild = ((Decorator)targetNode.Node).GetChild() == null;
 			}
 
-			if(canAddChild)
+			if(!targetNode.Graph.ReadOnly)
 			{
-				if(m_nodeMenuPaths == null)
+				if(canAddChild)
 				{
-					BuildNodeMenuPathList();
-				}
-
-				GenericMenu.MenuFunction2 onCreateChild = t => targetNode.Graph.OnNodeCreateChild(targetNode, t as Type);
-
-				foreach(var item in m_nodeMenuPaths)
-				{
-					menu.AddItem(new GUIContent("Add Child/" + item.Item2), false, onCreateChild, item.Item1);
-				}
-			}
-
-			foreach(DebugOptions item in Enum.GetValues(typeof(DebugOptions)))
-			{
-				menu.AddItem(new GUIContent("Debug/" + item.ToString()), targetNode.Node.DebugOptions.Has(item), (obj) =>
-				{
-					DebugOptions option = (DebugOptions)obj;
-					if(option == DebugOptions.None)
+					if(m_nodeMenuPaths == null)
 					{
-						targetNode.Node.DebugOptions = DebugOptions.None;
+						BuildNodeMenuPathList();
+					}
+
+					GenericMenu.MenuFunction2 onCreateChild = t => targetNode.Graph.OnNodeCreateChild(targetNode, t as Type);
+
+					foreach(var item in m_nodeMenuPaths)
+					{
+						menu.AddItem(new GUIContent("Add Child/" + item.Item2), false, onCreateChild, item.Item1);
+					}
+
+					menu.AddSeparator("");
+				}
+
+				if(targetNode.Node is Root)
+				{
+					menu.AddDisabledItem(new GUIContent("Copy"));
+				}
+				else
+				{
+					menu.AddItem(new GUIContent("Copy"), false, () => targetNode.Graph.OnCopyNode(targetNode));
+				}
+
+				if(targetNode.Graph.CanPaste(targetNode))
+				{
+					menu.AddItem(new GUIContent("Paste"), false, () => targetNode.Graph.OnPasteNode(targetNode));
+				}
+				else
+				{
+					menu.AddDisabledItem(new GUIContent("Paste"));
+				}
+
+				if(targetNode.Node is Root)
+				{
+					menu.AddDisabledItem(new GUIContent("Delete"));
+				}
+				else
+				{
+					menu.AddItem(new GUIContent("Delete"), false, () => targetNode.Graph.OnNodeDelete(targetNode));
+				}
+
+				if(targetNode.Node is Composite)
+				{
+					if(((Composite)targetNode.Node).ChildCount > 0)
+					{
+						menu.AddItem(new GUIContent("Delete Children"), false, () => targetNode.Graph.OnNodeDeleteChildren(targetNode));
 					}
 					else
 					{
-						if(targetNode.Node.DebugOptions.Has(option))
+						menu.AddDisabledItem(new GUIContent("Delete Children"));
+					}
+				}
+				else if(targetNode.Node is Decorator)
+				{
+					if(((Decorator)targetNode.Node).GetChild() != null)
+					{
+						menu.AddItem(new GUIContent("Delete Child"), false, () => targetNode.Graph.OnNodeDeleteChildren(targetNode));
+					}
+					else
+					{
+						menu.AddDisabledItem(new GUIContent("Delete Child"));
+					}
+				}
+
+				menu.AddSeparator("");
+			}
+
+			foreach(Breakpoint item in Enum.GetValues(typeof(Breakpoint)))
+			{
+				menu.AddItem(new GUIContent("Breakpoint/" + item.ToString()), targetNode.Node.Breakpoint.Has(item), (obj) =>
+				{
+					Breakpoint option = (Breakpoint)obj;
+					if(option == Breakpoint.None)
+					{
+						targetNode.Node.Breakpoint = Breakpoint.None;
+					}
+					else
+					{
+						if(targetNode.Node.Breakpoint.Has(option))
 						{
-							targetNode.Node.DebugOptions = targetNode.Node.DebugOptions.Remove(option);
+							targetNode.Node.Breakpoint = targetNode.Node.Breakpoint.Remove(option);
 						}
 						else
 						{
-							if(targetNode.Node.DebugOptions == DebugOptions.None)
-								targetNode.Node.DebugOptions = option;
+							if(targetNode.Node.Breakpoint == Breakpoint.None)
+								targetNode.Node.Breakpoint = option;
 							else
-								targetNode.Node.DebugOptions = targetNode.Node.DebugOptions.Add(option);
+								targetNode.Node.Breakpoint = targetNode.Node.Breakpoint.Add(option);
 						}
 					}
 				}, item);
-			}
-			menu.AddSeparator("");
-
-			if(targetNode.Node is Root)
-			{
-				menu.AddDisabledItem(new GUIContent("Copy"));
-			}
-			else
-			{
-				menu.AddItem(new GUIContent("Copy"), false, () => targetNode.Graph.OnCopyNode(targetNode));
-			}
-
-			if(targetNode.Graph.CanPaste(targetNode))
-			{
-				menu.AddItem(new GUIContent("Paste"), false, () => targetNode.Graph.OnPasteNode(targetNode));
-			}
-			else
-			{
-				menu.AddDisabledItem(new GUIContent("Paste"));
-			}
-
-			if(targetNode.Node is Root)
-			{
-				menu.AddDisabledItem(new GUIContent("Delete"));
-			}
-			else
-			{
-				menu.AddItem(new GUIContent("Delete"), false, () => targetNode.Graph.OnNodeDelete(targetNode));
-			}
-
-			if(targetNode.Node is Composite)
-			{
-				if(((Composite)targetNode.Node).ChildCount > 0)
-				{
-					menu.AddItem(new GUIContent("Delete Children"), false, () => targetNode.Graph.OnNodeDeleteChildren(targetNode));
-				}
-				else
-				{
-					menu.AddDisabledItem(new GUIContent("Delete Children"));
-				}
-			}
-			else if(targetNode.Node is Decorator)
-			{
-				if(((Decorator)targetNode.Node).GetChild() != null)
-				{
-					menu.AddItem(new GUIContent("Delete Child"), false, () => targetNode.Graph.OnNodeDeleteChildren(targetNode));
-				}
-				else
-				{
-					menu.AddDisabledItem(new GUIContent("Delete Child"));
-				}
 			}
 
 			return menu;
