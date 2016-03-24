@@ -1,12 +1,12 @@
-﻿using Newtonsoft.Json;
-using UnityEngine;
+﻿using UnityEngine;
+using Brainiac.Serialization;
 
 namespace Brainiac
 {
 	[AddNodeMenu("Action/Timer")]
 	public class Timer : Action
 	{
-		[JsonProperty]
+		[JsonMember][JsonName("Duration")]
 		[BTProperty(PropertyName = "Duration")]
 		private MemoryVar m_duration;
 

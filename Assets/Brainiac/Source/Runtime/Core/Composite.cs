@@ -1,12 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using Brainiac.Serialization;
 
 namespace Brainiac
 {
 	public abstract class Composite : BehaviourNode
 	{
-		[JsonProperty(PropertyName = "Children")]
+		[JsonMember][JsonName("Children")]
 		protected List<BehaviourNode> m_children;
 
 		[JsonIgnore]

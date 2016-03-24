@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
-using Newtonsoft.Json;
 using System;
+using Brainiac.Serialization;
 
 namespace Brainiac
 {
 	public abstract class Decorator : BehaviourNode
 	{
-		[JsonProperty(PropertyName = "Child")]
+		[JsonMember][JsonName("Child")]
 		protected BehaviourNode m_child;
 
 		public override void OnAwake()

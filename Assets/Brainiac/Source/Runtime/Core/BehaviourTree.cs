@@ -1,12 +1,14 @@
-using Newtonsoft.Json;
 using UnityEngine;
+using Brainiac.Serialization;
 
 namespace Brainiac
 {
 	public class BehaviourTree
 	{
+		[JsonMember][JsonName("Root")]
 		private Root m_root;
-		
+
+		[JsonIgnore]
 		public Root Root
 		{
 			get

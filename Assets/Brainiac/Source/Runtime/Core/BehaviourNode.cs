@@ -1,5 +1,5 @@
 using UnityEngine;
-using Newtonsoft.Json;
+using Brainiac.Serialization;
 
 namespace Brainiac
 {

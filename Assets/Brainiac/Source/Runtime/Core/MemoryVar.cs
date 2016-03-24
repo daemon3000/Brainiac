@@ -1,51 +1,42 @@
 ﻿using UnityEngine;
-using Newtonsoft.Json;
-using System.Runtime.Serialization;
+using Brainiac.Serialization;
 
 namespace Brainiac
 {
-	public class MemoryVar
+	public class MemoryVar : IJsonSerializable
 	{
-		[JsonProperty]
 		private string m_content;
-
 		private bool? m_valueAsBool;
 		private int? m_valueAsInt;
 		private float? m_valueAsFloat;
 
-		[JsonIgnore]
 		public string Content
 		{
 			get
 			{
 				return m_content;
 			}
-
 			set
 			{
 				m_content = value;
 			}
 		}
-
-		[JsonIgnore]
+		
 		public bool? AsBool
 		{
 			get { return m_valueAsBool; }
 		}
 
-		[JsonIgnore]
 		public int? AsInt
 		{
 			get { return m_valueAsInt; }
 		}
 
-		[JsonIgnore]
 		public float? AsFloat
 		{
 			get { return m_valueAsFloat; }
 		}
 
-		[JsonIgnore]
 		public string AsString
 		{
 			get { return m_content; }
@@ -90,10 +81,15 @@ namespace Brainiac
 			}
 		}
 
-		[OnDeserialized]
-		private void OnContentDeserialized(StreamingContext steamingContext)
+		public void ReadJson(JsonReader reader)
 		{
+			Content = (string)reader.Read(typeof(string), false, false);
 			ParseContent();
+		}
+
+		public void WriteJson(JsonWriter writer)
+		{
+			writer.Write(Content);
 		}
 	}
 }

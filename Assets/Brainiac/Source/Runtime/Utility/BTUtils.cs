@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 using System;
-using Newtonsoft.Json;
+using System.Text;
+using Brainiac.Serialization;
 
 namespace Brainiac
 {
 	public static class BTUtils
 	{
+		private const string TYPE_HINT_NAME = "$type";
+
 		public static bool IsSameOrSubclass(this Type potentialSubclass, Type potentialBase)
 		{
 			return potentialSubclass.IsSubclassOf(potentialBase) || (potentialSubclass == potentialBase);
@@ -33,12 +36,17 @@ namespace Brainiac
 				if(behaviourTree == null)
 					return "";
 
-				JsonSerializerSettings settings = new JsonSerializerSettings();
-				settings.TypeNameHandling = TypeNameHandling.Auto;
-				settings.Converters.Add(new Vector2Converter());
-				settings.Converters.Add(new Vector3Converter());
+				StringBuilder builder = new StringBuilder();
+				JsonWriterSettings settings = new JsonWriterSettings();
+				settings.TypeHintName = TYPE_HINT_NAME;
+				settings.TypeHintsOnlyWhenNeeded = true;
 
-				return JsonConvert.SerializeObject(behaviourTree, settings);
+				using(JsonWriter writer = new JsonWriter(builder, settings))
+				{
+					writer.Write(behaviourTree);
+				}
+
+				return builder.ToString();
 			}
 			catch(Exception ex)
 			{
@@ -54,12 +62,11 @@ namespace Brainiac
 				if(string.IsNullOrEmpty(btData))
 					return new BehaviourTree();
 
-				JsonSerializerSettings settings = new JsonSerializerSettings();
-				settings.TypeNameHandling = TypeNameHandling.Auto;
-				settings.Converters.Add(new Vector2Converter());
-				settings.Converters.Add(new Vector3Converter());
+				JsonReaderSettings settings = new JsonReaderSettings();
+				settings.TypeHintName = TYPE_HINT_NAME;
 
-				return JsonConvert.DeserializeObject<BehaviourTree>(btData, settings);
+				JsonReader reader = new JsonReader(btData, settings);
+				return reader.Deserialize(typeof(BehaviourTree)) as BehaviourTree;
 			}
 			catch(Exception ex)
 			{
@@ -75,12 +82,17 @@ namespace Brainiac
 				if(behaviourNode == null)
 					return "";
 
-				JsonSerializerSettings settings = new JsonSerializerSettings();
-				settings.TypeNameHandling = TypeNameHandling.Objects;
-				settings.Converters.Add(new Vector2Converter());
-				settings.Converters.Add(new Vector3Converter());
+				StringBuilder builder = new StringBuilder();
+				JsonWriterSettings settings = new JsonWriterSettings();
+				settings.TypeHintName = TYPE_HINT_NAME;
+				settings.TypeHintsOnlyWhenNeeded = true;
 
-				return JsonConvert.SerializeObject(new object[] { behaviourNode }, settings);
+				using(JsonWriter writer = new JsonWriter(builder, settings))
+				{
+					writer.Write(new object[] { behaviourNode });
+				}
+
+				return builder.ToString();
 			}
 			catch(Exception ex)
 			{
@@ -96,13 +108,13 @@ namespace Brainiac
 				if(string.IsNullOrEmpty(nodeData))
 					return null;
 
-				JsonSerializerSettings settings = new JsonSerializerSettings();
-				settings.TypeNameHandling = TypeNameHandling.Objects;
-				settings.Converters.Add(new Vector2Converter());
-				settings.Converters.Add(new Vector3Converter());
+				JsonReaderSettings settings = new JsonReaderSettings();
+				settings.TypeHintName = TYPE_HINT_NAME;
 
-				object[] obj = JsonConvert.DeserializeObject<object[]>(nodeData, settings);
+				JsonReader reader = new JsonReader(nodeData, settings);
+				object[] obj = reader.Deserialize() as object[];
 				return (obj != null && obj.Length > 0) ? obj[0] as BehaviourNode : null;
+
 			}
 			catch(Exception ex)
 			{
@@ -118,12 +130,11 @@ namespace Brainiac
 				if(string.IsNullOrEmpty(nodeData))
 					return null;
 
-				JsonSerializerSettings settings = new JsonSerializerSettings();
-				settings.TypeNameHandling = TypeNameHandling.Objects;
-				settings.Converters.Add(new Vector2Converter());
-				settings.Converters.Add(new Vector3Converter());
+				JsonReaderSettings settings = new JsonReaderSettings();
+				settings.TypeHintName = TYPE_HINT_NAME;
 
-				object[] obj = JsonConvert.DeserializeObject<object[]>(nodeData, settings);
+				JsonReader reader = new JsonReader(nodeData, settings);
+				object[] obj = reader.Deserialize() as object[];
 				return (obj != null && obj.Length > 0) ? obj[0] as T : null;
 			}
 			catch(Exception ex)
