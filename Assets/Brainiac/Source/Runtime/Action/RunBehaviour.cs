@@ -30,8 +30,6 @@ namespace Brainiac
 
 		public override void OnAwake()
 		{
-			base.OnAwake();
-
 			if(!string.IsNullOrEmpty(m_behaviourTreePath))
 			{
 				BTAsset asset = Resources.Load<BTAsset>(m_behaviourTreePath);
@@ -43,6 +41,15 @@ namespace Brainiac
 			else
 			{
 				m_behaviourTree = null;
+			}
+		}
+
+		public override void OnReset()
+		{
+			base.OnReset();
+			if(m_behaviourTree != null)
+			{
+				m_behaviourTree.Root.OnReset();
 			}
 		}
 

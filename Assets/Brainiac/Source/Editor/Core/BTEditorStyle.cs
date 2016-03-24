@@ -330,19 +330,16 @@ namespace BrainiacEditor
 			return new Vector2(180, 40);
 		}
 
-		public static Color GetTransitionColor(BehaviourNodeStatus? status)
+		public static Color GetTransitionColor(BehaviourNodeStatus status)
 		{
-			if(status.HasValue)
+			switch(status)
 			{
-				switch(status)
-				{
-				case BehaviourNodeStatus.Failure:
-					return Color.red;
-				case BehaviourNodeStatus.Running:
-					return new Color32(221, 186, 19, 255);
-				case BehaviourNodeStatus.Success:
-					return Color.green;
-				}
+			case BehaviourNodeStatus.Failure:
+				return Color.red;
+			case BehaviourNodeStatus.Running:
+				return new Color32(221, 186, 19, 255);
+			case BehaviourNodeStatus.Success:
+				return Color.green;
 			}
 
 			return Color.white;

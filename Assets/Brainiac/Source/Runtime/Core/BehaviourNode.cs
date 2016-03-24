@@ -74,13 +74,19 @@ namespace Brainiac
 		public BehaviourNode()
 		{
 			m_debugOptions = DebugOptions.None;
+			m_status = BehaviourNodeStatus.None;
 		}
 
 		public virtual void OnAwake() { }
 		protected virtual void OnEnter(Agent agent) { }
 		protected virtual void OnExit(Agent agent) { }
 		protected abstract BehaviourNodeStatus OnExecute(Agent agent);
-		
+
+		public virtual void OnReset()
+		{
+			m_status = BehaviourNodeStatus.None;
+		}
+
 		public BehaviourNodeStatus Run(Agent agent)
 		{
 			if(m_status != BehaviourNodeStatus.Running)

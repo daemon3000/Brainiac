@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
+using UnityEditor;
 using System;
 using System.Collections.Generic;
 using Brainiac;
-using UnityEditor;
 
 namespace BrainiacEditor
 {
@@ -20,7 +20,6 @@ namespace BrainiacEditor
 		private bool m_isDragging;
 		private bool m_canBeginDragging;
 		private Vector2 m_dragOffset;
-		private BehaviourNodeStatus? m_status;
 
 		public BehaviourNode Node
 		{
@@ -42,26 +41,13 @@ namespace BrainiacEditor
 			get { return m_children.Count; }
 		}
 
-		private BehaviourNodeStatus? Status
-		{
-			get
-			{
-				return m_status;
-			}
-			set
-			{
-				m_status = value;
-			}
-		}
-
 		private void OnCreated()
 		{
 			if(m_children == null)
 			{
 				m_children = new List<BTEditorGraphNode>();
 			}
-
-			m_status = null;
+			
 			m_isSelected = false;
 			m_isDragging = false;
 			m_canBeginDragging = false;
@@ -70,57 +56,8 @@ namespace BrainiacEditor
 
 		public void Update()
 		{
-			if(m_node is Root)
-			{
-				if(BTEditorCanvas.Current.IsDebuging)
-				{
-					Status = m_node.Status;
-				}
-				else
-				{
-					Status = null;
-				}
-			}
-
-			UpdateChildrenStatus();
 			UpdateChildren();
 			HandleEvents();
-		}
-
-		private void UpdateChildrenStatus()
-		{
-			bool siblingIsRunning = false;
-
-			foreach(var child in m_children)
-			{
-				if(Status == null)
-				{
-					child.Status = null;
-					continue;
-				}
-
-				if(BTEditorCanvas.Current.IsDebuging)
-				{
-					if(siblingIsRunning)
-					{
-						//	If a previous sibling is running then this child has not run so it has no status.
-						child.Status = null;
-					}
-					else
-					{
-						child.Status = child.Node.Status;
-					}
-				}
-				else
-				{
-					child.Status = null;
-				}
-
-				if(!siblingIsRunning)
-				{
-					siblingIsRunning = child.Node.Status == BehaviourNodeStatus.Running;
-				}
-			}
 		}
 
 		private void UpdateChildren()
@@ -214,7 +151,7 @@ namespace BrainiacEditor
 			{
 				Vector2 childNodeSize = BTEditorStyle.GetNodeSize(child.GetType());
 				Rect childPosition = new Rect(child.Node.Position + BTEditorCanvas.Current.Position, childNodeSize);
-				BehaviourNodeStatus? childStatus = BTEditorCanvas.Current.IsDebuging ? child.Status : null;
+				BehaviourNodeStatus childStatus = BTEditorCanvas.Current.IsDebuging ? child.Node.Status : BehaviourNodeStatus.None;
 
 				BTEditorUtils.DrawBezier(position, childPosition, BTEditorStyle.GetTransitionColor(childStatus));
 			}
@@ -225,7 +162,7 @@ namespace BrainiacEditor
 			BTGraphNodeStyle nodeStyle = BTEditorStyle.GetNodeStyle(m_node.GetType());
 			Rect position = new Rect(m_node.Position + BTEditorCanvas.Current.Position, nodeStyle.Size);
 			string label = string.IsNullOrEmpty(m_node.Name) ? m_node.Title : m_node.Name;
-			BehaviourNodeStatus? status = BTEditorCanvas.Current.IsDebuging ? Status : null;
+			BehaviourNodeStatus status = BTEditorCanvas.Current.IsDebuging ? m_node.Status : BehaviourNodeStatus.None;
 
 			EditorGUI.LabelField(position, label, nodeStyle.GetStyle(status, m_isSelected));
 

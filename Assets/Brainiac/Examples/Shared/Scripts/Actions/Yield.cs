@@ -15,6 +15,11 @@ namespace Brainiac
 			}
 		}
 
+		protected override void OnEnter(Agent agent)
+		{
+			m_canYield = true;
+		}
+
 		protected override BehaviourNodeStatus OnExecute(Agent agent)
 		{
 			if(m_canYield)
@@ -24,11 +29,6 @@ namespace Brainiac
 			}
 
 			return BehaviourNodeStatus.Success;
-		}
-
-		protected override void OnEnter(Agent agent)
-		{
-			m_canYield = true;
 		}
 	}
 }

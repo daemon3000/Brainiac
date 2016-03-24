@@ -15,6 +15,11 @@ namespace Brainiac
 			}
 		}
 
+		protected override void OnEnter(Agent agent)
+		{
+			m_currentChild = 0;
+		}
+
 		protected override BehaviourNodeStatus OnExecute(Agent agent)
 		{
 			BehaviourNodeStatus status = BehaviourNodeStatus.Success;
@@ -28,11 +33,6 @@ namespace Brainiac
 			}
 
 			return status;
-		}
-
-		protected override void OnEnter(Agent agent)
-		{
-			m_currentChild = 0;
 		}
 	}
 }

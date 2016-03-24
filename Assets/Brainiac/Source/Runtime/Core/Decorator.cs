@@ -11,8 +11,13 @@ namespace Brainiac
 
 		public override void OnAwake()
 		{
-			base.OnAwake();
 			m_child.OnAwake();
+		}
+
+		public override void OnReset()
+		{
+			base.OnReset();
+			m_child.OnReset();
 		}
 
 		public void SetChild(BehaviourNode node)

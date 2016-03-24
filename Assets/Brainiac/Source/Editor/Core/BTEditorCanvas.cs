@@ -52,6 +52,11 @@ namespace BrainiacEditor
 			get { return IsDebuging || EditorApplication.isPlaying; }
 		}
 
+		public bool IsPlaying
+		{
+			get { return EditorApplication.isPlaying; }
+		}
+
 		public Vector2 Position { get; set; }
 		public Vector2 Size { get; set; }
 		public bool IsDebuging { get; set; }

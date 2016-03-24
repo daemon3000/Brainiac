@@ -34,6 +34,11 @@ namespace Brainiac
 			m_duration = new MemoryVar();
 		}
 
+		protected override void OnEnter(Agent agent)
+		{
+			m_startTime = Time.time;
+		}
+
 		protected override BehaviourNodeStatus OnExecute(Agent agent)
 		{
 			float duration = m_duration.AsFloat.HasValue ? m_duration.AsFloat.Value : m_duration.Evaluate<float>(agent.Memory, 0.0f);
@@ -42,11 +47,6 @@ namespace Brainiac
 				return BehaviourNodeStatus.Running;
 
 			return BehaviourNodeStatus.Success;
-		}
-
-		protected override void OnEnter(Agent agent)
-		{
-			m_startTime = Time.time;
 		}
 	}
 }

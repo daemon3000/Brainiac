@@ -92,19 +92,16 @@ namespace BrainiacEditor
 			}
 		}
 
-		public GUIStyle GetStyle(BehaviourNodeStatus? status, bool isSelected)
+		public GUIStyle GetStyle(BehaviourNodeStatus status, bool isSelected)
 		{
-			if(status.HasValue)
+			switch(status)
 			{
-				switch(status)
-				{
-				case BehaviourNodeStatus.Failure:
-					return !isSelected ? m_failNormalStyle : m_failSelectedStyle;
-				case BehaviourNodeStatus.Running:
-					return !isSelected ? m_runninfNormalStyle : m_runningSelectedStyle;
-				case BehaviourNodeStatus.Success:
-					return !isSelected ? m_successNormalStyle : m_successSelectedStyle;
-				}
+			case BehaviourNodeStatus.Failure:
+				return !isSelected ? m_failNormalStyle : m_failSelectedStyle;
+			case BehaviourNodeStatus.Running:
+				return !isSelected ? m_runninfNormalStyle : m_runningSelectedStyle;
+			case BehaviourNodeStatus.Success:
+				return !isSelected ? m_successNormalStyle : m_successSelectedStyle;
 			}
 
 			return !isSelected ? m_standardNormalStyle : m_standardSelectedStyle;

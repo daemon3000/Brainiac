@@ -26,6 +26,10 @@ namespace Brainiac
 			{
 				if(m_updateMode == UpdateMode.EveryFrame || Time.time >= m_lastUpdateTime + m_updateInterval)
 				{
+					if(m_btInstance.Root.Status != BehaviourNodeStatus.Running)
+					{
+						m_btInstance.Root.OnReset();
+					}
 					m_btInstance.Root.Run(agent);
 					m_lastUpdateTime = Time.time;
 				}

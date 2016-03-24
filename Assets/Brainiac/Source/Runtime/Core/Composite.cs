@@ -25,10 +25,18 @@ namespace Brainiac
 
 		public override void OnAwake()
 		{
-			base.OnAwake();
 			for(int i = 0; i < m_children.Count; i++)
 			{
 				m_children[i].OnAwake();
+			}
+		}
+
+		public override void OnReset()
+		{
+			base.OnReset();
+			for(int i = 0; i < m_children.Count; i++)
+			{
+				m_children[i].OnReset();
 			}
 		}
 
