@@ -5,8 +5,8 @@ namespace Brainiac
 	[AddNodeMenu("Decorator/Repeat")]
 	public class Repeat : Decorator
 	{
-		[JsonMember][JsonName("RepeatCount")]
-		[BTProperty(PropertyName = "Repeat Count")]
+		[JsonMember("RepeatCount")]
+		[BTProperty("Repeat Count")]
 		private int m_repeatCount;
 
 		private int m_currentIteration;

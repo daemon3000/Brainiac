@@ -47,13 +47,7 @@ namespace Brainiac.Serialization
 	[AttributeUsage(AttributeTargets.All, AllowMultiple=false)]
 	public class JsonNameAttribute : Attribute
 	{
-		#region Fields
-
 		private string jsonName = null;
-
-		#endregion Fields
-
-		#region Init
 
 		/// <summary>
 		/// Ctor
@@ -71,10 +65,6 @@ namespace Brainiac.Serialization
 			this.jsonName = jsonName;
 		}
 
-		#endregion Init
-
-		#region Properties
-
 		/// <summary>
 		/// Gets and sets the name to be used in JSON
 		/// </summary>
@@ -83,10 +73,6 @@ namespace Brainiac.Serialization
 			get { return this.jsonName; }
 			set { this.jsonName = value; }
 		}
-
-		#endregion Properties
-
-		#region Methods
 
 		/// <summary>
 		/// Gets the name specified for use in Json serialization.
@@ -122,62 +108,18 @@ namespace Brainiac.Serialization
 			}
 
 #if WINDOWS_STORE
-			JsonNameAttribute attribute = memberInfo.GetCustomAttribute<JsonNameAttribute> (true);
+			JsonNameAttribute nameAttribute = memberInfo.GetCustomAttribute<JsonNameAttribute> (true);
+			JsonMemberAttribute memberAttribute = memberInfo.GetCustomAttribute<JsonMemberAttribute> (true);
 #else
-			JsonNameAttribute attribute = Attribute.GetCustomAttribute(memberInfo, typeof(JsonNameAttribute)) as JsonNameAttribute;
+			JsonNameAttribute nameAttribute = Attribute.GetCustomAttribute(memberInfo, typeof(JsonNameAttribute)) as JsonNameAttribute;
+			JsonMemberAttribute memberAttribute = Attribute.GetCustomAttribute(memberInfo, typeof(JsonMemberAttribute)) as JsonMemberAttribute;
 #endif
-			return attribute != null ? attribute.Name : null;
+			if(nameAttribute != null)
+				return nameAttribute.Name;
+			else if(memberAttribute != null)
+				return memberAttribute.Name;
+			else
+				return null;
 		}
-
-		///// <summary>
-		///// Gets the name specified for use in Json serialization.
-		///// </summary>
-		///// <param name="value"></param>
-		///// <returns></returns>
-		//public static string GetXmlName(object value)
-		//{
-		//    if (value == null)
-		//    {
-		//        return null;
-		//    }
-
-		//    Type type = value.GetType();
-		//    ICustomAttributeProvider memberInfo = null;
-
-		//    if (type.IsEnum)
-		//    {
-		//        string name = Enum.GetName(type, value);
-		//        if (String.IsNullOrEmpty(name))
-		//        {
-		//            return null;
-		//        }
-		//        memberInfo = type.GetField(name);
-		//    }
-		//    else
-		//    {
-		//        memberInfo = value as ICustomAttributeProvider;
-		//    }
-
-		//    if (memberInfo == null)
-		//    {
-		//        throw new ArgumentException();
-		//    }
-
-		//    XmlAttributes xmlAttributes = new XmlAttributes(memberInfo);
-		//    if (xmlAttributes.XmlElements.Count == 1 &&
-		//        !String.IsNullOrEmpty(xmlAttributes.XmlElements[0].ElementName))
-		//    {
-		//        return xmlAttributes.XmlElements[0].ElementName;
-		//    }
-		//    if (xmlAttributes.XmlAttribute != null &&
-		//        !String.IsNullOrEmpty(xmlAttributes.XmlAttribute.AttributeName))
-		//    {
-		//        return xmlAttributes.XmlAttribute.AttributeName;
-		//    }
-
-		//    return null;
-		//}
-
-		#endregion Methods
 	}
 }

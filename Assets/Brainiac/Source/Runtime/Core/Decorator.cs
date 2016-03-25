@@ -6,7 +6,7 @@ namespace Brainiac
 {
 	public abstract class Decorator : BehaviourNode
 	{
-		[JsonMember][JsonName("Child")]
+		[JsonMember("Child")]
 		protected BehaviourNode m_child;
 
 		public override void OnAwake()

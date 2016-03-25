@@ -6,8 +6,19 @@ namespace Brainiac.Serialization
 	 */
 	public class JsonMemberAttribute : Attribute
 	{
-		public JsonMemberAttribute ()
+		/// <summary>
+		/// Gets and sets the name to be used in JSON
+		/// </summary>
+		public string Name { get; set; }
+
+		public JsonMemberAttribute()
 		{
+			Name = null;
+		}
+
+		public JsonMemberAttribute(string name)
+		{
+			Name = name;
 		}
 	}
 }

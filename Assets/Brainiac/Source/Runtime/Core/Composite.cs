@@ -6,7 +6,7 @@ namespace Brainiac
 {
 	public abstract class Composite : BehaviourNode
 	{
-		[JsonMember][JsonName("Children")]
+		[JsonMember("Children")]
 		protected List<BehaviourNode> m_children;
 
 		[JsonIgnore]

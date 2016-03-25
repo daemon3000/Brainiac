@@ -11,5 +11,10 @@ namespace Brainiac
 		{
 			PropertyName = null;
 		}
+
+		public BTPropertyAttribute(string propertyName)
+		{
+			PropertyName = propertyName;
+		}
 	}
 }

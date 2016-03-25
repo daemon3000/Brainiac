@@ -5,7 +5,7 @@ namespace Brainiac
 {
 	public class BehaviourTree
 	{
-		[JsonMember][JsonName("Root")]
+		[JsonMember("Root")]
 		private Root m_root;
 
 		[JsonIgnore]

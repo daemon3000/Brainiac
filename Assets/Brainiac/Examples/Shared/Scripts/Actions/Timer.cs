@@ -6,8 +6,8 @@ namespace Brainiac
 	[AddNodeMenu("Action/Timer")]
 	public class Timer : Action
 	{
-		[JsonMember][JsonName("Duration")]
-		[BTProperty(PropertyName = "Duration")]
+		[JsonMember("Duration")]
+		[BTProperty("Duration")]
 		private MemoryVar m_duration;
 
 		private float m_startTime;

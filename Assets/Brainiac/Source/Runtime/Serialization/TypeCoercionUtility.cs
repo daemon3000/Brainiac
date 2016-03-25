@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
+using System.Linq;
 
 #if WINDOWS_STORE
 using TP = System.Reflection.TypeInfo;
@@ -752,24 +753,25 @@ namespace Brainiac.Serialization
 
 		private Array CoerceArray(Type elementType, IEnumerable value)
 		{
-			//ArrayList target = new ArrayList();
-			
-			int count = 0;
+			ArrayList target = new ArrayList();
+
+			//int count = 0;
+			//foreach (object item in value)
+			//{
+			//	count++;
+			//}
+			//Array arr = Array.CreateInstance (elementType, new int[] {count});
+
+			//int i=0;
 			foreach (object item in value)
 			{
-				count++;
-			}
-			Array arr = Array.CreateInstance (elementType, new int[] {count});
-
-			int i=0;
-			foreach (object item in value)
-			{
-				//target.Add(this.CoerceType(elementType, item));
-				arr.SetValue ( this.CoerceType(elementType, item), new int[] {i} );
-				i++;
+				target.Add(this.CoerceType(elementType, item));
+				//arr.SetValue ( this.CoerceType(elementType, item), new int[] {i} );
+				//i++;
 			}
 
-			return arr;//target.ToArray(elementType);
+			//return arr;
+			return target.ToArray(elementType);
 		}
 
 		private static bool IsNullable(Type type)
