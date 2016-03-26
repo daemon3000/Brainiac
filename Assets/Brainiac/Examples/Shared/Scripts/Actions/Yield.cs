@@ -15,12 +15,12 @@ namespace Brainiac
 			}
 		}
 
-		protected override void OnEnter(Agent agent)
+		protected override void OnEnter(AIController aiController)
 		{
 			m_canYield = true;
 		}
 
-		protected override BehaviourNodeStatus OnExecute(Agent agent)
+		protected override BehaviourNodeStatus OnExecute(AIController aiController)
 		{
 			if(m_canYield)
 			{

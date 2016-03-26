@@ -15,17 +15,17 @@ namespace Brainiac
 			}
 		}
 
-		protected override void OnEnter(Agent agent)
+		protected override void OnEnter(AIController aiController)
 		{
 			m_currentChild = 0;
 		}
 
-		protected override BehaviourNodeStatus OnExecute(Agent agent)
+		protected override BehaviourNodeStatus OnExecute(AIController aiController)
 		{
 			BehaviourNodeStatus status = BehaviourNodeStatus.Success;
 			while(m_currentChild < m_children.Count)
 			{
-				status = m_children[m_currentChild].Run(agent);
+				status = m_children[m_currentChild].Run(aiController);
 				if (status == BehaviourNodeStatus.Success)
 					m_currentChild++;
 				else

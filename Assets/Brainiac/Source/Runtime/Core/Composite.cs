@@ -23,11 +23,11 @@ namespace Brainiac
 			m_children = new List<BehaviourNode>();
 		}
 
-		public override void OnAwake()
+		public override void OnStart(AIController aiController)
 		{
 			for(int i = 0; i < m_children.Count; i++)
 			{
-				m_children[i].OnAwake();
+				m_children[i].OnStart(aiController);
 			}
 		}
 

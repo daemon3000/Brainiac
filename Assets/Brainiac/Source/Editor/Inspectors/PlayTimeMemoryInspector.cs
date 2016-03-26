@@ -78,8 +78,11 @@ namespace BrainiacEditor
 
 			GUI.BeginGroup(fieldRect);
 
-			EditorGUI.TextField(new Rect(0, 0, fieldRect.width, 16), "Name", memoryItemName);
-			success = TryToDrawField(new Rect(0, FIELD_HEIGHT, fieldRect.width, 16), "Value", memoryItemValue, out newValue);
+			EditorGUI.LabelField(new Rect(0, 0, 50, 16), "Name");
+			EditorGUI.TextField(new Rect(50, 0, fieldRect.width - 50, 16), memoryItemName);
+
+			EditorGUI.LabelField(new Rect(0, FIELD_HEIGHT, 50, 16), "Value");
+			success = TryToDrawField(new Rect(50, FIELD_HEIGHT, fieldRect.width - 50, 16), memoryItemValue, out newValue);
 
 			GUI.EndGroup();
 			GUI.EndGroup();
@@ -87,42 +90,44 @@ namespace BrainiacEditor
 			return success;
 		}
 
-		private bool TryToDrawField(Rect position, string label, object value, out object newValue)
+		private bool TryToDrawField(Rect position, object value, out object newValue)
 		{
 			bool success = true;
 
 			if(value is bool)
 			{
-				newValue = EditorGUI.Toggle(position, label, (bool)value);
+				newValue = EditorGUI.Toggle(position, (bool)value);
 			}
 			else if(value is int)
 			{
-				newValue = EditorGUI.IntField(position, label, (int)value);
+				newValue = EditorGUI.IntField(position, (int)value);
 			}
 			else if(value is float)
 			{
-				newValue = EditorGUI.FloatField(position, label, (float)value);
+				newValue = EditorGUI.FloatField(position, (float)value);
 			}
 			else if(value is string)
 			{
 				string val = (string)value;
-				newValue = EditorGUI.TextField(position, label, val != null ? val : "");
+				newValue = EditorGUI.TextField(position, val != null ? val : "");
 			}
 			else if(value is Vector2)
 			{
-				newValue = EditorGUI.Vector2Field(position, label, (Vector2)value);
+				newValue = EditorGUI.Vector2Field(position, new GUIContent(""), (Vector2)value);
 			}
 			else if(value is Vector3)
 			{
-				newValue = EditorGUI.Vector3Field(position, label, (Vector3)value);
+				newValue = EditorGUI.Vector3Field(position, new GUIContent(""), (Vector3)value);
 			}
 			else if(value is UnityEngine.Object)
 			{
-				newValue = EditorGUI.ObjectField(position, label, (UnityEngine.Object)value, value.GetType(), false);
+				success = false;
+				newValue = value;
+				EditorGUI.ObjectField(position, new GUIContent(""), (UnityEngine.Object)value, typeof(UnityEngine.Object), false);
 			}
 			else
 			{
-				EditorGUI.LabelField(position, label, "Item type mismatch!");
+				EditorGUI.LabelField(position, "Item type mismatch!");
 				success = false;
 				newValue = null;
 			}

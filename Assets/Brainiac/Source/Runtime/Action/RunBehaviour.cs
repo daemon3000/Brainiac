@@ -36,7 +36,7 @@ namespace Brainiac
 			}
 		}
 
-		public override void OnAwake()
+		public override void OnStart(AIController aiController)
 		{
 			if(!string.IsNullOrEmpty(m_behaviourTreePath))
 			{
@@ -61,11 +61,11 @@ namespace Brainiac
 			}
 		}
 
-		protected override BehaviourNodeStatus OnExecute(Agent agent)
+		protected override BehaviourNodeStatus OnExecute(AIController aiController)
 		{
 			if(m_behaviourTree != null)
 			{
-				return m_behaviourTree.Root.Run(agent);
+				return m_behaviourTree.Root.Run(aiController);
 			}
 			else
 			{

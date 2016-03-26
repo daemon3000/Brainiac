@@ -34,14 +34,14 @@ namespace Brainiac
 			m_duration = new MemoryVar();
 		}
 
-		protected override void OnEnter(Agent agent)
+		protected override void OnEnter(AIController aiController)
 		{
 			m_startTime = Time.time;
 		}
 
-		protected override BehaviourNodeStatus OnExecute(Agent agent)
+		protected override BehaviourNodeStatus OnExecute(AIController aiController)
 		{
-			float duration = m_duration.AsFloat.HasValue ? m_duration.AsFloat.Value : m_duration.Evaluate<float>(agent.Memory, 0.0f);
+			float duration = m_duration.AsFloat.HasValue ? m_duration.AsFloat.Value : m_duration.Evaluate<float>(aiController.Memory, 0.0f);
 
 			if(Time.time < m_startTime + duration)
 				return BehaviourNodeStatus.Running;

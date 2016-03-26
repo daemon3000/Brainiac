@@ -11,12 +11,12 @@ namespace Brainiac
 
 		private int m_currentIteration;
 
-		protected override void OnEnter(Agent agent)
+		protected override void OnEnter(AIController aiController)
 		{
 			m_currentIteration = 0;
 		}
 
-		protected override BehaviourNodeStatus OnExecute(Agent agent)
+		protected override BehaviourNodeStatus OnExecute(AIController aiController)
 		{
 			BehaviourNodeStatus status = BehaviourNodeStatus.Success;
 
@@ -29,7 +29,7 @@ namespace Brainiac
 						m_child.OnReset();
 					}
 
-					status = m_child.Run(agent);
+					status = m_child.Run(aiController);
 					if(status == BehaviourNodeStatus.Success)
 					{
 						m_currentIteration++;

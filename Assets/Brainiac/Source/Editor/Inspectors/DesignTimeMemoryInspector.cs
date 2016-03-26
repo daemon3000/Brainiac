@@ -29,7 +29,7 @@ namespace BrainiacEditor
 			m_startMemory = serializedObject.FindProperty("m_startMemory");
 			m_plusButtonContent = new GUIContent(EditorGUIUtility.Load("ol plus.png") as Texture);
 			m_minusButtonContent = new GUIContent(EditorGUIUtility.Load("ol minus.png") as Texture);
-			m_itemValueContent = new GUIContent("Value");
+			m_itemValueContent = new GUIContent("");
 			m_itemToAdd = null;
 		}
 
@@ -108,8 +108,11 @@ namespace BrainiacEditor
 
 			GUI.BeginGroup(fieldRect);
 
-			EditorGUI.PropertyField(new Rect(0, 0, fieldRect.width, 16), name);
-			EditorGUI.PropertyField(new Rect(0, FIELD_HEIGHT, fieldRect.width, 16), value, m_itemValueContent);
+			EditorGUI.LabelField(new Rect(0, 0, 50, 16), "Name");
+			name.stringValue = EditorGUI.TextField(new Rect(50, 0, fieldRect.width - 50, 16), name.stringValue);
+
+			EditorGUI.LabelField(new Rect(0, FIELD_HEIGHT, 50, 16), "Value");
+			EditorGUI.PropertyField(new Rect(50, FIELD_HEIGHT, fieldRect.width - 50, 16), value, m_itemValueContent);
 
 			GUI.EndGroup();
 

@@ -1,7 +1,5 @@
-﻿using UnityEngine;
-using UnityEditor;
-using System;
-using System.Collections;
+﻿using UnityEditor;
+using System.Collections.Generic;
 using Brainiac;
 
 namespace BrainiacEditor
@@ -16,7 +14,11 @@ namespace BrainiacEditor
 			if(EditorApplication.isPlaying)
 			{
 				Memory memory = (Memory)target;
-				m_inspector = new PlayTimeMemoryInspector(memory.GetMemory());
+				IDictionary<string, object> dict = memory.GetMemory();
+				if(dict != null)
+				{
+					m_inspector = new PlayTimeMemoryInspector(memory.GetMemory());
+				}
 			}
 			else
 			{
@@ -26,8 +28,15 @@ namespace BrainiacEditor
 
 		public override void OnInspectorGUI()
 		{
-			BTEditorStyle.EnsureStyle();
-			m_inspector.DrawGUI();
+			if(m_inspector != null)
+			{
+				BTEditorStyle.EnsureStyle();
+				m_inspector.DrawGUI();
+			}
+			else
+			{
+				EditorGUILayout.HelpBox("There is no memory to display!", MessageType.Error);
+			}
 		}
 	}
 }

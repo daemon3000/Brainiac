@@ -17,19 +17,19 @@ namespace Brainiac
 			}
 		}
 
-		public override void OnAwake()
+		public override void OnStart(AIController aiController)
 		{
 			Status = BehaviourNodeStatus.None;
 			m_weights = new float[m_children.Count];
 
 			for(int i = 0; i < m_children.Count; i++)
 			{
-				m_children[i].OnAwake();
+				m_children[i].OnStart(aiController);
 				m_weights[i] = m_children[i].Weight;
 			}
 		}
 
-		protected override void OnEnter(Agent agent)
+		protected override void OnEnter(AIController aiController)
 		{
 			m_chosenChild = ChooseRandomChild();
 		}

@@ -54,7 +54,7 @@ namespace Brainiac
 			m_failOnTie = true;
 		}
 
-		protected override BehaviourNodeStatus OnExecute(Agent agent)
+		protected override BehaviourNodeStatus OnExecute(AIController aiController)
 		{
 			BehaviourNodeStatus status = BehaviourNodeStatus.Success;
 			int numberOfFailures = 0;
@@ -68,7 +68,7 @@ namespace Brainiac
 					BehaviourNodeStatus childStatus = m_children[i].Status;
 					if(childStatus == BehaviourNodeStatus.None || childStatus == BehaviourNodeStatus.Running)
 					{
-						childStatus = m_children[i].Run(agent);
+						childStatus = m_children[i].Run(aiController);
 					}
 
 					if(childStatus == BehaviourNodeStatus.Success)

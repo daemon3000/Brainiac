@@ -9,9 +9,9 @@ namespace Brainiac
 		[JsonMember("Child")]
 		protected BehaviourNode m_child;
 
-		public override void OnAwake()
+		public override void OnStart(AIController aiController)
 		{
-			m_child.OnAwake();
+			m_child.OnStart(aiController);
 		}
 
 		public override void OnReset()
