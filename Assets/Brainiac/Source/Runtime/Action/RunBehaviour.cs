@@ -44,6 +44,7 @@ namespace Brainiac
 				if(asset != null)
 				{
 					m_behaviourTree = asset.CreateRuntimeTree();
+					m_behaviourTree.Root.OnStart(aiController);
 				}
 			}
 			else

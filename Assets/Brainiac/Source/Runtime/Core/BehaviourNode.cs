@@ -12,6 +12,7 @@ namespace Brainiac
 		private Breakpoint m_breakpoint;
 		private BehaviourNodeStatus m_status;
 
+		[BTHideInInspector]
 		public Vector2 Position
 		{
 			get
@@ -24,6 +25,7 @@ namespace Brainiac
 			}
 		}
 
+		[BTHideInInspector]
 		public string Name
 		{
 			get
@@ -36,6 +38,7 @@ namespace Brainiac
 			}
 		}
 
+		[BTHideInInspector]
 		public string Description
 		{
 			get
@@ -48,6 +51,7 @@ namespace Brainiac
 			}
 		}
 
+		[BTHideInInspector]
 		public Breakpoint Breakpoint
 		{
 			get
@@ -59,7 +63,8 @@ namespace Brainiac
 				m_breakpoint = value;
 			}
 		}
-		
+
+		[BTHideInInspector]
 		public float Weight
 		{
 			get
@@ -72,13 +77,13 @@ namespace Brainiac
 			}
 		}
 
-		[JsonIgnore]
+		[BTIgnore]
 		public virtual string Title
 		{
 			get { return GetType().Name; }
 		}
 
-		[JsonIgnore]
+		[BTIgnore]
 		public BehaviourNodeStatus Status
 		{
 			get { return m_status; }

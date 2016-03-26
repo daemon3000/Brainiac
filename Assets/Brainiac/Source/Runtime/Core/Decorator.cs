@@ -6,7 +6,8 @@ namespace Brainiac
 {
 	public abstract class Decorator : BehaviourNode
 	{
-		[JsonMember("Child")]
+		[BTProperty("Child")]
+		[BTHideInInspector]
 		protected BehaviourNode m_child;
 
 		public override void OnStart(AIController aiController)

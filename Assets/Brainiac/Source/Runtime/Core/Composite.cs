@@ -6,10 +6,11 @@ namespace Brainiac
 {
 	public abstract class Composite : BehaviourNode
 	{
-		[JsonMember("Children")]
+		[BTProperty("Children")]
+		[BTHideInInspector]
 		protected List<BehaviourNode> m_children;
 
-		[JsonIgnore]
+		[BTIgnore]
 		public int ChildCount
 		{
 			get

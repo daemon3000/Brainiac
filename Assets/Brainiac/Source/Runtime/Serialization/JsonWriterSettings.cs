@@ -205,7 +205,7 @@ namespace Brainiac.Serialization
 		/// </remarks>
 		internal bool IsIgnored(Type objType, MemberInfo member, object obj)
 		{
-			if (JsonIgnoreAttribute.IsJsonIgnore(member))
+			if (BTIgnoreAttribute.IsJsonIgnore(member))
 			{
 				return true;
 			}
@@ -227,15 +227,15 @@ namespace Brainiac.Serialization
 			}*/
 
 			//If the class is specified as opt-in serialization only, members must have the JsonMember attribute
-			if (objType.GetCustomAttributes (typeof(JsonOptInAttribute),true).Length != 0) {
-				if (member.GetCustomAttributes(typeof(JsonMemberAttribute),true).Length == 0) {
+			if (objType.GetCustomAttributes (typeof(BTOptInAttribute),true).Length != 0) {
+				if (member.GetCustomAttributes(typeof(BTPropertyAttribute),true).Length == 0) {
 					return true;
 				}
 			}
 
 			if (UseXmlSerializationAttributes)
 			{
-				if (JsonIgnoreAttribute.IsXmlIgnore(member))
+				if (BTIgnoreAttribute.IsXmlIgnore(member))
 				{
 					return true;
 				}

@@ -5,10 +5,10 @@ namespace Brainiac
 {
 	public class BehaviourTree
 	{
-		[JsonMember("Root")]
+		[BTProperty("Root")]
 		private Root m_root;
 
-		[JsonIgnore]
+		[BTIgnore]
 		public Root Root
 		{
 			get
@@ -17,7 +17,7 @@ namespace Brainiac
 			}
 		}
 
-		[JsonIgnore]
+		[BTIgnore]
 		public bool ReadOnly { get; set; }
 
 		public BehaviourTree()

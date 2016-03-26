@@ -1,4 +1,5 @@
 using UnityEngine;
+using Brainiac.Serialization;
 
 namespace Brainiac
 {
@@ -12,8 +13,7 @@ namespace Brainiac
 	{
 		private LogLevel m_level;
 		private string m_message;
-
-		[BTProperty]
+		
 		public LogLevel Level
 		{
 			get
@@ -25,8 +25,7 @@ namespace Brainiac
 				m_level = value;
 			}
 		}
-
-		[BTProperty]
+		
 		public string Message
 		{
 			get

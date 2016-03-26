@@ -69,7 +69,8 @@ namespace Brainiac.Serialization
 
 		#region Properties
 
-		public static TP GetTypeInfo ( System.Type tp ) {
+		public static TP GetTypeInfo(System.Type tp)
+		{
 #if WINDOWS_STORE
 			return tp.GetTypeInfo ();
 #else
@@ -81,7 +82,7 @@ namespace Brainiac.Serialization
 		{
 			get
 			{
-				if (this.memberMapCache == null)
+				if(this.memberMapCache == null)
 				{
 					// instantiate space for cache
 					this.memberMapCache = new Dictionary<Type, Dictionary<string, MemberInfo>>();
@@ -125,7 +126,7 @@ namespace Brainiac.Serialization
 			out Type objectType,
 			out Dictionary<string, MemberInfo> memberMap)
 		{
-			if (String.IsNullOrEmpty(typeInfo))
+			if(String.IsNullOrEmpty(typeInfo))
 			{
 				objectType = null;
 				memberMap = null;
@@ -133,19 +134,22 @@ namespace Brainiac.Serialization
 			}
 
 			Type hintedType = Type.GetType(typeInfo, false);
-			if (Type.Equals (hintedType, null)) {
+			if(Type.Equals(hintedType, null))
+			{
 				objectType = null;
 				memberMap = null;
 				return result;
 			}
 
 			objectType = hintedType;
-			return InstantiateObject (objectType, out memberMap);
+			return InstantiateObject(objectType, out memberMap);
 		}
 
-		internal object ProcessTypeHint ( object result, string typeInfo, out Type objectType, out Dictionary<string, MemberInfo> memberMap ) {
+		internal object ProcessTypeHint(object result, string typeInfo, out Type objectType, out Dictionary<string, MemberInfo> memberMap)
+		{
 			Type hintedType = Type.GetType(typeInfo, false);
-			if (Type.Equals (hintedType, null)) {
+			if(Type.Equals(hintedType, null))
+			{
 				objectType = null;
 				memberMap = null;
 				return result;
@@ -153,12 +157,13 @@ namespace Brainiac.Serialization
 
 			objectType = hintedType;
 
-			if (result != null && Type.Equals (result.GetType (), hintedType)) {
+			if(result != null && Type.Equals(result.GetType(), hintedType))
+			{
 				memberMap = GetMemberMap(objectType);
 				return result;
 			}
 
-			return InstantiateObject (objectType, out memberMap);
+			return InstantiateObject(objectType, out memberMap);
 		}
 
 		internal Object InstantiateObject(Type objectType)
@@ -188,33 +193,36 @@ namespace Brainiac.Serialization
 				}
 				throw new JsonTypeCoercionException("Error instantiating " + objectType.FullName, ex);
 			}*/
-			return System.Activator.CreateInstance (objectType);
+			return System.Activator.CreateInstance(objectType);
 			//return result;
-			}
+		}
 
 		internal Object InstantiateObject(Type objectType, out Dictionary<string, MemberInfo> memberMap)
 		{
-			Object o = InstantiateObject (objectType);
-			memberMap = GetMemberMap (objectType);
-			
+			Object o = InstantiateObject(objectType);
+			memberMap = GetMemberMap(objectType);
+
 			return o;
 		}
 
 		/**
 		 * Dictionary from types to a list of (string,FieldInfo) pairs and a list of (string,PropertyInfo) pairs
 		 */
-		Dictionary<Type,KeyValuePair< KeyValuePair<string,FieldInfo>[] , KeyValuePair<string,PropertyInfo>[] >> writingMaps;
-		List<KeyValuePair<string,FieldInfo>> fieldList;
-		List<KeyValuePair<string,PropertyInfo>> propList;
+		Dictionary<Type, KeyValuePair<KeyValuePair<string, FieldInfo>[], KeyValuePair<string, PropertyInfo>[]>> writingMaps;
+		List<KeyValuePair<string, FieldInfo>> fieldList;
+		List<KeyValuePair<string, PropertyInfo>> propList;
 
-		public void GetMemberWritingMap (Type objectType, JsonWriterSettings settings, out KeyValuePair<string,FieldInfo>[] outFields, out KeyValuePair<string,PropertyInfo>[] outProps) {
+		public void GetMemberWritingMap(Type objectType, JsonWriterSettings settings, out KeyValuePair<string, FieldInfo>[] outFields, out KeyValuePair<string, PropertyInfo>[] outProps)
+		{
 
-			if ( writingMaps == null ) {
-				writingMaps = new Dictionary<Type,KeyValuePair< KeyValuePair<string,FieldInfo>[] , KeyValuePair<string,PropertyInfo>[] >> ();
+			if(writingMaps == null)
+			{
+				writingMaps = new Dictionary<Type, KeyValuePair<KeyValuePair<string, FieldInfo>[], KeyValuePair<string, PropertyInfo>[]>>();
 			}
 
-			KeyValuePair< KeyValuePair<string,FieldInfo>[] , KeyValuePair<string,PropertyInfo>[]> pair;
-			if (writingMaps.TryGetValue (objectType, out pair)) {
+			KeyValuePair<KeyValuePair<string, FieldInfo>[], KeyValuePair<string, PropertyInfo>[]> pair;
+			if(writingMaps.TryGetValue(objectType, out pair))
+			{
 				outFields = pair.Key;
 				outProps = pair.Value;
 				return;
@@ -224,67 +232,74 @@ namespace Brainiac.Serialization
 
 			Type tp = objectType;
 
-			if (fieldList == null)
-				fieldList = new List<KeyValuePair<string, FieldInfo>> ();
+			if(fieldList == null)
+				fieldList = new List<KeyValuePair<string, FieldInfo>>();
 
-			if (propList == null)
-				propList = new List<KeyValuePair<string, PropertyInfo>> ();
+			if(propList == null)
+				propList = new List<KeyValuePair<string, PropertyInfo>>();
 
-			fieldList.Clear ();
-			propList.Clear ();
+			fieldList.Clear();
+			propList.Clear();
 
-			while (tp != null) {
+			while(tp != null)
+			{
 
 				FieldInfo[] fields = tp.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
-				for (int j = 0; j < fields.Length; j++ )
+				for(int j = 0; j < fields.Length; j++)
 				{
 					FieldInfo field = fields[j];
 
-					if (field.IsStatic || (!field.IsPublic && field.GetCustomAttributes (typeof(JsonMemberAttribute), true).Length == 0)) {
+					if(field.IsStatic || (!field.IsPublic && field.GetCustomAttributes(typeof(BTPropertyAttribute), true).Length == 0))
+					{
 						//if (Settings.DebugMode)
-							//	Console.WriteLine ("Cannot serialize " + field.Name + " : not public or is static (and does not have a JsonMember attribute)");
+						//	Console.WriteLine ("Cannot serialize " + field.Name + " : not public or is static (and does not have a JsonMember attribute)");
 						continue;
 					}
 
-					if (settings.IsIgnored (objectType, field, null)) {
+					if(settings.IsIgnored(objectType, field, null))
+					{
 						//if (Settings.DebugMode)
 						//	Console.WriteLine ("Cannot serialize " + field.Name + " : ignored by settings");
 						continue;
 					}
 
 					// use Attributes here to control naming
-					string fieldName = JsonNameAttribute.GetJsonName (field);
-					if (String.IsNullOrEmpty (fieldName))
+					string fieldName = BTPropertyAttribute.GetPropertyName(field);
+					if(String.IsNullOrEmpty(fieldName))
 						fieldName = field.Name;
 
-					fieldList.Add (new KeyValuePair<string, FieldInfo> (fieldName, field));
+					fieldList.Add(new KeyValuePair<string, FieldInfo>(fieldName, field));
 				}
 
 				PropertyInfo[] properties = tp.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
-				for (int j = 0; j < properties.Length; j++ )
+				for(int j = 0; j < properties.Length; j++)
 				{
-					PropertyInfo property  = properties[j];
+					PropertyInfo property = properties[j];
 
 					//Console.WriteLine (property.Name);
-					if (!property.CanRead) {
+					if(!property.CanRead)
+					{
 						//if (Settings.DebugMode)
 						//	Console.WriteLine ("Cannot serialize "+property.Name+" : cannot read");
 						continue;
 					}
 
-					if (!property.CanWrite && !anonymousType) {
+					if(!property.CanWrite && !anonymousType)
+					{
 						//if (Settings.DebugMode)
 						//	Console.WriteLine ("Cannot serialize "+property.Name+" : cannot write");
 						continue;
 					}
 
-					if (settings.IsIgnored(objectType, property, null)) {
+					if(settings.IsIgnored(objectType, property, null))
+					{
 						//if (Settings.DebugMode)
 						//	Console.WriteLine ("Cannot serialize "+property.Name+" : is ignored by settings");
 						continue;
 					}
 
-					if (property.GetIndexParameters ().Length != 0) {
+					if(property.GetIndexParameters().Length != 0)
+					{
 						//if (Settings.DebugMode)
 						//	Console.WriteLine ("Cannot serialize "+property.Name+" : is indexed");
 						continue;
@@ -292,11 +307,11 @@ namespace Brainiac.Serialization
 
 
 					// use Attributes here to control naming
-					string propertyName = JsonNameAttribute.GetJsonName(property);
-					if (String.IsNullOrEmpty(propertyName))
+					string propertyName = BTPropertyAttribute.GetPropertyName(property);
+					if(String.IsNullOrEmpty(propertyName))
 						propertyName = property.Name;
 
-					propList.Add ( new KeyValuePair<string, PropertyInfo>(propertyName, property));
+					propList.Add(new KeyValuePair<string, PropertyInfo>(propertyName, property));
 				}
 
 				tp = tp.BaseType;
@@ -305,7 +320,7 @@ namespace Brainiac.Serialization
 			outFields = fieldList.ToArray();
 			outProps = propList.ToArray();
 
-			pair = new KeyValuePair< KeyValuePair<string,FieldInfo>[] , KeyValuePair<string,PropertyInfo>[]> ( outFields, outProps );
+			pair = new KeyValuePair<KeyValuePair<string, FieldInfo>[], KeyValuePair<string, PropertyInfo>[]>(outFields, outProps);
 
 			writingMaps[objectType] = pair;
 		}
@@ -313,9 +328,10 @@ namespace Brainiac.Serialization
 		/** Returns a member map if suitable for the object type.
 		 * Dictionary types will make this method return null
 		 */
-		public Dictionary<string, MemberInfo> GetMemberMap (Type objectType) {
+		public Dictionary<string, MemberInfo> GetMemberMap(Type objectType)
+		{
 			// don't incurr the cost of member map for dictionaries
-			if (TCU.GetTypeInfo(typeof(IDictionary)).IsAssignableFrom(TCU.GetTypeInfo(objectType)))
+			if(TCU.GetTypeInfo(typeof(IDictionary)).IsAssignableFrom(TCU.GetTypeInfo(objectType)))
 			{
 				return null;
 			}
@@ -324,14 +340,14 @@ namespace Brainiac.Serialization
 				return this.CreateMemberMap(objectType);
 			}
 		}
-		
+
 		/** Creates a member map for the type */
 		private Dictionary<string, MemberInfo> CreateMemberMap(Type objectType)
 		{
 
 			Dictionary<string, MemberInfo> memberMap;
 
-			if (this.MemberMapCache.TryGetValue(objectType, out memberMap))
+			if(this.MemberMapCache.TryGetValue(objectType, out memberMap))
 			{
 				// map was stored in cache
 				return memberMap;
@@ -342,49 +358,60 @@ namespace Brainiac.Serialization
 
 			// load properties into property map
 			Type tp = objectType;
-			while (tp != null) {
-				PropertyInfo[] properties = TCU.GetTypeInfo(tp).GetProperties( BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance );
-				for  ( int i = 0 ; i < properties.Length; i++ )
+			while(tp != null)
+			{
+				PropertyInfo[] properties = TCU.GetTypeInfo(tp).GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+				for(int i = 0; i < properties.Length; i++)
 				{
-					PropertyInfo info = properties [i];
-					if (!info.CanRead || !info.CanWrite) {
+					PropertyInfo info = properties[i];
+					if(!info.CanRead || !info.CanWrite)
+					{
 						continue;
 					}
 
-					if (JsonIgnoreAttribute.IsJsonIgnore (info)) {
+					if(BTIgnoreAttribute.IsJsonIgnore(info))
+					{
 						continue;
 					}
 
-					string jsonName = JsonNameAttribute.GetJsonName (info);
-					if (String.IsNullOrEmpty (jsonName)) {
+					string jsonName = BTPropertyAttribute.GetPropertyName(info);
+					if(String.IsNullOrEmpty(jsonName))
+					{
 						memberMap[info.Name] = info;
-					} else {
+					}
+					else
+					{
 						memberMap[jsonName] = info;
 					}
 				}
 
 				// load public fields into property map
-				FieldInfo[] fields = TCU.GetTypeInfo(tp).GetFields( BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance );
-				foreach (FieldInfo info in fields)
+				FieldInfo[] fields = TCU.GetTypeInfo(tp).GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+				foreach(FieldInfo info in fields)
 				{
-					if (!info.IsPublic && 
-	#if WINDOWS_STORE
+					if(!info.IsPublic &&
+#if WINDOWS_STORE
 						info.GetCustomAttribute<JsonMemberAttribute>(false) == null
-	#else
-						info.GetCustomAttributes(typeof(JsonMemberAttribute), false).Length == 0
-	#endif
-					) {
-						continue;
-					}
-						
-					if (JsonIgnoreAttribute.IsJsonIgnore (info)) {
+#else
+						info.GetCustomAttributes(typeof(BTPropertyAttribute), false).Length == 0
+#endif
+					)
+					{
 						continue;
 					}
 
-					string jsonName = JsonNameAttribute.GetJsonName (info);
-					if (String.IsNullOrEmpty (jsonName)) {
+					if(BTIgnoreAttribute.IsJsonIgnore(info))
+					{
+						continue;
+					}
+
+					string jsonName = BTPropertyAttribute.GetPropertyName(info);
+					if(String.IsNullOrEmpty(jsonName))
+					{
 						memberMap[info.Name] = info;
-					} else {
+					}
+					else
+					{
 						memberMap[jsonName] = info;
 					}
 				}
@@ -404,18 +431,18 @@ namespace Brainiac.Serialization
 			out MemberInfo memberInfo)
 		{
 
-			if (memberMap != null &&
+			if(memberMap != null &&
 				memberMap.TryGetValue(memberName, out memberInfo))
 			{
 				// Check properties for object member
 				//memberInfo = memberMap[memberName];
 
-				if (memberInfo is PropertyInfo)
+				if(memberInfo is PropertyInfo)
 				{
 					// maps to public property
 					return ((PropertyInfo)memberInfo).PropertyType;
 				}
-				else if (memberInfo is FieldInfo)
+				else if(memberInfo is FieldInfo)
 				{
 					// maps to public field
 					return ((FieldInfo)memberInfo).FieldType;
@@ -435,7 +462,7 @@ namespace Brainiac.Serialization
 		/// <param name="value"></param>
 		internal void SetMemberValue(Object result, Type memberType, MemberInfo memberInfo, object value)
 		{
-			if (memberInfo is PropertyInfo)
+			if(memberInfo is PropertyInfo)
 			{
 				// set value of public property
 				((PropertyInfo)memberInfo).SetValue(
@@ -443,7 +470,7 @@ namespace Brainiac.Serialization
 					this.CoerceType(memberType, value),
 					null);
 			}
-			else if (memberInfo is FieldInfo)
+			else if(memberInfo is FieldInfo)
 			{
 				// set value of public field
 				((FieldInfo)memberInfo).SetValue(
@@ -461,44 +488,44 @@ namespace Brainiac.Serialization
 		internal object CoerceType(Type targetType, object value)
 		{
 			bool isNullable = TypeCoercionUtility.IsNullable(targetType);
-			if (value == null)
+			if(value == null)
 			{
-				if (!allowNullValueTypes &&
+				if(!allowNullValueTypes &&
 					TCU.GetTypeInfo(targetType).IsValueType &&
 					!isNullable)
 				{
-					throw new JsonTypeCoercionException(String.Format(TypeCoercionUtility.ErrorNullValueType, new System.Object[] {targetType.FullName}));
+					throw new JsonTypeCoercionException(String.Format(TypeCoercionUtility.ErrorNullValueType, new System.Object[] { targetType.FullName }));
 				}
 				return value;
 			}
 
-			if (isNullable)
+			if(isNullable)
 			{
 				// nullable types have a real underlying struct
 				Type[] genericArgs = targetType.GetGenericArguments();
-				if (genericArgs.Length == 1)
+				if(genericArgs.Length == 1)
 				{
 					targetType = genericArgs[0];
 				}
 			}
 
 			Type actualType = value.GetType();
-			if (TCU.GetTypeInfo(targetType).IsAssignableFrom(TCU.GetTypeInfo(actualType)))
+			if(TCU.GetTypeInfo(targetType).IsAssignableFrom(TCU.GetTypeInfo(actualType)))
 			{
 				return value;
 			}
 
-			if (TCU.GetTypeInfo(targetType).IsEnum)
+			if(TCU.GetTypeInfo(targetType).IsEnum)
 			{
-				if (value is String)
+				if(value is String)
 				{
-					if (!Enum.IsDefined(targetType, value))
+					if(!Enum.IsDefined(targetType, value))
 					{
 						// if isn't a defined value perhaps it is the JsonName
-						foreach (FieldInfo field in TCU.GetTypeInfo(targetType).GetFields())
+						foreach(FieldInfo field in TCU.GetTypeInfo(targetType).GetFields())
 						{
-							string jsonName = JsonNameAttribute.GetJsonName(field);
-							if (((string)value).Equals(jsonName))
+							string jsonName = BTPropertyAttribute.GetPropertyName(field);
+							if(((string)value).Equals(jsonName))
 							{
 								value = field.Name;
 								break;
@@ -522,59 +549,73 @@ namespace Brainiac.Serialization
 			// for which there is no type info for (e.g the field has been removed), that data would have been
 			// deserialized as an IDictionary, but when the tag gets the information it will try to coerce it
 			// which will often fail horribly
-			if (value is IDictionary) {
+			if(value is IDictionary)
+			{
 				return null;
 				// Dictionary<string, MemberInfo> memberMap;
 				// return this.CoerceType(targetType, (IDictionary)value, out memberMap);
 			}
 
-			if (TCU.GetTypeInfo(typeof(IEnumerable)).IsAssignableFrom(TCU.GetTypeInfo(targetType)) &&
+			if(TCU.GetTypeInfo(typeof(IEnumerable)).IsAssignableFrom(TCU.GetTypeInfo(targetType)) &&
 				TCU.GetTypeInfo(typeof(IEnumerable)).IsAssignableFrom(TCU.GetTypeInfo(actualType)))
 			{
 				return this.CoerceList(targetType, actualType, (IEnumerable)value);
 			}
 
-			if (value is String)
+			if(value is String)
 			{
-				if (Type.Equals (targetType, typeof(DateTime))) {
+				if(Type.Equals(targetType, typeof(DateTime)))
+				{
 					DateTime date;
-					if (DateTime.TryParse(
+					if(DateTime.TryParse(
 						(string)value,
 						DateTimeFormatInfo.InvariantInfo,
 						DateTimeStyles.RoundtripKind | DateTimeStyles.AllowWhiteSpaces | DateTimeStyles.NoCurrentDateDefault,
-						    out date)) {
+							out date))
+					{
 						return date;
 					}
-				} else if (Type.Equals (targetType, typeof(Guid))) {
+				}
+				else if(Type.Equals(targetType, typeof(Guid)))
+				{
 					// try-catch is pointless since will throw upon generic conversion
 					return new Guid((string)value);
-				} else if (Type.Equals (targetType, typeof(Char))) {
-					if (((string)value).Length == 1) {
+				}
+				else if(Type.Equals(targetType, typeof(Char)))
+				{
+					if(((string)value).Length == 1)
+					{
 						return ((string)value)[0];
 					}
-				} else if (Equals (targetType, typeof(Uri))) {
+				}
+				else if(Equals(targetType, typeof(Uri)))
+				{
 					Uri uri;
-					if (Uri.TryCreate ((string)value, UriKind.RelativeOrAbsolute, out uri)) {
+					if(Uri.TryCreate((string)value, UriKind.RelativeOrAbsolute, out uri))
+					{
 						return uri;
 					}
-				} else if (Type.Equals (targetType, typeof(Version))) {
+				}
+				else if(Type.Equals(targetType, typeof(Version)))
+				{
 					// try-catch is pointless since will throw upon generic conversion
-					return new Version ((string)value);
+					return new Version((string)value);
 				}
 			}
-			else if (Type.Equals (targetType, typeof(TimeSpan))) {
-				return new TimeSpan ((long)this.CoerceType (typeof(Int64), value));
+			else if(Type.Equals(targetType, typeof(TimeSpan)))
+			{
+				return new TimeSpan((long)this.CoerceType(typeof(Int64), value));
 			}
 
 #if !WINPHONE_8
 			TypeConverter converter = TypeDescriptor.GetConverter(targetType);
-			if (converter.CanConvertFrom(actualType))
+			if(converter.CanConvertFrom(actualType))
 			{
 				return converter.ConvertFrom(value);
 			}
 
 			converter = TypeDescriptor.GetConverter(actualType);
-			if (converter.CanConvertTo(targetType))
+			if(converter.CanConvertTo(targetType))
 			{
 				return converter.ConvertTo(value, targetType);
 			}
@@ -585,20 +626,20 @@ namespace Brainiac.Serialization
 				// fall back to basics
 				return Convert.ChangeType(value, targetType);
 			}
-			catch (Exception ex)
+			catch(Exception ex)
 			{
 				throw new JsonTypeCoercionException(
-					String.Format("Error converting {0} to {1}", new System.Object[] {value.GetType().FullName, targetType.FullName}), ex);
+					String.Format("Error converting {0} to {1}", new System.Object[] { value.GetType().FullName, targetType.FullName }), ex);
 			}
 		}
 
 		private object CoerceType(Type targetType, IDictionary value, out Dictionary<string, MemberInfo> memberMap)
 		{
 			object newValue = this.InstantiateObject(targetType, out memberMap);
-			if (memberMap != null)
+			if(memberMap != null)
 			{
 				// copy any values into new object
-				foreach (object key in value.Keys)
+				foreach(object key in value.Keys)
 				{
 					MemberInfo memberInfo;
 					Type memberType = TypeCoercionUtility.GetMemberInfo(memberMap, key as String, out memberInfo);
@@ -610,7 +651,7 @@ namespace Brainiac.Serialization
 
 		private object CoerceList(Type targetType, Type arrayType, IEnumerable value)
 		{
-			if (targetType.IsArray)
+			if(targetType.IsArray)
 			{
 				return this.CoerceArray(targetType.GetElementType(), value);
 			}
@@ -624,17 +665,17 @@ namespace Brainiac.Serialization
 			// a compatible match.
 			ConstructorInfo[] ctors = targetType.GetConstructors();
 			ConstructorInfo defaultCtor = null;
-			foreach (ConstructorInfo ctor in ctors)
+			foreach(ConstructorInfo ctor in ctors)
 			{
 				ParameterInfo[] paramList = ctor.GetParameters();
-				if (paramList.Length == 0)
+				if(paramList.Length == 0)
 				{
 					// save for in case cannot find closer match
 					defaultCtor = ctor;
 					continue;
 				}
 
-				if (paramList.Length == 1 &&
+				if(paramList.Length == 1 &&
 					TCU.GetTypeInfo(paramList[0].ParameterType).IsAssignableFrom(TCU.GetTypeInfo(arrayType)))
 				{
 					try
@@ -652,9 +693,10 @@ namespace Brainiac.Serialization
 				}
 			}
 
-			if (ConstructorInfo.Equals (defaultCtor, null)) {
-				throw new JsonTypeCoercionException (
-					String.Format (TypeCoercionUtility.ErrorDefaultCtor, new System.Object[] { targetType.FullName }));
+			if(ConstructorInfo.Equals(defaultCtor, null))
+			{
+				throw new JsonTypeCoercionException(
+					String.Format(TypeCoercionUtility.ErrorDefaultCtor, new System.Object[] { targetType.FullName }));
 			}
 			object collection;
 			try
@@ -662,9 +704,9 @@ namespace Brainiac.Serialization
 				// always try-catch Invoke() to expose real exception
 				collection = defaultCtor.Invoke(null);
 			}
-			catch (TargetInvocationException ex)
+			catch(TargetInvocationException ex)
 			{
-				if (ex.InnerException != null)
+				if(ex.InnerException != null)
 				{
 					throw new JsonTypeCoercionException(ex.InnerException.Message, ex.InnerException);
 				}
@@ -673,19 +715,19 @@ namespace Brainiac.Serialization
 
 			// many ICollection types have an AddRange method
 			// which adds all items at once
-			#if WINDOWS_STORE
+#if WINDOWS_STORE
 			/** \todo Not sure if this finds the correct methods */
 			MethodInfo method = TCU.GetTypeInfo(targetType).GetDeclaredMethod("AddRange");
-			#else
+#else
 			MethodInfo method = TCU.GetTypeInfo(targetType).GetMethod("AddRange");
-			#endif
+#endif
 
-			ParameterInfo[] parameters = (MethodInfo.Equals (method, null)) ?
+			ParameterInfo[] parameters = (MethodInfo.Equals(method, null)) ?
 					null : method.GetParameters();
 			Type paramType = (parameters == null || parameters.Length != 1) ?
 					null : parameters[0].ParameterType;
-			if (!Type.Equals (paramType, null) &&
-				TCU.GetTypeInfo(paramType).IsAssignableFrom (TCU.GetTypeInfo(arrayType)))
+			if(!Type.Equals(paramType, null) &&
+				TCU.GetTypeInfo(paramType).IsAssignableFrom(TCU.GetTypeInfo(arrayType)))
 			{
 				try
 				{
@@ -695,9 +737,9 @@ namespace Brainiac.Serialization
 						collection,
 						new object[] { value });
 				}
-				catch (TargetInvocationException ex)
+				catch(TargetInvocationException ex)
 				{
-					if (ex.InnerException != null)
+					if(ex.InnerException != null)
 					{
 						throw new JsonTypeCoercionException(ex.InnerException.Message, ex.InnerException);
 					}
@@ -715,22 +757,28 @@ namespace Brainiac.Serialization
 #else
 				method = TCU.GetTypeInfo(targetType).GetMethod("Add");
 #endif
-				parameters = (MethodInfo.Equals (method, null)) ?
+				parameters = (MethodInfo.Equals(method, null)) ?
 						null : method.GetParameters();
 				paramType = (parameters == null || parameters.Length != 1) ?
 						null : parameters[0].ParameterType;
-				if (!Type.Equals (paramType, null)) {
+				if(!Type.Equals(paramType, null))
+				{
 					// loop through adding items to collection
-					foreach (object item in value) {
-						try {
+					foreach(object item in value)
+					{
+						try
+						{
 							// always try-catch Invoke() to expose real exception
-							method.Invoke (
+							method.Invoke(
 								collection,
 								new object[] {
 									this.CoerceType (paramType, item)
 								});
-						} catch (TargetInvocationException ex) {
-							if (ex.InnerException != null) {
+						}
+						catch(TargetInvocationException ex)
+						{
+							if(ex.InnerException != null)
+							{
 								throw new JsonTypeCoercionException(ex.InnerException.Message, ex.InnerException);
 							}
 							throw new JsonTypeCoercionException("Error calling Add on " + targetType.FullName, ex);
@@ -745,9 +793,9 @@ namespace Brainiac.Serialization
 				// fall back to basics
 				return Convert.ChangeType(value, targetType);
 			}
-			catch (Exception ex)
+			catch(Exception ex)
 			{
-				throw new JsonTypeCoercionException(String.Format("Error converting {0} to {1}", new System.Object[] {value.GetType().FullName, targetType.FullName}), ex);
+				throw new JsonTypeCoercionException(String.Format("Error converting {0} to {1}", new System.Object[] { value.GetType().FullName, targetType.FullName }), ex);
 			}
 		}
 
@@ -763,7 +811,7 @@ namespace Brainiac.Serialization
 			//Array arr = Array.CreateInstance (elementType, new int[] {count});
 
 			//int i=0;
-			foreach (object item in value)
+			foreach(object item in value)
 			{
 				target.Add(this.CoerceType(elementType, item));
 				//arr.SetValue ( this.CoerceType(elementType, item), new int[] {i} );
@@ -776,15 +824,16 @@ namespace Brainiac.Serialization
 
 		private static bool IsNullable(Type type)
 		{
-			return TCU.GetTypeInfo(type).IsGenericType && (typeof(Nullable<>).Equals (type.GetGenericTypeDefinition()));
+			return TCU.GetTypeInfo(type).IsGenericType && (typeof(Nullable<>).Equals(type.GetGenericTypeDefinition()));
 		}
 
 
-		public static bool HasJsonUseTypeHintAttribute ( TP tp ) {
+		public static bool HasJsonUseTypeHintAttribute(TP tp)
+		{
 #if WINDOWS_STORE
 			return tp.GetCustomAttribute<JsonUseTypeHintAttribute> (true) != null;
 #else
-			return tp.GetCustomAttributes(typeof(JsonUseTypeHintAttribute),true).Length != 0;
+			return tp.GetCustomAttributes(typeof(BTUseTypeHintAttribute), true).Length != 0;
 #endif
 		}
 

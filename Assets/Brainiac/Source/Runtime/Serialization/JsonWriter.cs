@@ -752,7 +752,7 @@ namespace Brainiac.Serialization
 				string[] flagNames = new string[flags.Length];
 				for (int i=0; i<flags.Length; i++)
 				{
-					flagNames[i] = JsonNameAttribute.GetJsonName(flags[i]);
+					flagNames[i] = BTPropertyAttribute.GetPropertyName(flags[i]);
 					if (String.IsNullOrEmpty(flagNames[i]))
 					{
 						flagNames[i] = flags[i].ToString("f");
@@ -762,7 +762,7 @@ namespace Brainiac.Serialization
 			}
 			else
 			{
-				enumName = JsonNameAttribute.GetJsonName(value);
+				enumName = BTPropertyAttribute.GetPropertyName(value);
 				if (String.IsNullOrEmpty(enumName))
 				{
 					enumName = value.ToString("f");

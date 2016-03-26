@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Brainiac;
+using Brainiac.Serialization;
 
 namespace BrainiacEditor
 {
@@ -33,6 +34,7 @@ namespace BrainiacEditor
 
 		protected void DrawHeader()
 		{
+			EditorGUILayout.LabelField(m_target.Title, EditorStyles.boldLabel);
 			m_target.Name = EditorGUILayout.TextField("Name", m_target.Name);
 			EditorGUILayout.LabelField("Description");
 			m_target.Description = EditorGUILayout.TextArea(m_target.Description, BTEditorStyle.MultilineTextArea);
@@ -53,13 +55,19 @@ namespace BrainiacEditor
 
 			foreach(var field in fields)
 			{
-				object[] attributes = field.GetCustomAttributes(typeof(BTPropertyAttribute), true);
-				if(attributes.Length == 0)
+				BTPropertyAttribute propertyAttribute = Attribute.GetCustomAttribute(field, typeof(BTPropertyAttribute)) as BTPropertyAttribute;
+				BTIgnoreAttribute ignoreAttribute = Attribute.GetCustomAttribute(field, typeof(BTIgnoreAttribute)) as BTIgnoreAttribute;
+				BTHideInInspectorAttribute hideAttribute = Attribute.GetCustomAttribute(field, typeof(BTHideInInspectorAttribute)) as BTHideInInspectorAttribute;
+
+				if(ignoreAttribute != null || hideAttribute != null || (propertyAttribute == null && field.IsPrivate))
 					continue;
 
-				BTPropertyAttribute attribute = attributes[0] as BTPropertyAttribute;
-				string label = string.IsNullOrEmpty(attribute.PropertyName) ? field.Name : attribute.PropertyName;
-				
+				string label = field.Name;
+				if(propertyAttribute != null && !string.IsNullOrEmpty(propertyAttribute.PropertyName))
+				{
+					label = propertyAttribute.PropertyName;
+				}
+
 				if(field.FieldType == typeof(MemoryVar))
 				{
 					DrawMemoryVarField(label, (MemoryVar)field.GetValue(m_target));
@@ -75,13 +83,20 @@ namespace BrainiacEditor
 			}
 			foreach(var property in properties)
 			{
-				object[] attributes = property.GetCustomAttributes(typeof(BTPropertyAttribute), true);
-				if(attributes.Length == 0)
+				BTPropertyAttribute propertyAttribute = Attribute.GetCustomAttribute(property, typeof(BTPropertyAttribute)) as BTPropertyAttribute;
+				BTIgnoreAttribute ignoreAttribute = Attribute.GetCustomAttribute(property, typeof(BTIgnoreAttribute)) as BTIgnoreAttribute;
+				BTHideInInspectorAttribute hideAttribute = Attribute.GetCustomAttribute(property, typeof(BTHideInInspectorAttribute)) as BTHideInInspectorAttribute;
+				var setterMethod = property.GetSetMethod(true);
+
+				if(setterMethod == null || ignoreAttribute != null || hideAttribute != null || (propertyAttribute == null && setterMethod.IsPrivate))
 					continue;
 
-				BTPropertyAttribute attribute = attributes[0] as BTPropertyAttribute;
-				string label = string.IsNullOrEmpty(attribute.PropertyName) ? property.Name : attribute.PropertyName;
-				
+				string label = property.Name;
+				if(propertyAttribute != null && !string.IsNullOrEmpty(propertyAttribute.PropertyName))
+				{
+					label = propertyAttribute.PropertyName;
+				}
+
 				if(property.PropertyType == typeof(MemoryVar))
 				{
 					DrawMemoryVarField(label, (MemoryVar)property.GetValue(m_target, null));

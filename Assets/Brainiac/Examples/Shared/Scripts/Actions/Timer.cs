@@ -6,13 +6,12 @@ namespace Brainiac
 	[AddNodeMenu("Action/Timer")]
 	public class Timer : Action
 	{
-		[JsonMember("Duration")]
 		[BTProperty("Duration")]
 		private MemoryVar m_duration;
 
 		private float m_startTime;
 
-		[JsonIgnore]
+		[BTIgnore]
 		public MemoryVar Duration
 		{
 			get

@@ -6,17 +6,17 @@ namespace Brainiac.Serialization
 	 * declare every member that should be serialized with the JsonMemberAttribute.
 	 * \see JsonMemberAttribute
 	 */
-	public class JsonOptInAttribute : Attribute
+	public class BTOptInAttribute : Attribute
 	{
-		public JsonOptInAttribute ()
+		public BTOptInAttribute ()
 		{
 			
 		}
 	}
 
-	public class JsonUseTypeHintAttribute : Attribute
+	public class BTUseTypeHintAttribute : Attribute
 	{
-		public JsonUseTypeHintAttribute () {}
+		public BTUseTypeHintAttribute () {}
 	}
 }
 
