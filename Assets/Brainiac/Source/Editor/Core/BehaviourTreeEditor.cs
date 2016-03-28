@@ -309,6 +309,7 @@ namespace BrainiacEditor
 			else
 			{
 				menu.AddItem(new GUIContent("Save"), false, SaveBehaviourTree);
+				AssetDatabase.SaveAssets();
 			}
 
 			menu.AddSeparator("");

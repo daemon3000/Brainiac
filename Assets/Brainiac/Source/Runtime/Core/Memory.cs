@@ -31,15 +31,18 @@ namespace Brainiac
 			}
 		}
 
-		public object GetItem(string name)
+		public object GetItem(string name, object defValue = null)
 		{
-			object value = null;
-			if(m_globalMemory.TryGetValue(name, out value))
+			if(!string.IsNullOrEmpty(name))
 			{
-				return value;
+				object value = null;
+				if(m_globalMemory.TryGetValue(name, out value))
+				{
+					return value;
+				}
 			}
 			
-			return null;
+			return defValue;
 		}
 
 		public T GetItem<T>(string name, T defaultValue)

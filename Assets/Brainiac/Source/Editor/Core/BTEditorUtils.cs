@@ -117,10 +117,16 @@ namespace BrainiacEditor
 				if(targetNode.Node is Root)
 				{
 					menu.AddDisabledItem(new GUIContent("Copy"));
+					menu.AddDisabledItem(new GUIContent("Cut"));
 				}
 				else
 				{
 					menu.AddItem(new GUIContent("Copy"), false, () => targetNode.Graph.OnCopyNode(targetNode));
+					menu.AddItem(new GUIContent("Cut"), false, () =>
+					{
+						targetNode.Graph.OnCopyNode(targetNode);
+						targetNode.Graph.OnNodeDelete(targetNode);
+					});
 				}
 
 				if(targetNode.Graph.CanPaste(targetNode))
