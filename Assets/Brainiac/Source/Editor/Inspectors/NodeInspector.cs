@@ -36,8 +36,8 @@ namespace BrainiacEditor
 		{
 			EditorGUILayout.LabelField(m_target.Title, EditorStyles.boldLabel);
 			m_target.Name = EditorGUILayout.TextField("Name", m_target.Name);
-			EditorGUILayout.LabelField("Description");
-			m_target.Description = EditorGUILayout.TextArea(m_target.Description, BTEditorStyle.MultilineTextArea);
+			EditorGUILayout.LabelField("Comment");
+			m_target.Comment = EditorGUILayout.TextArea(m_target.Comment, BTEditorStyle.MultilineTextArea);
 
 			EditorGUILayout.Space();
 			m_target.Weight = EditorGUILayout.Slider("Random Weight", m_target.Weight, 0.0f, 1.0f);

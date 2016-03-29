@@ -129,7 +129,7 @@ namespace BrainiacEditor
 					{
 						if(!ReadOnly)
 						{
-							GenericMenu menu = BTEditorUtils.CreateGraphContextMenu();
+							GenericMenu menu = BTEditorUtils.CreateGraphContextMenu(this);
 							menu.DropDown(new Rect(BTEditorCanvas.Current.Event.mousePosition, Vector2.zero));
 
 							BTEditorCanvas.Current.Event.Use();

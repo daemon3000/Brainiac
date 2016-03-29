@@ -2,8 +2,8 @@
 
 namespace Brainiac
 {
-	[AddNodeMenu("Action/Yield")]
-	public class Yield : Action
+	[AddNodeMenu("Action/Yield One Frame")]
+	public class YieldOneFrame : Action
 	{
 		private bool m_canYield;
 
@@ -11,7 +11,7 @@ namespace Brainiac
 		{
 			get
 			{
-				return "Yield";
+				return "Yield One Frame";
 			}
 		}
 

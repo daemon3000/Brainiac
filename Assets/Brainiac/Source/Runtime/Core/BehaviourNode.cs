@@ -6,7 +6,7 @@ namespace Brainiac
 	public abstract class BehaviourNode
 	{
 		private Vector2 m_position;
-		private string m_description;
+		private string m_comment;
 		private string m_name;
 		private float m_weight;
 		private Breakpoint m_breakpoint;
@@ -39,15 +39,15 @@ namespace Brainiac
 		}
 
 		[BTHideInInspector]
-		public string Description
+		public string Comment
 		{
 			get
 			{
-				return m_description;
+				return m_comment;
 			}
 			set
 			{
-				m_description = value;
+				m_comment = value;
 			}
 		}
 

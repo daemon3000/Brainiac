@@ -202,7 +202,7 @@ namespace BrainiacEditor
 			return menu;
 		}
 
-		public static GenericMenu CreateGraphContextMenu()
+		public static GenericMenu CreateGraphContextMenu(BTEditorGraph graph)
 		{
 			GenericMenu menu = new GenericMenu();
 
@@ -225,6 +225,9 @@ namespace BrainiacEditor
 			{
 				menu.AddDisabledItem(new GUIContent("Redo"));
 			}
+
+			menu.AddSeparator("");
+			menu.AddItem(new GUIContent("Select All"), false, () => graph.SelectEntireGraph());
 
 			return menu;
 		}
