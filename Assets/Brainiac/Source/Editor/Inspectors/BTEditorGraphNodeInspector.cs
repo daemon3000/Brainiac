@@ -13,16 +13,10 @@ namespace BrainiacEditor
 		private void OnEnable()
 		{
 			m_graphNode = (BTEditorGraphNode)target;
-			if(m_graphNode != null && m_graphNode.Node != null)
-			{
-				Type inspectorType = BTEditorUtils.GetInspectorTypeForNode(m_graphNode.Node.GetType());
-				m_nodeInspector = Activator.CreateInstance(inspectorType) as NodeInspector;
-				m_nodeInspector.SetTarget(m_graphNode.Node);
-			}
+			if(m_graphNode != null)
+				m_nodeInspector = BTNodeInspectorFactory.CreateInspectorForNode(m_graphNode.Node);
 			else
-			{
 				m_nodeInspector = null;
-			}
 		}
 
 		public override void OnInspectorGUI()

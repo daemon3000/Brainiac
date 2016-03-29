@@ -169,15 +169,27 @@ namespace BrainiacEditor
 
 		public static void EnsureStyle()
 		{
+			LoadEditorSkin();
+			LoadTextures();
+			CreateNodeStyles();
+			CreateGUIStyles();
+		}
+
+		private static void LoadEditorSkin()
+		{
 			if(m_editorSkin == null)
 			{
 				m_editorSkin = Resources.Load<GUISkin>("Brainiac/editor_style");
 			}
+		}
 
+		private static void LoadTextures()
+		{
 			if(m_arrowUp == null)
 			{
 				m_arrowUp = Resources.Load<Texture>("Brainiac/arrow_2_up");
 			}
+
 			if(m_arrowDown == null)
 			{
 				m_arrowDown = Resources.Load<Texture>("Brainiac/arrow_2_down");
@@ -192,15 +204,19 @@ namespace BrainiacEditor
 			{
 				m_optionsIcon = Resources.Load<Texture>("Brainiac/options_icon");
 			}
+		}
 
+		private static void CreateNodeStyles()
+		{
 			if(m_compositeStyle == null)
 			{
 				m_compositeStyle = new BTGraphNodeStyle("flow node hex 1", "flow node hex 1 on",
 														"flow node hex 6", "flow node hex 6 on",
 														"flow node hex 4", "flow node hex 4 on",
-														"flow node hex 3", "flow node hex 3 on", 
+														"flow node hex 3", "flow node hex 3 on",
 														new Vector2(180, 35));
 			}
+
 			if(m_decoratorStyle == null)
 			{
 				m_decoratorStyle = new BTGraphNodeStyle("flow node hex 1", "flow node hex 1 on",
@@ -209,6 +225,7 @@ namespace BrainiacEditor
 														"flow node hex 3", "flow node hex 3 on",
 														new Vector2(180, 35));
 			}
+
 			if(m_actionStyle == null)
 			{
 				m_actionStyle = new BTGraphNodeStyle("flow node 0", "flow node 0 on",
@@ -217,7 +234,10 @@ namespace BrainiacEditor
 													"flow node 3", "flow node 3 on",
 													new Vector2(180, 40));
 			}
+		}
 
+		private static void CreateGUIStyles()
+		{
 			if(m_editorFooter == null)
 			{
 				m_editorFooter = new GUIStyle("ProjectBrowserHeaderBgTop");
@@ -269,6 +289,7 @@ namespace BrainiacEditor
 			{
 				m_arrowUpButtonStyle = m_editorSkin.FindStyle("arrow_up");
 			}
+
 			if(m_arrowDownButtonStyle == null)
 			{
 				m_arrowDownButtonStyle = m_editorSkin.FindStyle("arrow_down");
@@ -278,15 +299,18 @@ namespace BrainiacEditor
 			{
 				m_breadcrumbLeftStyle = new GUIStyle("GUIEditor.BreadcrumbLeft");
 			}
+
 			if(m_breadcrumbLeftActiveStyle == null)
 			{
 				m_breadcrumbLeftActiveStyle = new GUIStyle("GUIEditor.BreadcrumbLeft");
 				m_breadcrumbLeftActiveStyle.normal.background = m_breadcrumbLeftActiveStyle.active.background;
 			}
+
 			if(m_breadcrumbMidStyle == null)
 			{
 				m_breadcrumbMidStyle = new GUIStyle("GUIEditor.BreadcrumbMid");
 			}
+
 			if(m_breadcrumbMidActiveStyle == null)
 			{
 				m_breadcrumbMidActiveStyle = new GUIStyle("GUIEditor.BreadcrumbMid");

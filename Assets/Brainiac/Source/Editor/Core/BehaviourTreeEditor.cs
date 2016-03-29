@@ -124,17 +124,6 @@ namespace BrainiacEditor
 			}
 		}
 
-		private void SaveBehaviourTree()
-		{
-			if(m_btAsset != null)
-			{
-				m_btAsset.CanvasPosition = m_canvas.Position;
-				m_btAsset.CanvasSize = m_canvas.Size;
-				m_btAsset.Serialize();
-				EditorUtility.SetDirty(m_btAsset);
-			}
-		}
-
 		private void ReloadBehaviourTree()
 		{
 			if(m_btAsset != null)
@@ -146,7 +135,7 @@ namespace BrainiacEditor
 			}
 		}
 
-		private void CreateNewBehaviourTree()
+		public void CreateNewBehaviourTree()
 		{
 			string path = EditorUtility.SaveFilePanelInProject("Create new behaviour tree", "behaviour_tree", "asset", "");
 			if(!string.IsNullOrEmpty(path))
@@ -160,7 +149,7 @@ namespace BrainiacEditor
 			}
 		}
 
-		private void OpenBehaviourTree()
+		public void OpenBehaviourTree()
 		{
 			string path = EditorUtility.OpenFilePanel("Open behaviour tree", "", "asset");
 			if(!string.IsNullOrEmpty(path))
@@ -171,6 +160,17 @@ namespace BrainiacEditor
 					path = path.Substring(index);
 					SetBTAsset(AssetDatabase.LoadAssetAtPath<BTAsset>(path), true);
 				}
+			}
+		}
+
+		public void SaveBehaviourTree()
+		{
+			if(m_btAsset != null)
+			{
+				m_btAsset.CanvasPosition = m_canvas.Position;
+				m_btAsset.CanvasSize = m_canvas.Size;
+				m_btAsset.Serialize();
+				EditorUtility.SetDirty(m_btAsset);
 			}
 		}
 
@@ -292,29 +292,9 @@ namespace BrainiacEditor
 		{
 			if(GUI.Button(screenRect, BTEditorStyle.OptionsIcon, EditorStyles.toolbarButton))
 			{
-				CreateOptionsMenu(new Rect(Event.current.mousePosition, Vector2.zero));
+				GenericMenu menu = BTContextMenuFactory.CreateOptionsMenu(this);
+				menu.DropDown(new Rect(Event.current.mousePosition, Vector2.zero));
 			}
-		}
-
-		private void CreateOptionsMenu(Rect position)
-		{
-			GenericMenu menu = new GenericMenu();
-
-			menu.AddItem(new GUIContent("New"), false, CreateNewBehaviourTree);
-			menu.AddItem(new GUIContent("Open"), false, OpenBehaviourTree);
-			menu.AddSeparator("");
-
-			if(m_canvas.ReadOnly)
-			{
-				menu.AddDisabledItem(new GUIContent("Save"));
-			}
-			else
-			{
-				menu.AddItem(new GUIContent("Save"), false, SaveBehaviourTree);
-				AssetDatabase.SaveAssets();
-			}
-
-			menu.DropDown(position);
 		}
 
 		public void OnRepaint()
