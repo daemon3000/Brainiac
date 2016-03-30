@@ -21,8 +21,9 @@ namespace Brainiac
 		[SerializeField]
 		private bool m_debugMode;
 
-		private float m_lastUpdateTime;
 		private BehaviourTree m_btInstance;
+		private float m_timeElapsedSinceLastUpdate;
+		private bool m_isRunning;
 
 		public GameObject Body
 		{
@@ -68,7 +69,8 @@ namespace Brainiac
 				m_btInstance = m_behaviourTree.CreateRuntimeTree();
 			}
 
-			m_lastUpdateTime = 0.0f;
+			m_timeElapsedSinceLastUpdate = 0.0f;
+			m_isRunning = true;
 		}
 
 		private void Start()
@@ -81,19 +83,26 @@ namespace Brainiac
 
 		private void Update()
 		{
-			if(m_btInstance != null)
+			if(m_isRunning)
 			{
-				if(m_updateMode == UpdateMode.EveryFrame || Time.time >= m_lastUpdateTime + m_updateInterval)
+				if(m_updateMode == UpdateMode.EveryFrame || m_timeElapsedSinceLastUpdate >= m_updateInterval)
 				{
 					RaiseBeforeUpdateEvent();
-					if(m_btInstance.Root.Status != BehaviourNodeStatus.Running)
+
+					if(m_btInstance != null)
 					{
-						m_btInstance.Root.OnReset();
+						if(m_btInstance.Root.Status != BehaviourNodeStatus.Running)
+						{
+							m_btInstance.Root.OnReset();
+						}
+						m_btInstance.Root.Run(this);
 					}
-					m_btInstance.Root.Run(this);
-					m_lastUpdateTime = Time.time;
+
+					m_timeElapsedSinceLastUpdate = 0.0f;
 					RaiseAfterUpdateEvent();
 				}
+
+				m_timeElapsedSinceLastUpdate += Time.deltaTime;
 			}
 		}
 
@@ -111,6 +120,25 @@ namespace Brainiac
 			{
 				AfterUpdate();
 			}
+		}
+
+		public void Stop()
+		{
+			m_isRunning = false;
+			if(m_btInstance != null)
+			{
+				m_btInstance.Root.OnReset();
+			}
+		}
+
+		public void Pause()
+		{
+			m_isRunning = false;
+		}
+
+		public void Resume()
+		{
+			m_isRunning = true;
 		}
 
 #if UNITY_EDITOR

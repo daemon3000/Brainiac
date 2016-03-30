@@ -157,7 +157,7 @@ namespace BrainiacEditor
 		{
 			if(memVar != null)
 			{
-				memVar.Content = EditorGUILayout.TextField(label, memVar.Content);
+				memVar.Value = EditorGUILayout.TextField(label, memVar.Value);
 			}
 		}
 
