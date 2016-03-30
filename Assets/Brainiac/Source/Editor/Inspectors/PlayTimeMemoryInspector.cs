@@ -125,6 +125,12 @@ namespace BrainiacEditor
 				newValue = value;
 				EditorGUI.ObjectField(position, new GUIContent(""), (UnityEngine.Object)value, typeof(UnityEngine.Object), false);
 			}
+			else if(value == null)
+			{
+				EditorGUI.LabelField(position, "NULL");
+				success = false;
+				newValue = null;
+			}
 			else
 			{
 				EditorGUI.LabelField(position, "Item type mismatch!");

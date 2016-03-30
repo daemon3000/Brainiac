@@ -35,6 +35,7 @@ namespace BrainiacEditor
 				BTUndoGroup oldGroup = m_undoStack.Peek() as BTUndoGroup;
 				if(oldGroup != null && oldGroup.IsOpen)
 				{
+					Debug.LogWarningFormat("You have to call BTUndoSystem.EndUndoGroup before begining a new group. Old group is '{0}', new group is '{1}'", oldGroup.Title, title);
 					if(oldGroup.IsEmpty)
 					{
 						m_undoStack.Pop();
@@ -43,7 +44,6 @@ namespace BrainiacEditor
 					{
 						oldGroup.Close();
 					}
-					Debug.LogWarning("You have to call BTUndoSystem.EndUndoGroup before begining a new group");
 				}
 			}
 

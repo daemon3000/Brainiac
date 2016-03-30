@@ -32,6 +32,7 @@ namespace BrainiacEditor
 			{
 				BTEditorStyle.EnsureStyle();
 				m_inspector.DrawGUI();
+				Repaint();
 			}
 			else
 			{

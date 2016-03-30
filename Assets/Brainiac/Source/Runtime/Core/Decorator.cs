@@ -12,13 +12,19 @@ namespace Brainiac
 
 		public override void OnStart(AIController aiController)
 		{
-			m_child.OnStart(aiController);
+			if(m_child != null)
+			{
+				m_child.OnStart(aiController);
+			}
 		}
 
 		public override void OnReset()
 		{
 			base.OnReset();
-			m_child.OnReset();
+			if(m_child != null)
+			{
+				m_child.OnReset();
+			}
 		}
 
 		public void SetChild(BehaviourNode node)
