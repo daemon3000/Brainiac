@@ -163,14 +163,42 @@ namespace BrainiacEditor
 		{
 			Vector2 nodeSize = BTEditorStyle.GetNodeSize(m_node.GetType());
 			Rect position = new Rect(m_node.Position + BTEditorCanvas.Current.Position, nodeSize);
+			BTEditorTreeLayout treeLayout = BTEditorStyle.TreeLayout;
 
 			foreach(var child in m_children)
 			{
 				Vector2 childNodeSize = BTEditorStyle.GetNodeSize(child.GetType());
 				Rect childPosition = new Rect(child.Node.Position + BTEditorCanvas.Current.Position, childNodeSize);
 				BehaviourNodeStatus childStatus = BTEditorCanvas.Current.IsDebuging ? child.Node.Status : BehaviourNodeStatus.None;
+				Color color = BTEditorStyle.GetTransitionColor(childStatus);
+				Vector2 nodeCenter = position.center;
+				Vector2 childCenter = childPosition.center;
 
-				BTEditorUtils.DrawBezier(position, childPosition, BTEditorStyle.GetTransitionColor(childStatus));
+				if(treeLayout == BTEditorTreeLayout.Horizontal)
+				{
+					BTEditorUtils.DrawLine(nodeCenter - Vector2.right * position.width / 4.0f, new Vector2(nodeCenter.x - position.width / 4.0f, childCenter.y), color);
+					BTEditorUtils.DrawLine(new Vector2(nodeCenter.x - position.width / 4.0f, childCenter.y), childCenter, color);
+				}
+				else if(treeLayout == BTEditorTreeLayout.Vertical)
+				{
+					if(Mathf.Approximately(nodeCenter.y, childCenter.y) || Mathf.Approximately(nodeCenter.x, childCenter.x))
+					{
+						BTEditorUtils.DrawLine(nodeCenter, childCenter, color);
+					}
+					else
+					{
+						BTEditorUtils.DrawLine(nodeCenter, nodeCenter + Vector2.up * (childCenter.y - nodeCenter.y) / 2, color);
+
+						BTEditorUtils.DrawLine(nodeCenter + Vector2.up * (childCenter.y - nodeCenter.y) / 2,
+											   childCenter + Vector2.up * (nodeCenter.y - childCenter.y) / 2, color);
+
+						BTEditorUtils.DrawLine(childCenter, childCenter + Vector2.up * (nodeCenter.y - childCenter.y) / 2, color);
+					}
+				}
+				else
+				{
+					BTEditorUtils.DrawLine(nodeCenter, childCenter, color);
+				}
 			}
 		}
 

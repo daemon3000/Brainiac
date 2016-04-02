@@ -5,7 +5,7 @@ namespace BrainiacEditor
 {
 	public static class BTEditorUtils
 	{
-		private const int BEZIER_H_OFFSET = 0;
+		private const int BEZIER_H_OFFSET = 150;
 		private const int BEZIER_WIDTH = 3;
 
 		public static void DrawBezier(Rect a, Rect b, Color color)
@@ -21,6 +21,16 @@ namespace BrainiacEditor
 			Handles.DrawBezier(a, b, new Vector3(a.x + BEZIER_H_OFFSET, a.y, 0),
 							   new Vector3(b.x - BEZIER_H_OFFSET, b.y, 0),
 							   color, null, BEZIER_WIDTH);
+		}
+
+		public static void DrawLine(Rect a, Rect b, Color color)
+		{
+			Handles.DrawBezier(a.center, b.center, a.center, b.center, color, null, BEZIER_WIDTH);
+		}
+
+		public static void DrawLine(Vector2 a, Vector2 b, Color color)
+		{
+			Handles.DrawBezier(a, b, a, b, color, null, BEZIER_WIDTH);
 		}
 
 		public static string GetResourcePath(UnityEngine.Object target)

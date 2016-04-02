@@ -57,18 +57,30 @@ namespace BrainiacEditor
 			get { return EditorApplication.isPlaying; }
 		}
 
+		public bool SnapToGrid
+		{
+			get
+			{
+				return EditorPrefs.GetBool("Brainiac.Editor.SnapToGrid", true);
+			}
+			set
+			{
+				EditorPrefs.SetBool("Brainiac.Editor.SnapToGrid", value);
+			}
+		}
+
 		public Vector2 Position { get; set; }
 		public Vector2 Size { get; set; }
 		public bool IsDebuging { get; set; }
-		public bool SnapToGrid { get; set; }
+		public string Clipboard { get; set; }
 		
 		public BTEditorCanvas()
 		{
 			Position = Vector2.zero;
 			Size = Vector2.zero;
 			IsDebuging = false;
-			SnapToGrid = true;
 			SnapSize = 10;
+			Clipboard = null;
 		}
 
 		public void Repaint()

@@ -21,13 +21,16 @@ namespace Brainiac
 
 		public void SetItem(string name, object item)
 		{
-			if(m_globalMemory.ContainsKey(name))
+			if(!string.IsNullOrEmpty(name))
 			{
-				m_globalMemory[name] = item;
-			}
-			else
-			{
-				m_globalMemory.Add(name, item);
+				if(m_globalMemory.ContainsKey(name))
+				{
+					m_globalMemory[name] = item;
+				}
+				else
+				{
+					m_globalMemory.Add(name, item);
+				}
 			}
 		}
 

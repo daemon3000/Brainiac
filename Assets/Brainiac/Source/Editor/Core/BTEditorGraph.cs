@@ -13,7 +13,6 @@ namespace BrainiacEditor
 
 		private List<BTEditorGraphNode> m_selection;
 		private BTEditorGraphNode m_root;
-		private string m_serializedCopyTarget;
 		private bool m_drawSelectionBox;
 		private bool m_isBehaviourTreeReadOnly;
 		private bool m_canBeginBoxSelection;
@@ -241,41 +240,24 @@ namespace BrainiacEditor
 			}
 		}
 
-		public bool CanCopy(BTEditorGraphNode source)
-		{
-			return source != null && source.Node != null;
-		}
-
 		public void OnCopyNode(BTEditorGraphNode source)
 		{
 			if(CanCopy(source))
 			{
-				m_serializedCopyTarget = BTUtils.SerializeNode(source.Node);
+				BTEditorCanvas.Current.Clipboard = BTUtils.SerializeNode(source.Node);
 			}
 		}
 
-		public bool CanPaste(BTEditorGraphNode destination)
+		public bool CanCopy(BTEditorGraphNode source)
 		{
-			if(destination != null && destination.Node != null && !string.IsNullOrEmpty(m_serializedCopyTarget))
-			{
-				if(destination.Node is Composite)
-				{
-					return true;
-				}
-				else if(destination.Node is Decorator)
-				{
-					return destination.ChildCount == 0;
-				}
-			}
-
-			return false;
+			return source != null && source.Node != null;
 		}
 
 		public void OnPasteNode(BTEditorGraphNode destination)
 		{
 			if(CanPaste(destination))
 			{
-				BehaviourNode node = BTUtils.DeserializeNode(m_serializedCopyTarget);
+				BehaviourNode node = BTUtils.DeserializeNode(BTEditorCanvas.Current.Clipboard);
 				BTEditorGraphNode child = BTEditorGraphNode.Create(destination, node);
 				if(child != null)
 				{
@@ -288,6 +270,23 @@ namespace BrainiacEditor
 					BTUndoSystem.RegisterUndo(undoState);
 				}
 			}
+		}
+
+		public bool CanPaste(BTEditorGraphNode destination)
+		{
+			if(destination != null && destination.Node != null && !string.IsNullOrEmpty(BTEditorCanvas.Current.Clipboard))
+			{
+				if(destination.Node is Composite)
+				{
+					return true;
+				}
+				else if(destination.Node is Decorator)
+				{
+					return destination.ChildCount == 0;
+				}
+			}
+
+			return false;
 		}
 
 		public void RemoveNodeFromSelection(BTEditorGraphNode node)

@@ -149,11 +149,10 @@ namespace BrainiacEditor
 		public static GenericMenu CreateOptionsMenu(BehaviourTreeEditor editor)
 		{
 			GenericMenu menu = new GenericMenu();
+			BTEditorTreeLayout treeLayout = BTEditorStyle.TreeLayout;
 
 			menu.AddItem(new GUIContent("New"), false, editor.CreateNewBehaviourTree);
 			menu.AddItem(new GUIContent("Open"), false, editor.OpenBehaviourTree);
-			menu.AddSeparator("");
-
 			if(BTEditorCanvas.Current.ReadOnly)
 			{
 				menu.AddDisabledItem(new GUIContent("Save"));
@@ -162,6 +161,20 @@ namespace BrainiacEditor
 			{
 				menu.AddItem(new GUIContent("Save"), false, editor.SaveBehaviourTree);
 				AssetDatabase.SaveAssets();
+			}
+			menu.AddSeparator("");
+
+			menu.AddItem(new GUIContent("Snap To Grid"), BTEditorCanvas.Current.SnapToGrid, () =>
+			{
+				BTEditorCanvas.Current.SnapToGrid = !BTEditorCanvas.Current.SnapToGrid;
+			});
+
+			foreach(BTEditorTreeLayout layout in Enum.GetValues(typeof(BTEditorTreeLayout)))
+			{
+				menu.AddItem(new GUIContent("Layout/" + layout.ToString()), treeLayout == layout, (obj) =>
+				{
+					BTEditorStyle.TreeLayout = (BTEditorTreeLayout)obj;
+				}, layout);
 			}
 
 			return menu;

@@ -167,6 +167,18 @@ namespace BrainiacEditor
 			}
 		}
 
+		public static BTEditorTreeLayout TreeLayout
+		{
+			get
+			{
+				return (BTEditorTreeLayout)EditorPrefs.GetInt("Brainiac.Editor.TreeLayout", (int)BTEditorTreeLayout.Free);
+			}
+			set
+			{
+				EditorPrefs.SetInt("Brainiac.Editor.TreeLayout", (int)value);
+			}
+		}
+
 		public static void EnsureStyle()
 		{
 			LoadEditorSkin();
