@@ -86,7 +86,12 @@ namespace Brainiac
 			if(m_editModeTree != null)
 			{
 				m_editModeTree.Root.OnBeforeSerialize(this);
-				m_serializedData = BTUtils.SerializeTree(m_editModeTree);
+
+				string serializedData = BTUtils.SerializeTree(m_editModeTree);
+				if(serializedData != null)
+				{
+					m_serializedData = serializedData;
+				}
 			}
 		}
 

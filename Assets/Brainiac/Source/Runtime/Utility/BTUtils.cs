@@ -8,6 +8,7 @@ namespace Brainiac
 	public static class BTUtils
 	{
 		private const string TYPE_HINT_NAME = "$type";
+		private const int MAX_TREE_DEPTH = 1000;
 
 		public static string GenerateUniqueStringID()
 		{
@@ -39,12 +40,13 @@ namespace Brainiac
 			try
 			{
 				if(behaviourTree == null)
-					return "";
+					return null;
 
 				StringBuilder builder = new StringBuilder();
 				JsonWriterSettings settings = new JsonWriterSettings();
 				settings.TypeHintName = TYPE_HINT_NAME;
 				settings.TypeHintsOnlyWhenNeeded = true;
+				settings.MaxDepth = MAX_TREE_DEPTH;
 
 				using(JsonWriter writer = new JsonWriter(builder, settings))
 				{
@@ -56,7 +58,7 @@ namespace Brainiac
 			catch(Exception ex)
 			{
 				Debug.LogException(ex);
-				return "";
+				return null;
 			}
 		}
 
@@ -85,12 +87,13 @@ namespace Brainiac
 			try
 			{
 				if(behaviourNode == null)
-					return "";
+					return null;
 
 				StringBuilder builder = new StringBuilder();
 				JsonWriterSettings settings = new JsonWriterSettings();
 				settings.TypeHintName = TYPE_HINT_NAME;
 				settings.TypeHintsOnlyWhenNeeded = true;
+				settings.MaxDepth = MAX_TREE_DEPTH;
 
 				using(JsonWriter writer = new JsonWriter(builder, settings))
 				{
@@ -102,7 +105,7 @@ namespace Brainiac
 			catch(Exception ex)
 			{
 				Debug.LogException(ex);
-				return "";
+				return null;
 			}
 		}
 
@@ -128,7 +131,7 @@ namespace Brainiac
 			}
 		}
 
-		public static T LoadNode<T>(string nodeData) where T : BehaviourNode
+		public static T DeserializeNode<T>(string nodeData) where T : BehaviourNode
 		{
 			try
 			{
