@@ -10,6 +10,22 @@ namespace Brainiac
 		[BTHideInInspector]
 		protected BehaviourNode m_child;
 
+		public override void OnBeforeSerialize(BTAsset btAsset)
+		{
+			if(m_child != null)
+			{
+				m_child.OnBeforeSerialize(btAsset);
+			}
+		}
+
+		public override void OnAfterDeserialize(BTAsset btAsset)
+		{
+			if(m_child != null)
+			{
+				m_child.OnAfterDeserialize(btAsset);
+			}
+		}
+
 		public override void OnStart(AIController aiController)
 		{
 			if(m_child != null)

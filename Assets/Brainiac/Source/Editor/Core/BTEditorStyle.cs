@@ -222,20 +222,18 @@ namespace BrainiacEditor
 		{
 			if(m_compositeStyle == null)
 			{
-				m_compositeStyle = new BTGraphNodeStyle("flow node hex 1", "flow node hex 1 on",
-														"flow node hex 6", "flow node hex 6 on",
-														"flow node hex 4", "flow node hex 4 on",
-														"flow node hex 3", "flow node hex 3 on",
-														new Vector2(180, 35));
+				m_compositeStyle = new BTGraphNodeStyle("flow node 1", "flow node 1 on",
+														"flow node 6", "flow node 6 on",
+														"flow node 4", "flow node 4 on",
+														"flow node 3", "flow node 3 on");
 			}
 
 			if(m_decoratorStyle == null)
 			{
-				m_decoratorStyle = new BTGraphNodeStyle("flow node hex 1", "flow node hex 1 on",
-														"flow node hex 6", "flow node hex 6 on",
-														"flow node hex 4", "flow node hex 4 on",
-														"flow node hex 3", "flow node hex 3 on",
-														new Vector2(180, 35));
+				m_decoratorStyle = new BTGraphNodeStyle("flow node 1", "flow node 1 on",
+														"flow node 6", "flow node 6 on",
+														"flow node 4", "flow node 4 on",
+														"flow node 3", "flow node 3 on");
 			}
 
 			if(m_actionStyle == null)
@@ -243,8 +241,7 @@ namespace BrainiacEditor
 				m_actionStyle = new BTGraphNodeStyle("flow node 0", "flow node 0 on",
 													"flow node 6", "flow node 6 on",
 													"flow node 4", "flow node 4 on",
-													"flow node 3", "flow node 3 on",
-													new Vector2(180, 40));
+													"flow node 3", "flow node 3 on");
 			}
 		}
 
@@ -330,37 +327,45 @@ namespace BrainiacEditor
 			}
 		}
 
-		public static BTGraphNodeStyle GetNodeStyle(Type nodeType)
+		public static BTGraphNodeStyle GetNodeStyle(BehaviourNode node)
 		{
-			if(nodeType.IsSameOrSubclass(typeof(Composite)))
+			if(node != null)
 			{
-				return m_compositeStyle;
-			}
-			else if(nodeType.IsSameOrSubclass(typeof(Decorator)))
-			{
-				return m_decoratorStyle;
-			}
-			else if(nodeType.IsSameOrSubclass(typeof(Brainiac.Action)))
-			{
-				return m_actionStyle;
+				if(node is Composite)
+				{
+					return m_compositeStyle;
+				}
+				else if(node is Decorator)
+				{
+					return m_decoratorStyle;
+				}
+				else if(node is Brainiac.Action)
+				{
+					return m_actionStyle;
+				}
 			}
 
 			return null;
 		}
 
-		public static Vector2 GetNodeSize(Type nodeType)
+		public static Vector2 GetNodeSize(BehaviourNode node)
 		{
-			if(nodeType.IsSameOrSubclass(typeof(Composite)))
+			string label = string.IsNullOrEmpty(node.Name) ? node.Title : node.Name;
+
+			if(node != null)
 			{
-				return m_compositeStyle.Size;
-			}
-			else if(nodeType.IsSameOrSubclass(typeof(Decorator)))
-			{
-				return m_decoratorStyle.Size;
-			}
-			else if(nodeType.IsSameOrSubclass(typeof(Brainiac.Action)))
-			{
-				return m_actionStyle.Size;
+				if(node is Composite)
+				{
+					return m_compositeStyle.GetSize(label, TreeLayout);
+				}
+				else if(node is Decorator)
+				{
+					return m_decoratorStyle.GetSize(label, TreeLayout);
+				}
+				else if(node is Brainiac.Action)
+				{
+					return m_actionStyle.GetSize(label, TreeLayout);
+				}
 			}
 
 			return new Vector2(180, 40);

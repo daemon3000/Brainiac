@@ -1,12 +1,20 @@
 ﻿using UnityEngine;
-using System;
-using System.Collections;
 using Brainiac;
 
 namespace BrainiacEditor
 {
 	public class BTGraphNodeStyle
 	{
+		private const float VERT_MAX_NODE_WIDTH = 180;
+		private const float VERT_MAX_NODE_HEIGHT = 200;
+		private const float VERT_MIN_NODE_WIDTH = 60;
+		private const float VERT_MIN_NODE_HEIGHT = 40;
+		private const float HORZ_MIN_NODE_HEIGHT = 40;
+		private const float HORZ_NODE_WIDTH = 180;
+		private const float NODE_BORDER = 20;
+
+		private static GUIContent m_content = new GUIContent();
+
 		private GUIStyle m_standardNormalStyle;
 		private GUIStyle m_standardSelectedStyle;
 		private GUIStyle m_failNormalStyle;
@@ -25,12 +33,10 @@ namespace BrainiacEditor
 		private string m_successNormalStyleName;
 		private string m_successSelectedStyleName;
 
-		public Vector2 Size { get; private set; }
-
 		public BTGraphNodeStyle(string standardNormalStyleName, string standardSelectedStyleName, 
 								string failNormalStyleName, string failSelectedStyleName,
 								string runningNormalStyleName, string runningSelectedStyleName, 
-								string successNormalStyleName, string successSelectedStyleName, Vector2 size)
+								string successNormalStyleName, string successSelectedStyleName)
 		{
 			m_standardNormalStyleName = standardNormalStyleName;
 			m_standardSelectedStyleName = standardSelectedStyleName;
@@ -40,7 +46,6 @@ namespace BrainiacEditor
 			m_runningSelectedStyleName = runningSelectedStyleName;
 			m_successNormalStyleName = successNormalStyleName;
 			m_successSelectedStyleName = successSelectedStyleName;
-			Size = size;
 
 			EnsureStyle();
 		}
@@ -49,47 +54,48 @@ namespace BrainiacEditor
 		{
 			if(m_standardNormalStyle == null)
 			{
-				m_standardNormalStyle = (GUIStyle)m_standardNormalStyleName;
-				m_standardNormalStyle.wordWrap = true;
+				m_standardNormalStyle = CreateStyle(m_standardNormalStyleName);
 			}
 			if(m_standardSelectedStyle == null)
 			{
-				m_standardSelectedStyle = (GUIStyle)m_standardSelectedStyleName;
-				m_standardSelectedStyle.wordWrap = true;
+				m_standardSelectedStyle = CreateStyle(m_standardSelectedStyleName);
 			}
 
 			if(m_failNormalStyle == null)
 			{
-				m_failNormalStyle = (GUIStyle)m_failNormalStyleName;
-				m_failNormalStyle.wordWrap = true;
+				m_failNormalStyle = CreateStyle(m_failNormalStyleName);
 			}
 			if(m_failSelectedStyle == null)
 			{
-				m_failSelectedStyle = (GUIStyle)m_failSelectedStyleName;
-				m_failSelectedStyle.wordWrap = true;
+				m_failSelectedStyle = CreateStyle(m_failSelectedStyleName);
 			}
 
 			if(m_runninfNormalStyle == null)
 			{
-				m_runninfNormalStyle = (GUIStyle)m_runninfNormalStyleName;
-				m_runninfNormalStyle.wordWrap = true;
+				m_runninfNormalStyle = CreateStyle(m_runninfNormalStyleName);
 			}
 			if(m_runningSelectedStyle == null)
 			{
-				m_runningSelectedStyle = (GUIStyle)m_runningSelectedStyleName;
-				m_runningSelectedStyle.wordWrap = true;
+				m_runningSelectedStyle = CreateStyle(m_runningSelectedStyleName);
 			}
 
 			if(m_successNormalStyle == null)
 			{
-				m_successNormalStyle = (GUIStyle)m_successNormalStyleName;
-				m_successNormalStyle.wordWrap = true;
+				m_successNormalStyle = CreateStyle(m_successNormalStyleName);
 			}
 			if(m_successSelectedStyle == null)
 			{
-				m_successSelectedStyle = (GUIStyle)m_successSelectedStyleName;
-				m_successSelectedStyle.wordWrap = true;
+				m_successSelectedStyle = CreateStyle(m_successSelectedStyleName);
 			}
+		}
+
+		private GUIStyle CreateStyle(string source)
+		{
+			GUIStyle style = (GUIStyle)source;
+			style.wordWrap = true;
+			style.alignment = TextAnchor.UpperCenter;
+
+			return style;
 		}
 
 		public GUIStyle GetStyle(BehaviourNodeStatus status, bool isSelected)
@@ -105,6 +111,53 @@ namespace BrainiacEditor
 			}
 
 			return !isSelected ? m_standardNormalStyle : m_standardSelectedStyle;
+		}
+
+		public Vector2 GetSize(string content, BTEditorTreeLayout layout)
+		{
+			if(!string.IsNullOrEmpty(content))
+			{
+				if(layout == BTEditorTreeLayout.Horizontal)
+					return GetSizeHorizontal(content);
+				else
+					return GetSizeVertical(content);
+			}
+
+			return new Vector2(180, 40);
+		}
+
+		private Vector2 GetSizeVertical(string content)
+		{
+			m_content.text = content;
+			Vector2 size = m_standardNormalStyle.CalcSize(m_content);
+			size.x = Mathf.Max(size.x, VERT_MIN_NODE_WIDTH);
+			size.y = Mathf.Max(size.y, VERT_MIN_NODE_HEIGHT);
+			if(size.x > VERT_MAX_NODE_WIDTH)
+			{
+				size.x = VERT_MAX_NODE_WIDTH;
+				size.y = Mathf.Min(m_standardNormalStyle.CalcHeight(m_content, size.x), VERT_MAX_NODE_HEIGHT);
+			}
+
+			size.x += NODE_BORDER;
+
+			float snapSize = BTEditorCanvas.Current.SnapSize * 2;
+			size.x = (float)Mathf.Round(size.x / snapSize) * snapSize;
+			size.y = (float)Mathf.Round(size.y / snapSize) * snapSize;
+
+			return size;
+		}
+
+		private Vector2 GetSizeHorizontal(string content)
+		{
+			m_content.text = content;
+			Vector2 size = new Vector2();
+			size.x = HORZ_NODE_WIDTH;
+			size.y = Mathf.Max(m_standardNormalStyle.CalcHeight(m_content, HORZ_NODE_WIDTH), HORZ_MIN_NODE_HEIGHT);
+
+			float snapSize = BTEditorCanvas.Current.SnapSize * 2;
+			size.x = (float)Mathf.Round(size.x / snapSize) * snapSize;
+
+			return size;
 		}
 	}
 }

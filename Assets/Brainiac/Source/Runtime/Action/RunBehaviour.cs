@@ -1,25 +1,25 @@
-﻿using UnityEngine;
+﻿using Brainiac.Serialization;
 
 namespace Brainiac
 {
 	[AddNodeMenu("Action/Run Behaviour")]
 	public class RunBehaviour : Action
 	{
-		private string m_behaviourTreePath;
+		[BTProperty("BehaviourTreeID")]
+		[BTHideInInspector]
+		private string m_behaviourTreeID;
+
+		private BTAsset m_behaviourTreeAsset;
 		private BehaviourTree m_behaviourTree;
 
-		public string BehaviourTreePath
+		[BTIgnore]
+		public BTAsset BehaviourTreeAsset
 		{
-			get
-			{
-				return m_behaviourTreePath;
-			}
-			set
-			{
-				m_behaviourTreePath = value;
-			}
+			get { return m_behaviourTreeAsset; }
+			set { m_behaviourTreeAsset = value; }
 		}
 
+		[BTIgnore]
 		public BehaviourTree BehaviourTree
 		{
 			get
@@ -36,20 +36,30 @@ namespace Brainiac
 			}
 		}
 
+		public override void OnBeforeSerialize(BTAsset btAsset)
+		{
+			if(string.IsNullOrEmpty(m_behaviourTreeID))
+			{
+				m_behaviourTreeID = BTUtils.GenerateUniqueStringID();
+			}
+
+			btAsset.SetSubtreeAsset(m_behaviourTreeID, m_behaviourTreeAsset);
+		}
+
+		public override void OnAfterDeserialize(BTAsset btAsset)
+		{
+			m_behaviourTreeAsset = btAsset.GetSubtreeAsset(m_behaviourTreeID);
+		}
+
 		public override void OnStart(AIController aiController)
 		{
-			if(!string.IsNullOrEmpty(m_behaviourTreePath))
+			if(m_behaviourTreeAsset != null)
 			{
-				BTAsset asset = Resources.Load<BTAsset>(m_behaviourTreePath);
-				if(asset != null)
+				m_behaviourTree = m_behaviourTreeAsset.CreateRuntimeTree();
+				if(m_behaviourTree != null)
 				{
-					m_behaviourTree = asset.CreateRuntimeTree();
 					m_behaviourTree.Root.OnStart(aiController);
 				}
-			}
-			else
-			{
-				m_behaviourTree = null;
 			}
 		}
 

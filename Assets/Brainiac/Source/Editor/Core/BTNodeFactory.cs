@@ -37,8 +37,6 @@ namespace BrainiacEditor
 			{
 				menu.AddItem(new GUIContent("Add Child/" + item.Item2), false, onCreateChild, item.Item1);
 			}
-
-			menu.AddSeparator("");
 		}
 	}
 }

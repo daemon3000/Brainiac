@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using System;
-using System.Collections;
 using Brainiac;
 
 namespace BrainiacEditor
 {
 	[CustomEditor(typeof(BTAsset))]
-	public class BTAssetEditor : Editor
+	public class BTAssetInspector : Editor
 	{
 		public override void OnInspectorGUI()
 		{

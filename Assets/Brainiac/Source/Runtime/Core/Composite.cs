@@ -24,6 +24,22 @@ namespace Brainiac
 			m_children = new List<BehaviourNode>();
 		}
 
+		public override void OnBeforeSerialize(BTAsset btAsset)
+		{
+			for(int i = 0; i < m_children.Count; i++)
+			{
+				m_children[i].OnBeforeSerialize(btAsset);
+			}
+		}
+
+		public override void OnAfterDeserialize(BTAsset btAsset)
+		{
+			for(int i = 0; i < m_children.Count; i++)
+			{
+				m_children[i].OnAfterDeserialize(btAsset);
+			}
+		}
+
 		public override void OnStart(AIController aiController)
 		{
 			for(int i = 0; i < m_children.Count; i++)

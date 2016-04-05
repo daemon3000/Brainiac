@@ -96,6 +96,8 @@ namespace Brainiac
 			m_status = BehaviourNodeStatus.None;
 		}
 
+		public virtual void OnBeforeSerialize(BTAsset btAsset) { }
+		public virtual void OnAfterDeserialize(BTAsset btAsset) { }
 		public virtual void OnStart(AIController aiController) { }
 		protected virtual void OnEnter(AIController aiController) { }
 		protected virtual void OnExit(AIController aiController) { }

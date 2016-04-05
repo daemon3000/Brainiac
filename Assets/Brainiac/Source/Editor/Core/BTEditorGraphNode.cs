@@ -74,7 +74,7 @@ namespace BrainiacEditor
 
 		private void HandleEvents()
 		{
-			Rect position = new Rect(m_node.Position, BTEditorStyle.GetNodeSize(m_node.GetType()));
+			Rect position = new Rect(m_node.Position, BTEditorStyle.GetNodeSize(m_node));
 			Vector2 mousePosition = BTEditorCanvas.Current.WindowSpaceToCanvasSpace(BTEditorCanvas.Current.Event.mousePosition);
 
 			if(BTEditorCanvas.Current.Event.type == EventType.MouseDown && BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
@@ -161,13 +161,13 @@ namespace BrainiacEditor
 
 		private void DrawTransitions()
 		{
-			Vector2 nodeSize = BTEditorStyle.GetNodeSize(m_node.GetType());
+			Vector2 nodeSize = BTEditorStyle.GetNodeSize(m_node);
 			Rect position = new Rect(m_node.Position + BTEditorCanvas.Current.Position, nodeSize);
 			BTEditorTreeLayout treeLayout = BTEditorStyle.TreeLayout;
 
 			foreach(var child in m_children)
 			{
-				Vector2 childNodeSize = BTEditorStyle.GetNodeSize(child.GetType());
+				Vector2 childNodeSize = BTEditorStyle.GetNodeSize(child.Node);
 				Rect childPosition = new Rect(child.Node.Position + BTEditorCanvas.Current.Position, childNodeSize);
 				BehaviourNodeStatus childStatus = BTEditorCanvas.Current.IsDebuging ? child.Node.Status : BehaviourNodeStatus.None;
 				Color color = BTEditorStyle.GetTransitionColor(childStatus);
@@ -176,8 +176,19 @@ namespace BrainiacEditor
 
 				if(treeLayout == BTEditorTreeLayout.Horizontal)
 				{
-					BTEditorUtils.DrawLine(nodeCenter - Vector2.right * position.width / 4.0f, new Vector2(nodeCenter.x - position.width / 4.0f, childCenter.y), color);
-					BTEditorUtils.DrawLine(new Vector2(nodeCenter.x - position.width / 4.0f, childCenter.y), childCenter, color);
+					if(Mathf.Approximately(nodeCenter.y, childCenter.y) || Mathf.Approximately(nodeCenter.x, childCenter.x))
+					{
+						BTEditorUtils.DrawLine(nodeCenter, childCenter, color);
+					}
+					else
+					{
+						BTEditorUtils.DrawLine(nodeCenter, nodeCenter + Vector2.right * (childCenter.x - nodeCenter.x) / 2, color);
+
+						BTEditorUtils.DrawLine(nodeCenter + Vector2.right * (childCenter.x - nodeCenter.x) / 2,
+											   childCenter + Vector2.right * (nodeCenter.x - childCenter.x) / 2, color);
+
+						BTEditorUtils.DrawLine(childCenter, childCenter + Vector2.right * (nodeCenter.x - childCenter.x) / 2, color);
+					}
 				}
 				else if(treeLayout == BTEditorTreeLayout.Vertical)
 				{
@@ -204,9 +215,10 @@ namespace BrainiacEditor
 
 		private void DrawSelf()
 		{
-			BTGraphNodeStyle nodeStyle = BTEditorStyle.GetNodeStyle(m_node.GetType());
-			Rect position = new Rect(m_node.Position + BTEditorCanvas.Current.Position, nodeStyle.Size);
 			string label = string.IsNullOrEmpty(m_node.Name) ? m_node.Title : m_node.Name;
+			BTGraphNodeStyle nodeStyle = BTEditorStyle.GetNodeStyle(m_node);
+			Vector2 nodeSize = BTEditorStyle.GetNodeSize(m_node);
+			Rect position = new Rect(m_node.Position + BTEditorCanvas.Current.Position, nodeSize);
 			BehaviourNodeStatus status = BTEditorCanvas.Current.IsDebuging ? m_node.Status : BehaviourNodeStatus.None;
 
 			EditorGUI.LabelField(position, label, nodeStyle.GetStyle(status, m_isSelected));
@@ -288,19 +300,15 @@ namespace BrainiacEditor
 			if(m_node is RunBehaviour)
 			{
 				RunBehaviour rb = (RunBehaviour)m_node;
-				if(rb.BehaviourTreePath != null)
+				if(rb.BehaviourTreeAsset != null)
 				{
-					BTAsset asset = Resources.Load<BTAsset>(rb.BehaviourTreePath);
-					if(asset != null)
+					if(BTEditorCanvas.Current.IsDebuging && rb.BehaviourTree != null)
 					{
-						if(BTEditorCanvas.Current.IsDebuging && rb.BehaviourTree != null)
-						{
-							BehaviourTreeEditor.OpenSubtreeDebug(asset, rb.BehaviourTree);
-						}
-						else
-						{
-							BehaviourTreeEditor.OpenSubtree(asset);
-						}
+						BehaviourTreeEditor.OpenSubtreeDebug(rb.BehaviourTreeAsset, rb.BehaviourTree);
+					}
+					else
+					{
+						BehaviourTreeEditor.OpenSubtree(rb.BehaviourTreeAsset);
 					}
 				}
 			}
@@ -348,7 +356,7 @@ namespace BrainiacEditor
 				BehaviourNode node = BTUtils.CreateNode(type);
 				if(node != null)
 				{
-					Vector2 nodeSize = BTEditorStyle.GetNodeSize(node.GetType());
+					Vector2 nodeSize = BTEditorStyle.GetNodeSize(node);
 					Vector2 nodePos = m_node.Position + nodeSize * 1.5f;
 					nodePos.x = Mathf.Max(nodePos.x, 0.0f);
 					nodePos.y = Mathf.Max(nodePos.y, 0.0f);

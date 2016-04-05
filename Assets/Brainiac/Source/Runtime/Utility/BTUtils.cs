@@ -9,6 +9,11 @@ namespace Brainiac
 	{
 		private const string TYPE_HINT_NAME = "$type";
 
+		public static string GenerateUniqueStringID()
+		{
+			return Guid.NewGuid().ToString("N");
+		}
+
 		public static bool IsSameOrSubclass(this Type potentialSubclass, Type potentialBase)
 		{
 			return potentialSubclass.IsSubclassOf(potentialBase) || (potentialSubclass == potentialBase);

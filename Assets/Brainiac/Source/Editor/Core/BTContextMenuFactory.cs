@@ -26,6 +26,7 @@ namespace BrainiacEditor
 				if(canAddChild)
 				{
 					BTNodeFactory.AddChild(menu, targetNode);
+					menu.AddSeparator("");
 				}
 
 				if(targetNode.Node is Root)
@@ -85,6 +86,11 @@ namespace BrainiacEditor
 				}
 
 				menu.AddSeparator("");
+
+				if(targetNode.Node is Composite || targetNode.Node is Decorator)
+				{
+					menu.AddItem(new GUIContent("Select Branch"), false, () => targetNode.Graph.SelectBranch(targetNode));
+				}
 			}
 
 			foreach(Breakpoint item in Enum.GetValues(typeof(Breakpoint)))

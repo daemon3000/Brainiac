@@ -261,8 +261,7 @@ namespace BrainiacEditor
 				BTEditorGraphNode child = BTEditorGraphNode.Create(destination, node);
 				if(child != null)
 				{
-					ClearSelection();
-					SelectNodeHierarchy(child);
+					SelectBranch(child);
 
 					var undoState = new UndoNodeCreated(child);
 					undoState.Title = "Pasted " + child.Node.Title;
@@ -341,17 +340,24 @@ namespace BrainiacEditor
 
 		public void SelectEntireGraph()
 		{
-			SelectNodeHierarchy(m_root);
+			ClearSelection();
+			SelectBranchRecursive(m_root);
 		}
 
-		private void SelectNodeHierarchy(BTEditorGraphNode node)
+		public void SelectBranch(BTEditorGraphNode root)
+		{
+			ClearSelection();
+			SelectBranchRecursive(root);
+		}
+
+		private void SelectBranchRecursive(BTEditorGraphNode node)
 		{
 			m_selection.Add(node);
 			node.OnSelected();
 
 			for(int i = 0; i < node.ChildCount; i++)
 			{
-				SelectNodeHierarchy(node.GetChild(i));
+				SelectBranchRecursive(node.GetChild(i));
 			}
 		}
 

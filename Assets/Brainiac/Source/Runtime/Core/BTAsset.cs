@@ -1,10 +1,18 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 namespace Brainiac
 {
 	[CreateAssetMenu(menuName = "Brainiac/Behaviour Tree")]
 	public class BTAsset : ScriptableObject
 	{
+		[System.Serializable]
+		private class AssetIDPair
+		{
+			public BTAsset asset;
+			public string assetID;
+		}
+
 		[SerializeField]
 		[HideInInspector]
 		private string m_serializedData;
@@ -12,6 +20,8 @@ namespace Brainiac
 		private Vector2 m_canvasPosition;
 		[SerializeField]
 		private Vector2 m_canvasSize;
+		[SerializeField]
+		private List<AssetIDPair> m_subtrees;
 
 #if UNITY_EDITOR
 		private BehaviourTree m_editModeTree;
@@ -53,6 +63,10 @@ namespace Brainiac
 			{
 				m_canvasSize = DEFAULT_CANVAS_SIZE;
 			}
+			if(m_subtrees == null)
+			{
+				m_subtrees = new List<AssetIDPair>();
+			}
 		}
 
 		public BehaviourTree GetEditModeTree()
@@ -60,6 +74,7 @@ namespace Brainiac
 			if(m_editModeTree == null)
 			{
 				m_editModeTree = BTUtils.DeserializeTree(m_serializedData);
+				m_editModeTree.Root.OnAfterDeserialize(this);
 				m_editModeTree.ReadOnly = false;
 			}
 
@@ -70,6 +85,7 @@ namespace Brainiac
 		{
 			if(m_editModeTree != null)
 			{
+				m_editModeTree.Root.OnBeforeSerialize(this);
 				m_serializedData = BTUtils.SerializeTree(m_editModeTree);
 			}
 		}
@@ -83,9 +99,35 @@ namespace Brainiac
 		public BehaviourTree CreateRuntimeTree()
 		{
 			BehaviourTree tree = BTUtils.DeserializeTree(m_serializedData);
+			tree.Root.OnAfterDeserialize(this);
 			tree.ReadOnly = true;
 
 			return tree;
+		}
+
+		public void SetSubtreeAsset(string subtreeID, BTAsset subtreeAsset)
+		{
+			if(!string.IsNullOrEmpty(subtreeID))
+			{
+				AssetIDPair subtree = m_subtrees.Find(obj => obj.assetID == subtreeID);
+				if(subtree != null)
+				{
+					subtree.asset = subtreeAsset;
+				}
+				else
+				{
+					subtree = new AssetIDPair();
+					subtree.asset = subtreeAsset;
+					subtree.assetID = subtreeID;
+					m_subtrees.Add(subtree);
+				}
+			}
+		}
+
+		public BTAsset GetSubtreeAsset(string subtreeID)
+		{
+			AssetIDPair subtree = m_subtrees.Find(obj => obj.assetID == subtreeID);
+			return subtree != null ? subtree.asset : null;
 		}
 	}
 }
