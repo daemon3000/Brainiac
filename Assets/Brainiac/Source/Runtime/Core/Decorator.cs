@@ -26,11 +26,11 @@ namespace Brainiac
 			}
 		}
 
-		public override void OnStart(AIController aiController)
+		public override void OnStart(AIAgent agent)
 		{
 			if(m_child != null)
 			{
-				m_child.OnStart(aiController);
+				m_child.OnStart(agent);
 			}
 		}
 

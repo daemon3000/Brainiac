@@ -4,8 +4,8 @@ using Brainiac;
 
 namespace BrainiacEditor
 {
-	[CustomEditor(typeof(AIController))]
-	public class AIControllerInspector : Editor
+	[CustomEditor(typeof(AIAgent))]
+	public class AIAgentInspector : Editor
 	{
 		private SerializedProperty m_behaviourTree;
 		private SerializedProperty m_updateMode;
@@ -28,6 +28,7 @@ namespace BrainiacEditor
 		{
 			serializedObject.Update();
 
+			GUI.enabled = !EditorApplication.isPlaying;
 			EditorGUILayout.PropertyField(m_behaviourTree);
 			EditorGUILayout.PropertyField(m_memory);
 			EditorGUILayout.PropertyField(m_body);
@@ -43,9 +44,9 @@ namespace BrainiacEditor
 
 			serializedObject.ApplyModifiedProperties();
 
-			AIController aiController = (AIController)target;
+			AIAgent agent = (AIAgent)target;
 			BTAsset btAsset = m_behaviourTree.objectReferenceValue as BTAsset;
-			BehaviourTree btInstance = aiController.GetBehaviourTree();
+			BehaviourTree btInstance = agent.GetBehaviourTree();
 
 			GUI.enabled = btAsset != null;
 			if(EditorApplication.isPlaying && btInstance != null)

@@ -15,7 +15,7 @@ namespace Brainiac
 			}
 		}
 
-		protected override BehaviourNodeStatus OnExecute(AIController aiController)
+		protected override BehaviourNodeStatus OnExecute(AIAgent agent)
 		{
 			if(m_child != null)
 			{
@@ -24,7 +24,7 @@ namespace Brainiac
 					m_child.OnReset();
 				}
 
-				m_child.Run(aiController);
+				m_child.Run(agent);
 			}
 
 			return BehaviourNodeStatus.Running;

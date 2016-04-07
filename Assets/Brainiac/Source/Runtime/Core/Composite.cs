@@ -40,11 +40,11 @@ namespace Brainiac
 			}
 		}
 
-		public override void OnStart(AIController aiController)
+		public override void OnStart(AIAgent agent)
 		{
 			for(int i = 0; i < m_children.Count; i++)
 			{
-				m_children[i].OnStart(aiController);
+				m_children[i].OnStart(agent);
 			}
 		}
 

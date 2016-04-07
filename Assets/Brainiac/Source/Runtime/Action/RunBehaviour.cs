@@ -51,14 +51,14 @@ namespace Brainiac
 			m_behaviourTreeAsset = btAsset.GetSubtreeAsset(m_behaviourTreeID);
 		}
 
-		public override void OnStart(AIController aiController)
+		public override void OnStart(AIAgent agent)
 		{
 			if(m_behaviourTreeAsset != null)
 			{
 				m_behaviourTree = m_behaviourTreeAsset.CreateRuntimeTree();
 				if(m_behaviourTree != null)
 				{
-					m_behaviourTree.Root.OnStart(aiController);
+					m_behaviourTree.Root.OnStart(agent);
 				}
 			}
 		}
@@ -72,11 +72,11 @@ namespace Brainiac
 			}
 		}
 
-		protected override BehaviourNodeStatus OnExecute(AIController aiController)
+		protected override BehaviourNodeStatus OnExecute(AIAgent agent)
 		{
 			if(m_behaviourTree != null)
 			{
-				return m_behaviourTree.Root.Run(aiController);
+				return m_behaviourTree.Root.Run(agent);
 			}
 			else
 			{

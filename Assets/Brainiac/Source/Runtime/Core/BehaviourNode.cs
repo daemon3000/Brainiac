@@ -98,23 +98,23 @@ namespace Brainiac
 
 		public virtual void OnBeforeSerialize(BTAsset btAsset) { }
 		public virtual void OnAfterDeserialize(BTAsset btAsset) { }
-		public virtual void OnStart(AIController aiController) { }
-		protected virtual void OnEnter(AIController aiController) { }
-		protected virtual void OnExit(AIController aiController) { }
-		protected abstract BehaviourNodeStatus OnExecute(AIController aiController);
+		public virtual void OnStart(AIAgent agent) { }
+		protected virtual void OnEnter(AIAgent agent) { }
+		protected virtual void OnExit(AIAgent agent) { }
+		protected abstract BehaviourNodeStatus OnExecute(AIAgent agent);
 
 		public virtual void OnReset()
 		{
 			m_status = BehaviourNodeStatus.None;
 		}
 
-		public BehaviourNodeStatus Run(AIController aiController)
+		public BehaviourNodeStatus Run(AIAgent agent)
 		{
 			if(m_status != BehaviourNodeStatus.Running)
 			{
-				OnEnter(aiController);
+				OnEnter(agent);
 #if UNITY_EDITOR
-				if(aiController.DebugMode)
+				if(agent.DebugMode)
 				{
 					if(m_breakpoint.Has(Breakpoint.OnEnter))
 					{
@@ -124,13 +124,13 @@ namespace Brainiac
 #endif
 			}
 
-			m_status = OnExecute(aiController);
+			m_status = OnExecute(agent);
 
 			if(m_status != BehaviourNodeStatus.Running)
 			{
-				OnExit(aiController);
+				OnExit(agent);
 #if UNITY_EDITOR
-				if(aiController.DebugMode)
+				if(agent.DebugMode)
 				{
 					if((m_status == BehaviourNodeStatus.Success && m_breakpoint.Has(Breakpoint.OnSuccess)) ||
 						(m_status == BehaviourNodeStatus.Failure && m_breakpoint.Has(Breakpoint.OnFailure)) ||

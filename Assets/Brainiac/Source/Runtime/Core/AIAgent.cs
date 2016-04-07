@@ -3,7 +3,7 @@ using UnityEngine.Events;
 
 namespace Brainiac
 {
-	public class AIController : MonoBehaviour 
+	public class AIAgent : MonoBehaviour 
 	{
 		public event UnityAction BeforeUpdate;
 		public event UnityAction AfterUpdate;
@@ -83,29 +83,101 @@ namespace Brainiac
 
 		private void Update()
 		{
-			if(m_isRunning)
+			if(m_updateMode != UpdateMode.Manual && m_isRunning)
 			{
 				if(m_updateMode == UpdateMode.EveryFrame || m_timeElapsedSinceLastUpdate >= m_updateInterval)
 				{
-					RaiseBeforeUpdateEvent();
-
-					if(m_btInstance != null)
-					{
-						if(m_btInstance.Root.Status != BehaviourNodeStatus.Running)
-						{
-							m_btInstance.Root.OnReset();
-						}
-						m_btInstance.Root.Run(this);
-					}
-
+					UpdateInternal();
 					m_timeElapsedSinceLastUpdate = 0.0f;
-					RaiseAfterUpdateEvent();
 				}
 
 				m_timeElapsedSinceLastUpdate += Time.deltaTime;
 			}
 		}
 
+		private void UpdateInternal()
+		{
+			RaiseBeforeUpdateEvent();
+
+			if(m_btInstance != null)
+			{
+				if(m_btInstance.Root.Status != BehaviourNodeStatus.Running)
+				{
+					m_btInstance.Root.OnReset();
+				}
+				m_btInstance.Root.Run(this);
+			}
+			
+			RaiseAfterUpdateEvent();
+		}
+
+		public void Stop()
+		{
+			if(m_updateMode != UpdateMode.Manual)
+			{
+				m_timeElapsedSinceLastUpdate = 0.0f;
+				m_isRunning = false;
+				if(m_btInstance != null)
+				{
+					m_btInstance.Root.OnReset();
+				}
+			}
+#if UNITY_EDITOR
+			else
+			{
+				Debug.LogWarning("Can't stop AIAgent! Update mode is set to 'Manual'.", this);
+			}
+#endif
+		}
+
+		public void Pause()
+		{
+			if(m_updateMode != UpdateMode.Manual)
+			{
+				m_isRunning = false;
+			}
+#if UNITY_EDITOR
+			else
+			{
+				Debug.LogWarning("Can't pause AIAgent! Update mode is set to 'Manual'.", this);
+			}
+#endif
+		}
+
+		public void Resume()
+		{
+			if(m_updateMode != UpdateMode.Manual)
+			{
+				m_isRunning = true;
+			}
+#if UNITY_EDITOR
+			else
+			{
+				Debug.LogWarning("Can't resume AIAgent! Update mode is set to 'Manual'.", this);
+			}
+#endif
+		}
+
+		public void Tick()
+		{
+			if(m_updateMode == UpdateMode.Manual)
+			{
+				UpdateInternal();
+			}
+#if UNITY_EDITOR
+			else
+			{
+				Debug.LogWarning("Can't tick AIAgent! Update mode needs to be set to 'Manual'.", this);
+			}
+#endif
+		}
+
+#if UNITY_EDITOR
+		public BehaviourTree GetBehaviourTree()
+		{
+			return m_btInstance;
+		}
+#endif
 		private void RaiseBeforeUpdateEvent()
 		{
 			if(BeforeUpdate != null)
@@ -121,31 +193,5 @@ namespace Brainiac
 				AfterUpdate();
 			}
 		}
-
-		public void Stop()
-		{
-			m_isRunning = false;
-			if(m_btInstance != null)
-			{
-				m_btInstance.Root.OnReset();
-			}
-		}
-
-		public void Pause()
-		{
-			m_isRunning = false;
-		}
-
-		public void Resume()
-		{
-			m_isRunning = true;
-		}
-
-#if UNITY_EDITOR
-		public BehaviourTree GetBehaviourTree()
-		{
-			return m_btInstance;
-		}
-#endif
 	}
 }

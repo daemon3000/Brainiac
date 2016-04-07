@@ -7,7 +7,7 @@ namespace Brainiac
 	{
 		protected BehaviourNode m_chosenChild;
 
-		protected override void OnEnter(AIController aiController)
+		protected override void OnEnter(AIAgent agent)
 		{
 			if(m_children.Count > 0)
 			{
@@ -19,11 +19,11 @@ namespace Brainiac
 			}
 		}
 
-		protected override BehaviourNodeStatus OnExecute(AIController aiController)
+		protected override BehaviourNodeStatus OnExecute(AIAgent agent)
 		{
 			if(m_chosenChild != null)
 			{
-				return m_chosenChild.Run(aiController);
+				return m_chosenChild.Run(agent);
 			}
 
 			return BehaviourNodeStatus.Success;
