@@ -32,7 +32,7 @@ namespace BrainiacEditor
 			}
 		}
 
-		protected void DrawHeader()
+		protected virtual void DrawHeader()
 		{
 			EditorGUILayout.LabelField(m_target.Title, EditorStyles.boldLabel);
 			m_target.Name = EditorGUILayout.TextField("Name", m_target.Name);
@@ -45,7 +45,7 @@ namespace BrainiacEditor
 			EditorGUILayout.Space();
 		}
 
-		protected void DrawProperties()
+		protected virtual void DrawProperties()
 		{
 			Type nodeType = m_target.GetType();
 			var fields = from fi in nodeType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
@@ -58,16 +58,11 @@ namespace BrainiacEditor
 				BTPropertyAttribute propertyAttribute = Attribute.GetCustomAttribute(field, typeof(BTPropertyAttribute)) as BTPropertyAttribute;
 				BTIgnoreAttribute ignoreAttribute = Attribute.GetCustomAttribute(field, typeof(BTIgnoreAttribute)) as BTIgnoreAttribute;
 				BTHideInInspectorAttribute hideAttribute = Attribute.GetCustomAttribute(field, typeof(BTHideInInspectorAttribute)) as BTHideInInspectorAttribute;
+				string label = BTEditorUtils.MakePrettyName(field.Name);
 
 				if(ignoreAttribute != null || hideAttribute != null || (propertyAttribute == null && field.IsPrivate))
 					continue;
-
-				string label = field.Name;
-				if(propertyAttribute != null && !string.IsNullOrEmpty(propertyAttribute.PropertyName))
-				{
-					label = propertyAttribute.PropertyName;
-				}
-
+				
 				if(field.FieldType == typeof(MemoryVar))
 				{
 					DrawMemoryVarField(label, (MemoryVar)field.GetValue(m_target));
@@ -87,15 +82,10 @@ namespace BrainiacEditor
 				BTIgnoreAttribute ignoreAttribute = Attribute.GetCustomAttribute(property, typeof(BTIgnoreAttribute)) as BTIgnoreAttribute;
 				BTHideInInspectorAttribute hideAttribute = Attribute.GetCustomAttribute(property, typeof(BTHideInInspectorAttribute)) as BTHideInInspectorAttribute;
 				var setterMethod = property.GetSetMethod(true);
+				string label = BTEditorUtils.MakePrettyName(property.Name);
 
 				if(setterMethod == null || ignoreAttribute != null || hideAttribute != null || (propertyAttribute == null && setterMethod.IsPrivate))
 					continue;
-
-				string label = property.Name;
-				if(propertyAttribute != null && !string.IsNullOrEmpty(propertyAttribute.PropertyName))
-				{
-					label = propertyAttribute.PropertyName;
-				}
 
 				if(property.PropertyType == typeof(MemoryVar))
 				{
@@ -112,7 +102,7 @@ namespace BrainiacEditor
 			}
 		}
 
-		private bool TryToDrawField(string label, object currentValue, Type type, out object value)
+		protected virtual bool TryToDrawField(string label, object currentValue, Type type, out object value)
 		{
 			bool success = true;
 
@@ -153,7 +143,7 @@ namespace BrainiacEditor
 			return success;
 		}
 
-		private void DrawMemoryVarField(string label, MemoryVar memVar)
+		protected virtual void DrawMemoryVarField(string label, MemoryVar memVar)
 		{
 			if(memVar != null)
 			{
