@@ -64,12 +64,12 @@ namespace BrainiacEditor
 
 		private bool TryDrawMemoryItem(Rect position, string memoryItemName, object memoryItemValue, out object newValue)
 		{
-			string label = !string.IsNullOrEmpty(memoryItemName) ? memoryItemName : "Item";
-			bool success = false;
-
 			Rect headerRect = new Rect(0.0f, 0.0f, position.width, HEADER_HEIGHT);
 			Rect bgRect = new Rect(headerRect.x, headerRect.yMax, headerRect.width, FIELD_HEIGHT * 2 + FIELD_SPACING_VERT * 2);
 			Rect fieldRect = new Rect(bgRect.x + FIELD_SPACING_HORZ, bgRect.y + FIELD_SPACING_VERT, bgRect.width - FIELD_SPACING_HORZ * 2, bgRect.height - FIELD_SPACING_VERT * 2);
+			bool success = false;
+
+			string label = string.Format("{0} ({1})", !string.IsNullOrEmpty(memoryItemName) ? memoryItemName : "Item", memoryItemValue != null ? memoryItemValue.GetType().Name : "Unknown");
 
 			GUI.BeginGroup(position);
 

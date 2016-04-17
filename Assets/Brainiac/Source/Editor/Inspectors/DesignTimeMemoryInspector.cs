@@ -94,7 +94,7 @@ namespace BrainiacEditor
 		{
 			SerializedProperty name = memoryItem.FindPropertyRelative("m_name");
 			SerializedProperty value = GetMemoryItemValue(memoryItem);
-			string label = !string.IsNullOrEmpty(name.stringValue) ? name.stringValue : "Item";
+			string label = string.Format("{0} ({1})", !string.IsNullOrEmpty(name.stringValue) ? name.stringValue : "Item",  GetMemoryItemType(memoryItem));
 
 			Rect headerRect = new Rect(0.0f, 0.0f, position.width, HEADER_HEIGHT);
 			Rect bgRect = new Rect(headerRect.x, headerRect.yMax, headerRect.width, FIELD_HEIGHT * 2 + FIELD_SPACING_VERT * 2);
@@ -148,6 +148,12 @@ namespace BrainiacEditor
 			}
 
 			return null;
+		}
+
+		private MemoryItem.ItemType GetMemoryItemType(SerializedProperty memoryItem)
+		{
+			SerializedProperty itemTypeProp = memoryItem.FindPropertyRelative("m_type");
+			return (MemoryItem.ItemType)itemTypeProp.enumValueIndex;
 		}
 
 		private float CalculateContentHeight()

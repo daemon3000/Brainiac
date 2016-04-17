@@ -125,7 +125,10 @@ namespace Brainiac
 #if UNITY_EDITOR
 			else
 			{
-				Debug.LogWarning("Can't stop AIAgent! Update mode is set to 'Manual'.", this);
+				if(m_btInstance != null)
+				{
+					m_btInstance.Root.OnReset();
+				}
 			}
 #endif
 		}

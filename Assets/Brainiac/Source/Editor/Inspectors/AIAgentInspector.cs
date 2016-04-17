@@ -38,6 +38,7 @@ namespace BrainiacEditor
 				EditorGUILayout.PropertyField(m_updateInterval);
 			}
 
+			GUI.enabled = true;
 			GUI.color = m_debugMode.boolValue ? Color.green : Color.red;
 			m_debugMode.boolValue = GUILayout.Toggle(m_debugMode.boolValue, "Debug", "Button", GUILayout.Height(24.0f));
 			GUI.color = Color.white;
