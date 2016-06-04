@@ -43,7 +43,7 @@ namespace BrainiacEditor
 			get { return m_children.Count; }
 		}
 
-		private bool IsRoot
+		public bool IsRoot
 		{
 			get { return m_graph.IsRoot(this); }
 		}
@@ -340,7 +340,10 @@ namespace BrainiacEditor
 			}
 			else if(m_node is NodeGroup)
 			{
-				m_graph.OnPushNodeGroup(this);
+				if(IsRoot)
+					m_graph.OnPopNodeGroup();
+				else
+					m_graph.OnPushNodeGroup(this);
 			}
 		}
 

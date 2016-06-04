@@ -16,6 +16,7 @@ namespace BrainiacEditor
 		private static BTGraphNodeStyle m_compositeStyle;
 		private static BTGraphNodeStyle m_decoratorStyle;
 		private static BTGraphNodeStyle m_actionStyle;
+		private static BTGraphNodeStyle m_nodeGroupStyle;
 
 		private static GUIStyle m_editorFooter;
 		private static GUIStyle m_selectionBoxStyle;
@@ -243,6 +244,14 @@ namespace BrainiacEditor
 													"flow node 4", "flow node 4 on",
 													"flow node 3", "flow node 3 on");
 			}
+
+			if(m_nodeGroupStyle == null)
+			{
+				m_nodeGroupStyle = new BTGraphNodeStyle("flow node hex 1", "flow node hex 1 on",
+													"flow node hex 6", "flow node hex 6 on",
+													"flow node hex 4", "flow node hex 4 on",
+													"flow node hex 3", "flow node hex 3 on");
+			}
 		}
 
 		private static void CreateGUIStyles()
@@ -331,11 +340,15 @@ namespace BrainiacEditor
 		{
 			if(node != null)
 			{
-				if(node is Composite)
+				if(node is NodeGroup)
+				{
+					return m_nodeGroupStyle;
+				}
+				else if(node is Composite)
 				{
 					return m_compositeStyle;
 				}
-				else if(node is Decorator || node is NodeGroup)
+				else if(node is Decorator)
 				{
 					return m_decoratorStyle;
 				}
@@ -354,7 +367,11 @@ namespace BrainiacEditor
 
 			if(node != null)
 			{
-				if(node is Composite)
+				if(node is NodeGroup)
+				{
+					return m_nodeGroupStyle.GetSize(label, TreeLayout);
+				}
+				else if(node is Composite)
 				{
 					return m_compositeStyle.GetSize(label, TreeLayout);
 				}
