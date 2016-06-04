@@ -11,15 +11,18 @@ namespace BrainiacEditor
 	public class NodeInspector
 	{
 		private BehaviourNode m_target;
+		private BTEditorGraphNode m_graphNode;
 
-		protected BehaviourNode Target
+		public BehaviourNode Target
 		{
 			get { return m_target; }
+			set { m_target = value; }
 		}
 
-		public virtual void SetTarget(BehaviourNode target)
+		public BTEditorGraphNode GraphNode
 		{
-			m_target = target;
+			get { return m_graphNode; }
+			set { m_graphNode = value; }
 		}
 
 		public virtual void OnInspectorGUI()

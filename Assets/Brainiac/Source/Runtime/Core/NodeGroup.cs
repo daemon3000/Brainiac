@@ -1,14 +1,15 @@
-﻿using UnityEngine;
+﻿using Brainiac.Serialization;
 
 namespace Brainiac
 {
-	public class Root : Decorator
+	[AddNodeMenu("Utility/Node Group")]
+	public class NodeGroup : Decorator
 	{
 		public override string Title
 		{
 			get
 			{
-				return "Root";
+				return "NodeGroup";
 			}
 		}
 

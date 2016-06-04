@@ -335,7 +335,7 @@ namespace BrainiacEditor
 				{
 					return m_compositeStyle;
 				}
-				else if(node is Decorator)
+				else if(node is Decorator || node is NodeGroup)
 				{
 					return m_decoratorStyle;
 				}
@@ -358,7 +358,7 @@ namespace BrainiacEditor
 				{
 					return m_compositeStyle.GetSize(label, TreeLayout);
 				}
-				else if(node is Decorator)
+				else if(node is Decorator || node is NodeGroup)
 				{
 					return m_decoratorStyle.GetSize(label, TreeLayout);
 				}

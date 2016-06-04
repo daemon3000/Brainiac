@@ -50,15 +50,16 @@ namespace BrainiacEditor
 			}
 		}
 
-		public static NodeInspector CreateInspectorForNode(BehaviourNode node)
+		public static NodeInspector CreateInspectorForNode(BTEditorGraphNode graphNode)
 		{
-			if(node != null)
+			if(graphNode != null && graphNode.Node != null)
 			{
-				Type inspectorType = GetInspectorTypeForNode(node.GetType());
+				Type inspectorType = GetInspectorTypeForNode(graphNode.Node.GetType());
 				if(inspectorType != null)
 				{
 					NodeInspector inspector = Activator.CreateInstance(inspectorType) as NodeInspector;
-					inspector.SetTarget(node);
+					inspector.Target = graphNode.Node;
+					inspector.GraphNode = graphNode;
 
 					return inspector;
 				}

@@ -23,7 +23,6 @@ namespace BrainiacEditor
 		private bool m_isDragging;
 		private bool m_canBeginDragging;
 		
-
 		public BehaviourNode Node
 		{
 			get { return m_node; }
@@ -44,6 +43,27 @@ namespace BrainiacEditor
 			get { return m_children.Count; }
 		}
 
+		private bool IsRoot
+		{
+			get { return m_graph.IsRoot(this); }
+		}
+
+		private bool CanUpdateChildren
+		{
+			get
+			{
+				return !(m_node is NodeGroup) || m_graph.IsRoot(this);
+			}
+		}
+
+		private bool CanDrawChildren
+		{
+			get
+			{
+				return !(m_node is NodeGroup) || m_graph.IsRoot(this);
+			}
+		}
+		
 		private void OnCreated()
 		{
 			if(m_children == null)
@@ -60,7 +80,9 @@ namespace BrainiacEditor
 
 		public void Update()
 		{
-			UpdateChildren();
+			if(CanUpdateChildren)
+				UpdateChildren();
+
 			HandleEvents();
 		}
 
@@ -99,7 +121,7 @@ namespace BrainiacEditor
 						m_lastClickTime = Time.realtimeSinceStartup;
 					}
 
-					m_canBeginDragging = true;
+					m_canBeginDragging = !IsRoot;
 					BTEditorCanvas.Current.Event.Use();
 				}
 			}
@@ -154,9 +176,13 @@ namespace BrainiacEditor
 
 		public void Draw()
 		{
-			DrawTransitions();
+			if(CanDrawChildren)
+				DrawTransitions();
+
 			DrawSelf();
-			DrawChildren();
+
+			if(CanDrawChildren)
+				DrawChildren();
 		}
 
 		private void DrawTransitions()
@@ -311,6 +337,10 @@ namespace BrainiacEditor
 						BehaviourTreeEditor.OpenSubtree(rb.BehaviourTreeAsset);
 					}
 				}
+			}
+			else if(m_node is NodeGroup)
+			{
+				m_graph.OnPushNodeGroup(this);
 			}
 		}
 

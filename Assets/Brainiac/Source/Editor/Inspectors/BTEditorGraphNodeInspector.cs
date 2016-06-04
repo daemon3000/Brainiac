@@ -12,9 +12,9 @@ namespace BrainiacEditor
 
 		private void OnEnable()
 		{
-			m_graphNode = (BTEditorGraphNode)target;
+			m_graphNode = target as BTEditorGraphNode;
 			if(m_graphNode != null)
-				m_nodeInspector = BTNodeInspectorFactory.CreateInspectorForNode(m_graphNode.Node);
+				m_nodeInspector = BTNodeInspectorFactory.CreateInspectorForNode(m_graphNode);
 			else
 				m_nodeInspector = null;
 		}

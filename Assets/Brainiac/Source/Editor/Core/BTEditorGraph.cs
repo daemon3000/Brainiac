@@ -12,7 +12,8 @@ namespace BrainiacEditor
 		private const int CONTEXT_MOUSE_BUTTON = 1;
 
 		private List<BTEditorGraphNode> m_selection;
-		private BTEditorGraphNode m_root;
+		private BTEditorGraphNode m_masterRoot;
+		private Stack<BTEditorGraphNode> m_rootStack;
 		private bool m_drawSelectionBox;
 		private bool m_isBehaviourTreeReadOnly;
 		private bool m_canBeginBoxSelection;
@@ -26,12 +27,29 @@ namespace BrainiacEditor
 			}
 		}
 
+		public int Depth
+		{
+			get
+			{
+				return Mathf.Max(m_rootStack.Count - 1, 0);
+			}
+		}
+
 		public Rect? SelectionBox { get; set; }
 		public Vector2 MinNodePosition { get; private set; }
 
+		private BTEditorGraphNode WorkingRoot
+		{
+			get
+			{
+				return m_rootStack.Peek();
+			}
+		}
+
 		private void OnCreated()
 		{
-			m_root = null;
+			m_masterRoot = null;
+			m_rootStack = new Stack<BTEditorGraphNode>();
 			m_drawSelectionBox = false;
 			m_isBehaviourTreeReadOnly = false;
 			m_selectionBoxStartPos = Vector2.zero;
@@ -40,25 +58,27 @@ namespace BrainiacEditor
 
 		public void SetBehaviourTree(BehaviourTree behaviourTree)
 		{
-			if(m_root != null)
+			if(m_masterRoot != null)
 			{
-				BTEditorGraphNode.DestroyImmediate(m_root);
-				m_root = null;
+				BTEditorGraphNode.DestroyImmediate(m_masterRoot);
+				m_masterRoot = null;
+				m_rootStack.Clear();
 			}
 
 			m_isBehaviourTreeReadOnly = behaviourTree.ReadOnly;
-			m_root = BTEditorGraphNode.Create(this, behaviourTree.Root);
+			m_masterRoot = BTEditorGraphNode.Create(this, behaviourTree.Root);
+			m_rootStack.Push(m_masterRoot);
 			BTUndoSystem.Clear();
 		}
 
 		public void DrawGUI(Rect screenRect)
 		{
-			if(m_root != null)
+			if(WorkingRoot != null)
 			{
 				MinNodePosition = screenRect.min;
 
-				m_root.Update();
-				m_root.Draw();
+				WorkingRoot.Update();
+				WorkingRoot.Draw();
 				DrawSelectionBox();
 				HandleEvents(screenRect);
 			}
@@ -126,17 +146,32 @@ namespace BrainiacEditor
 					}
 					else if(BTEditorCanvas.Current.Event.button == CONTEXT_MOUSE_BUTTON)
 					{
-						if(!ReadOnly)
-						{
-							GenericMenu menu = BTContextMenuFactory.CreateGraphContextMenu(this);
-							menu.DropDown(new Rect(BTEditorCanvas.Current.Event.mousePosition, Vector2.zero));
+						GenericMenu menu = BTContextMenuFactory.CreateGraphContextMenu(this);
+						menu.DropDown(new Rect(BTEditorCanvas.Current.Event.mousePosition, Vector2.zero));
 
-							BTEditorCanvas.Current.Event.Use();
-						}
+						BTEditorCanvas.Current.Event.Use();
 					}
 				}
 
 				m_canBeginBoxSelection = false;
+			}
+		}
+
+		public void OnPushNodeGroup(BTEditorGraphNode node)
+		{
+			if(node != null && node.Node is NodeGroup)
+			{
+				BTUndoSystem.RegisterUndo(new UndoNodeGroupPush(node));
+				m_rootStack.Push(node);
+			}
+		}
+
+		public void OnPopNodeGroup()
+		{
+			if(m_rootStack.Count > 1)
+			{
+				var oldWorkingRoot = m_rootStack.Pop();
+				BTUndoSystem.RegisterUndo(new UndoNodeGroupPop(oldWorkingRoot));
 			}
 		}
 
@@ -304,6 +339,27 @@ namespace BrainiacEditor
 			}
 		}
 
+		public void IncreaseEditingDepth(BTEditorGraphNode node)
+		{
+			if(node != null && (node.Node is NodeGroup || node.Node is Root))
+			{
+				m_rootStack.Push(node);
+			}
+		}
+
+		public void DecreaseEditingDepth()
+		{
+			if(m_rootStack.Count > 1)
+			{
+				m_rootStack.Pop();
+			}
+		}
+
+		public bool IsRoot(BTEditorGraphNode node)
+		{
+			return node == WorkingRoot;
+		}
+
 		public string GetNodeHash(BTEditorGraphNode node)
 		{
 			List<byte> path = new List<byte>();
@@ -321,7 +377,7 @@ namespace BrainiacEditor
 			byte[] actualPath = Convert.FromBase64String(path);
 			if(actualPath != null)
 			{
-				BTEditorGraphNode node = m_root;
+				BTEditorGraphNode node = WorkingRoot;
 
 				for(int i = 0; i < actualPath.Length; i++)
 				{
@@ -341,7 +397,7 @@ namespace BrainiacEditor
 		public void SelectEntireGraph()
 		{
 			ClearSelection();
-			SelectBranchRecursive(m_root);
+			SelectBranchRecursive(WorkingRoot);
 		}
 
 		public void SelectBranch(BTEditorGraphNode root)
@@ -376,7 +432,9 @@ namespace BrainiacEditor
 
 		private void OnDestroy()
 		{
-			BTEditorGraphNode.DestroyImmediate(m_root);
+			BTEditorGraphNode.DestroyImmediate(m_masterRoot);
+			m_masterRoot = null;
+			m_rootStack.Clear();
 		}
 
 		public static BTEditorGraph Create()

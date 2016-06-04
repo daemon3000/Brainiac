@@ -126,28 +126,42 @@ namespace BrainiacEditor
 		{
 			GenericMenu menu = new GenericMenu();
 
-			if(BTUndoSystem.CanUndo)
+			if(!graph.ReadOnly)
 			{
-				BTUndoState topUndo = BTUndoSystem.PeekUndo();
-				menu.AddItem(new GUIContent(string.Format("Undo \"{0}\"", topUndo.Title)), false, () => BTUndoSystem.Undo());
+				if(BTUndoSystem.CanUndo)
+				{
+					BTUndoState topUndo = BTUndoSystem.PeekUndo();
+					menu.AddItem(new GUIContent(string.Format("Undo \"{0}\"", topUndo.Title)), false, () => BTUndoSystem.Undo());
+				}
+				else
+				{
+					menu.AddDisabledItem(new GUIContent("Undo"));
+				}
+
+				if(BTUndoSystem.CanRedo)
+				{
+					BTUndoState topRedo = BTUndoSystem.PeekRedo();
+					menu.AddItem(new GUIContent(string.Format("Redo \"{0}\"", topRedo.Title)), false, () => BTUndoSystem.Redo());
+				}
+				else
+				{
+					menu.AddDisabledItem(new GUIContent("Redo"));
+				}
+
+				menu.AddSeparator("");
+			}
+
+			if(graph.Depth > 0)
+			{
+				menu.AddItem(new GUIContent("Go Up"), false, () => graph.OnPopNodeGroup());
 			}
 			else
 			{
-				menu.AddDisabledItem(new GUIContent("Undo"));
+				menu.AddDisabledItem(new GUIContent("Go Up"));
 			}
 
-			if(BTUndoSystem.CanRedo)
-			{
-				BTUndoState topRedo = BTUndoSystem.PeekRedo();
-				menu.AddItem(new GUIContent(string.Format("Redo \"{0}\"", topRedo.Title)), false, () => BTUndoSystem.Redo());
-			}
-			else
-			{
-				menu.AddDisabledItem(new GUIContent("Redo"));
-			}
-
-			menu.AddSeparator("");
-			menu.AddItem(new GUIContent("Select All"), false, () => graph.SelectEntireGraph());
+			if(!graph.ReadOnly)
+				menu.AddItem(new GUIContent("Select All"), false, () => graph.SelectEntireGraph());
 
 			return menu;
 		}
