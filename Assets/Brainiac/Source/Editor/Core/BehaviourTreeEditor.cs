@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using Brainiac;
-using System;
 
 namespace BrainiacEditor
 {
@@ -93,7 +92,7 @@ namespace BrainiacEditor
 				m_btAsset = asset;
 				m_graph.SetBehaviourTree(m_btAsset.GetEditModeTree());
 				m_canvas.Position = m_btAsset.CanvasPosition;
-				m_canvas.Size = m_btAsset.CanvasSize;
+				m_canvas.Area = m_btAsset.CanvasArea;
 				m_canvas.IsDebuging = false;
 
 				if(clearNavigationHistory)
@@ -112,7 +111,7 @@ namespace BrainiacEditor
 				m_btAsset = asset;
 				m_graph.SetBehaviourTree(btInstance);
 				m_canvas.Position = m_btAsset.CanvasPosition;
-				m_canvas.Size = m_btAsset.CanvasSize;
+				m_canvas.Area = m_btAsset.CanvasArea;
 				m_canvas.IsDebuging = true;
 
 				if(clearNavigationHistory)
@@ -130,7 +129,7 @@ namespace BrainiacEditor
 			{
 				m_graph.SetBehaviourTree(m_btAsset.GetEditModeTree());
 				m_canvas.Position = m_btAsset.CanvasPosition;
-				m_canvas.Size = m_btAsset.CanvasSize;
+				m_canvas.Area = m_btAsset.CanvasArea;
 				m_canvas.IsDebuging = false;
 			}
 		}
@@ -168,7 +167,7 @@ namespace BrainiacEditor
 			if(m_btAsset != null)
 			{
 				m_btAsset.CanvasPosition = m_canvas.Position;
-				m_btAsset.CanvasSize = m_canvas.Size;
+				m_btAsset.CanvasArea = m_canvas.Area;
 				m_btAsset.Serialize();
 				EditorUtility.SetDirty(m_btAsset);
 			}
@@ -200,7 +199,7 @@ namespace BrainiacEditor
 				Rect canvasRect = new Rect(0.0f, navHistoryRect.yMax, position.width, position.height - (footerRect.height + navHistoryRect.height));
 				
 				BTEditorStyle.EnsureStyle();
-				m_grid.DrawGUI();
+				m_grid.DrawGUI(position.size);
 				m_graph.DrawGUI(canvasRect);
 				m_canvas.HandleEvents(canvasRect, position.size);
 				DrawNavigationHistory(navHistoryRect);

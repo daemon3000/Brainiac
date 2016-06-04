@@ -70,14 +70,14 @@ namespace BrainiacEditor
 		}
 
 		public Vector2 Position { get; set; }
-		public Vector2 Size { get; set; }
+		public Rect Area { get; set; }
 		public bool IsDebuging { get; set; }
 		public string Clipboard { get; set; }
 		
 		public BTEditorCanvas()
 		{
 			Position = Vector2.zero;
-			Size = Vector2.zero;
+			Area = new Rect();
 			IsDebuging = false;
 			SnapSize = 10;
 			Clipboard = null;
@@ -94,15 +94,15 @@ namespace BrainiacEditor
 		public void HandleEvents(Rect screenRect, Vector2 windowSize)
 		{
 			Vector2 canvasPosition = Position;
-			Vector2 canvasSize = Size;
+			Rect canvasArea = Area;
 
-			if(canvasSize.x < windowSize.x)
+			if(canvasArea.xMax < windowSize.x)
 			{
-				canvasSize.x = windowSize.x;
+				canvasArea.xMax = windowSize.x;
 			}
-			if(canvasSize.y < windowSize.y)
+			if(canvasArea.yMax < windowSize.y)
 			{
-				canvasSize.y = windowSize.y;
+				canvasArea.yMax = windowSize.y;
 			}
 
 			if(Event.current.type == EventType.MouseDrag && Event.current.button == DRAG_MOUSE_BUTTON)
@@ -114,20 +114,25 @@ namespace BrainiacEditor
 				}
 			}
 
-			canvasPosition.x = Mathf.Clamp(canvasPosition.x, -(canvasSize.x - windowSize.x), 0.0f);
-			canvasPosition.y = Mathf.Clamp(canvasPosition.y, -(canvasSize.y - windowSize.y), 0.0f);
+			canvasPosition.x = Mathf.Clamp(canvasPosition.x, -(canvasArea.xMax - windowSize.x), -canvasArea.x);
+			canvasPosition.y = Mathf.Clamp(canvasPosition.y, -(canvasArea.yMax - windowSize.y), -canvasArea.y);
 
 			Position = canvasPosition;
-			Size = canvasSize;
+			Area = canvasArea;
 		}
 
 		public void RecalculateSize(Vector2 referencePosition)
 		{
-			Vector2 canvasSize = Size;
-			canvasSize.x = Mathf.Max(referencePosition.x + 250.0f, canvasSize.x);
-			canvasSize.y = Mathf.Max(referencePosition.y + 250.0f, canvasSize.y);
+			Rect canvasArea = Area;
+			float xMax = Mathf.Max(referencePosition.x + 250.0f, canvasArea.xMax);
+			float yMax = Mathf.Max(referencePosition.y + 150.0f, canvasArea.yMax);
 
-			Size = canvasSize;
+			canvasArea.x = Mathf.Min(referencePosition.x - 150.0f, Mathf.Min(canvasArea.x, 0.0f));
+			canvasArea.y = Mathf.Min(referencePosition.y - 150.0f, Mathf.Min(canvasArea.y, 0.0f));
+			canvasArea.width = xMax - canvasArea.x;
+			canvasArea.height = yMax - canvasArea.y;
+
+			Area = canvasArea;
 		}
 
 		public Vector2 WindowSpaceToCanvasSpace(Vector2 mousePosition)

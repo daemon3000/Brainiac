@@ -26,8 +26,8 @@ TextureImporter:
   cubemapConvolutionSteps: 8
   cubemapConvolutionExponent: 1.5
   seamlessCubemap: 0
-  textureFormat: -1
-  maxTextureSize: 512
+  textureFormat: 5
+  maxTextureSize: 1024
   textureSettings:
     filterMode: -1
     aniso: 1

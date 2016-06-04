@@ -19,7 +19,7 @@ namespace Brainiac
 		[SerializeField]
 		private Vector2 m_canvasPosition;
 		[SerializeField]
-		private Vector2 m_canvasSize;
+		private Rect m_canvasArea;
 		[SerializeField]
 		private List<AssetIDPair> m_subtrees;
 
@@ -44,24 +44,25 @@ namespace Brainiac
 			}
 		}
 
-		public Vector3 CanvasSize
+		public Rect CanvasArea
 		{
 			get
 			{
-				return m_canvasSize;
+				return m_canvasArea;
 			}
 			set
 			{
-				m_canvasSize = value;
+				m_canvasArea = value;
 			}
 		}
 
 #if UNITY_EDITOR
 		private void OnEnable()
 		{
-			if(m_canvasSize == Vector2.zero)
+			if(Mathf.Approximately(m_canvasArea.width, 0) || Mathf.Approximately(m_canvasArea.height, 0))
 			{
-				m_canvasSize = DEFAULT_CANVAS_SIZE;
+				m_canvasArea = new Rect(-DEFAULT_CANVAS_SIZE.x / 2, -DEFAULT_CANVAS_SIZE.y / 2, DEFAULT_CANVAS_SIZE.x, DEFAULT_CANVAS_SIZE.y);
+				m_canvasPosition = m_canvasArea.center;
 			}
 			if(m_subtrees == null)
 			{

@@ -1,7 +1,4 @@
 ﻿using UnityEngine;
-using System;
-using System.Collections;
-using UnityEditor;
 
 namespace BrainiacEditor
 {
@@ -14,13 +11,14 @@ namespace BrainiacEditor
 			m_gridTexture = gridTexture;
 		}
 
-		public void DrawGUI()
+		public void DrawGUI(Vector2 windowSize)
 		{
 			BTEditorCanvas canvas = BTEditorCanvas.Current;
-			float width = Mathf.Max(m_gridTexture.width, canvas.Size.x);
-			float height = Mathf.Max(m_gridTexture.height, canvas.Size.y);
-			Rect position = new Rect(canvas.Position.x, canvas.Position.y, width, height);
-			Rect texCoords = new Rect(0.0f, 0.0f, width / m_gridTexture.width, height / m_gridTexture.height);
+			Rect position = new Rect(0, 0, windowSize.x, windowSize.y);
+			Rect texCoords = new Rect(-canvas.Position.x / m_gridTexture.width,
+									  (1.0f - windowSize.y / m_gridTexture.height) + canvas.Position.y / m_gridTexture.height,
+									  windowSize.x / m_gridTexture.width,
+									  windowSize.y / m_gridTexture.height);
 
 			GUI.DrawTextureWithTexCoords(position, m_gridTexture, texCoords);
 		}

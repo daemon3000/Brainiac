@@ -36,7 +36,6 @@ namespace BrainiacEditor
 		}
 
 		public Rect? SelectionBox { get; set; }
-		public Vector2 MinNodePosition { get; private set; }
 
 		private BTEditorGraphNode WorkingRoot
 		{
@@ -75,8 +74,6 @@ namespace BrainiacEditor
 		{
 			if(WorkingRoot != null)
 			{
-				MinNodePosition = screenRect.min;
-
 				WorkingRoot.Update();
 				WorkingRoot.Draw();
 				DrawSelectionBox();

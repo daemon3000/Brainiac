@@ -307,9 +307,6 @@ namespace BrainiacEditor
 				nodePos.y = (float)Math.Round(nodePos.y / snapSize) * snapSize;
 			}
 
-			nodePos.x = Mathf.Max(nodePos.x, m_graph.MinNodePosition.x);
-			nodePos.y = Mathf.Max(nodePos.y, m_graph.MinNodePosition.y);
-
 			m_node.Position = nodePos;
 
 			BTEditorCanvas.Current.RecalculateSize(m_node.Position);
