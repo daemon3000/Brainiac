@@ -17,8 +17,6 @@ namespace Brainiac
 		[HideInInspector]
 		private string m_serializedData;
 		[SerializeField]
-		private Vector2 m_canvasPosition;
-		[SerializeField]
 		private Rect m_canvasArea;
 		[SerializeField]
 		private List<AssetIDPair> m_subtrees;
@@ -30,18 +28,6 @@ namespace Brainiac
 		public static Vector2 DEFAULT_CANVAS_SIZE
 		{
 			get { return new Vector2(1000, 1000); }
-		}
-
-		public Vector2 CanvasPosition
-		{
-			get
-			{
-				return m_canvasPosition;
-			}
-			set
-			{
-				m_canvasPosition = value;
-			}
 		}
 
 		public Rect CanvasArea
@@ -62,7 +48,6 @@ namespace Brainiac
 			if(Mathf.Approximately(m_canvasArea.width, 0) || Mathf.Approximately(m_canvasArea.height, 0))
 			{
 				m_canvasArea = new Rect(-DEFAULT_CANVAS_SIZE.x / 2, -DEFAULT_CANVAS_SIZE.y / 2, DEFAULT_CANVAS_SIZE.x, DEFAULT_CANVAS_SIZE.y);
-				m_canvasPosition = m_canvasArea.center;
 			}
 			if(m_subtrees == null)
 			{

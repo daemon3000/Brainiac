@@ -90,9 +90,11 @@ namespace BrainiacEditor
 				}
 
 				m_btAsset = asset;
-				m_graph.SetBehaviourTree(m_btAsset.GetEditModeTree());
-				m_canvas.Position = m_btAsset.CanvasPosition;
+
+				BehaviourTree behaviourTree = m_btAsset.GetEditModeTree();
+				m_graph.SetBehaviourTree(behaviourTree);
 				m_canvas.Area = m_btAsset.CanvasArea;
+				m_canvas.CenterOnPosition(behaviourTree.Root.Position, position.size);
 				m_canvas.IsDebuging = false;
 
 				if(clearNavigationHistory)
@@ -110,7 +112,7 @@ namespace BrainiacEditor
 			{
 				m_btAsset = asset;
 				m_graph.SetBehaviourTree(btInstance);
-				m_canvas.Position = m_btAsset.CanvasPosition;
+				m_canvas.CenterOnPosition(btInstance.Root.Position, position.size);
 				m_canvas.Area = m_btAsset.CanvasArea;
 				m_canvas.IsDebuging = true;
 
@@ -127,8 +129,10 @@ namespace BrainiacEditor
 		{
 			if(m_btAsset != null)
 			{
-				m_graph.SetBehaviourTree(m_btAsset.GetEditModeTree());
-				m_canvas.Position = m_btAsset.CanvasPosition;
+				BehaviourTree behaviourTree = m_btAsset.GetEditModeTree();
+
+				m_graph.SetBehaviourTree(behaviourTree);
+				m_canvas.CenterOnPosition(behaviourTree.Root.Position, position.size);
 				m_canvas.Area = m_btAsset.CanvasArea;
 				m_canvas.IsDebuging = false;
 			}
@@ -166,7 +170,6 @@ namespace BrainiacEditor
 		{
 			if(m_btAsset != null)
 			{
-				m_btAsset.CanvasPosition = m_canvas.Position;
 				m_btAsset.CanvasArea = m_canvas.Area;
 				m_btAsset.Serialize();
 				EditorUtility.SetDirty(m_btAsset);

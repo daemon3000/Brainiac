@@ -63,6 +63,21 @@ namespace BrainiacEditor
 				return !(m_node is NodeGroup) || m_graph.IsRoot(this);
 			}
 		}
+
+		private Vector2 NodePositon
+		{
+			get
+			{
+				return IsRoot ? Vector2.zero : m_node.Position;
+			}
+			set
+			{
+				if(!IsRoot)
+				{
+					m_node.Position = value;
+				}
+			}
+		}
 		
 		private void OnCreated()
 		{
@@ -96,7 +111,7 @@ namespace BrainiacEditor
 
 		private void HandleEvents()
 		{
-			Rect position = new Rect(m_node.Position, BTEditorStyle.GetNodeSize(m_node));
+			Rect position = new Rect(NodePositon, BTEditorStyle.GetNodeSize(m_node));
 			Vector2 mousePosition = BTEditorCanvas.Current.WindowSpaceToCanvasSpace(BTEditorCanvas.Current.Event.mousePosition);
 
 			if(BTEditorCanvas.Current.Event.type == EventType.MouseDown && BTEditorCanvas.Current.Event.button == SELECT_MOUSE_BUTTON)
@@ -188,7 +203,7 @@ namespace BrainiacEditor
 		private void DrawTransitions()
 		{
 			Vector2 nodeSize = BTEditorStyle.GetNodeSize(m_node);
-			Rect position = new Rect(m_node.Position + BTEditorCanvas.Current.Position, nodeSize);
+			Rect position = new Rect(NodePositon + BTEditorCanvas.Current.Position, nodeSize);
 			BTEditorTreeLayout treeLayout = BTEditorStyle.TreeLayout;
 
 			foreach(var child in m_children)
@@ -244,7 +259,7 @@ namespace BrainiacEditor
 			string label = string.IsNullOrEmpty(m_node.Name) ? m_node.Title : m_node.Name;
 			BTGraphNodeStyle nodeStyle = BTEditorStyle.GetNodeStyle(m_node);
 			Vector2 nodeSize = BTEditorStyle.GetNodeSize(m_node);
-			Rect position = new Rect(m_node.Position + BTEditorCanvas.Current.Position, nodeSize);
+			Rect position = new Rect(NodePositon + BTEditorCanvas.Current.Position, nodeSize);
 			BehaviourNodeStatus status = BTEditorCanvas.Current.IsDebuging ? m_node.Status : BehaviourNodeStatus.None;
 
 			EditorGUI.LabelField(position, label, nodeStyle.GetStyle(status, m_isSelected));
@@ -293,7 +308,7 @@ namespace BrainiacEditor
 
 		public void OnBeginDrag(Vector2 position)
 		{
-			m_dragOffset = position - m_node.Position;
+			m_dragOffset = position - NodePositon;
 			m_isDragging = true;
 		}
 
@@ -307,9 +322,9 @@ namespace BrainiacEditor
 				nodePos.y = (float)Math.Round(nodePos.y / snapSize) * snapSize;
 			}
 
-			m_node.Position = nodePos;
+			NodePositon = nodePos;
 
-			BTEditorCanvas.Current.RecalculateSize(m_node.Position);
+			BTEditorCanvas.Current.RecalculateSize(NodePositon);
 			BTEditorCanvas.Current.Repaint();
 		}
 
@@ -387,7 +402,7 @@ namespace BrainiacEditor
 				if(node != null)
 				{
 					Vector2 nodeSize = BTEditorStyle.GetNodeSize(node);
-					Vector2 nodePos = m_node.Position + nodeSize * 1.5f;
+					Vector2 nodePos = NodePositon + nodeSize * 1.5f;
 					nodePos.x = Mathf.Max(nodePos.x, 0.0f);
 					nodePos.y = Mathf.Max(nodePos.y, 0.0f);
 

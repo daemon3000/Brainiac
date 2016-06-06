@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 using UnityEditor;
-using Brainiac;
 
 namespace BrainiacEditor
 {
@@ -133,6 +132,25 @@ namespace BrainiacEditor
 			canvasArea.height = yMax - canvasArea.y;
 
 			Area = canvasArea;
+		}
+
+		public void RecalculateSize(Rect referencePosition)
+		{
+			Rect canvasArea = Area;
+			float xMax = Mathf.Max(referencePosition.xMax + 250.0f, canvasArea.xMax);
+			float yMax = Mathf.Max(referencePosition.yMax + 150.0f, canvasArea.yMax);
+
+			canvasArea.x = Mathf.Min(referencePosition.x - 150.0f, Mathf.Min(canvasArea.x, 0.0f));
+			canvasArea.y = Mathf.Min(referencePosition.y - 150.0f, Mathf.Min(canvasArea.y, 0.0f));
+			canvasArea.width = xMax - canvasArea.x;
+			canvasArea.height = yMax - canvasArea.y;
+
+			Area = canvasArea;
+		}
+
+		public void CenterOnPosition(Vector2 position, Vector2 windowSize)
+		{
+			Position = new Vector2((windowSize.x / 2.0f - position.x), (100 - position.y));
 		}
 
 		public Vector2 WindowSpaceToCanvasSpace(Vector2 mousePosition)
