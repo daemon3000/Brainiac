@@ -6,7 +6,7 @@ namespace Brainiac
 	public class Limiter : Decorator
 	{
 		[BTProperty("MaxExecutions")]
-		private MemoryVar m_maxExecutions;
+		private int m_maxExecutions;
 
 		private int m_numberOfExecutions;
 
@@ -19,9 +19,7 @@ namespace Brainiac
 		protected override BehaviourNodeStatus OnExecute(AIAgent agent)
 		{
 			BehaviourNodeStatus status = BehaviourNodeStatus.Failure;
-			int maxExecutions = m_maxExecutions.AsInt.HasValue ? m_maxExecutions.AsInt.Value : m_maxExecutions.Evaluate<int>(agent.Memory, 0);
-
-			if(m_child != null && m_numberOfExecutions < maxExecutions)
+			if(m_child != null && m_numberOfExecutions < m_maxExecutions)
 			{
 				status = m_child.Run(agent);
 			}

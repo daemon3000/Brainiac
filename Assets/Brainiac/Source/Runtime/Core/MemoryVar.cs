@@ -59,6 +59,11 @@ namespace Brainiac
 			return defValue;
 		}
 
+		public bool HasValue<T>(Memory memory)
+		{
+			return memory.HasItem<T>(m_valueAsVariableName);
+		}
+
 		private void ParseContent()
 		{
 			bool valueAsBool = false;

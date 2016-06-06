@@ -54,6 +54,12 @@ namespace Brainiac
 			return (value != null && value is T) ? (T)value : defaultValue;
 		}
 
+		public bool HasItem<T>(string name)
+		{
+			object value = GetItem(name);
+			return (value != null && value is T);
+		}
+
 #if UNITY_EDITOR
 		public IDictionary<string, object> GetMemory()
 		{
