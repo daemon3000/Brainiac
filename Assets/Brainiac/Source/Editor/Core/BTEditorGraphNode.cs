@@ -119,9 +119,7 @@ namespace BrainiacEditor
 				if(position.Contains(mousePosition))
 				{
 					if(!m_isSelected)
-					{
 						m_graph.OnNodeSelected(this);
-					}
 
 					if(m_lastClickTime.HasValue)
 					{

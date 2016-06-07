@@ -174,7 +174,11 @@ namespace BrainiacEditor
 
 		public void OnNodeSelected(BTEditorGraphNode node)
 		{
-			if(BTEditorCanvas.Current.Event.control || SelectionBox.HasValue)
+			if(BTEditorCanvas.Current.Event.shift && (node.Node is Composite || node.Node is Decorator))
+			{
+				SelectBranch(node);
+			}
+			else if(BTEditorCanvas.Current.Event.control || SelectionBox.HasValue)
 			{
 				if(!m_selection.Contains(node))
 				{

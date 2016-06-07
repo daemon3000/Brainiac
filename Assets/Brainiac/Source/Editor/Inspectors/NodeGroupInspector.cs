@@ -10,17 +10,10 @@ namespace BrainiacEditor
 		{
 			if(Target != null && Target is NodeGroup)
 			{
-				string label = BTEditorCanvas.Current.IsDebuging ? "Preview" : "Open";
-				if(GraphNode.IsRoot)
-				{
-					label = "Close";
-				}
-
-				bool prevGUIState = GUI.enabled;
-
+				string label = GraphNode.IsRoot ? "Collapse" : "Expand";
+				
 				DrawHeader();
 
-				GUI.enabled = true;
 				if(GUILayout.Button(label, GUILayout.Height(26.0f)))
 				{
 					if(GraphNode.IsRoot)
@@ -28,7 +21,6 @@ namespace BrainiacEditor
 					else
 						GraphNode.Graph.OnPushNodeGroup(GraphNode);
 				}
-				GUI.enabled = prevGUIState;
 
 				RepaintCanvas();
 			}

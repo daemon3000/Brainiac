@@ -3,14 +3,14 @@ using Brainiac;
 
 namespace BrainiacEditor
 {
-	[CustomNodeInspector(typeof(Condition))]
-	public class ConditionInspector : NodeInspector
+	[CustomNodeInspector(typeof(Evaluate))]
+	public class EvaluateInspector : NodeInspector
 	{
 		public override void OnInspectorGUI()
 		{
-			if(Target != null && Target is Condition)
+			if(Target != null && Target is Evaluate)
 			{
-				Condition target = (Condition)Target;
+				Evaluate target = (Evaluate)Target;
 				ConditionValueType oldValueType = target.ValueType;
 
 				DrawHeader();
