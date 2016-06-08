@@ -49,6 +49,14 @@ namespace Brainiac
 			m_value = "";
 		}
 
+		public void Change(Memory memory, object value)
+		{
+			if(!string.IsNullOrEmpty(m_valueAsVariableName))
+			{
+				memory.SetItem(m_valueAsVariableName, value);
+			}
+		}
+
 		public T Evaluate<T>(Memory memory, T defValue)
 		{
 			if(!string.IsNullOrEmpty(m_valueAsVariableName))

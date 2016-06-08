@@ -98,17 +98,14 @@ namespace Brainiac
 
 		private bool CompareBool(AIAgent agent)
 		{
-			bool? value = null;
+			bool value = false;
 
 			if(m_firstValue.AsBool.HasValue)
 				value = m_firstValue.AsBool.Value;
-			else if(m_firstValue.HasValue<bool>(agent.Memory))
+			else
 				value = m_firstValue.Evaluate<bool>(agent.Memory, false);
 
-			if(value.HasValue)
-				return (m_booleanComparison == BooleanComparison.IsTrue) ? value.Value : !value.Value;
-			else
-				return false;
+			return (m_booleanComparison == BooleanComparison.IsTrue) ? value : !value;
 		}
 
 		private bool CompareInteger(AIAgent agent)
