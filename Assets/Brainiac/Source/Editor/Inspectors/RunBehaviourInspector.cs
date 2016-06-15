@@ -22,7 +22,7 @@ namespace BrainiacEditor
 				if(BTEditorCanvas.Current.IsDebuging && target.BehaviourTreeAsset != null && target.BehaviourTree != null)
 				{
 					GUI.enabled = true;
-					if(GUILayout.Button("Preview", GUILayout.Height(26.0f)))
+					if(GUILayout.Button("Preview", GUILayout.Height(24.0f)))
 					{
 						BehaviourTreeEditor.OpenSubtreeDebug(target.BehaviourTreeAsset, target.BehaviourTree);
 					}
@@ -30,7 +30,7 @@ namespace BrainiacEditor
 				else
 				{
 					GUI.enabled = target.BehaviourTreeAsset != null;
-					if(GUILayout.Button("Open", GUILayout.Height(26.0f)))
+					if(GUILayout.Button("Open", GUILayout.Height(24.0f)))
 					{
 						BehaviourTreeEditor.OpenSubtree(target.BehaviourTreeAsset);
 					}
@@ -38,6 +38,7 @@ namespace BrainiacEditor
 				
 				GUI.enabled = prevGUIState;
 
+				DrawConditionsAndServices();
 				RepaintCanvas();
 			}
 		}

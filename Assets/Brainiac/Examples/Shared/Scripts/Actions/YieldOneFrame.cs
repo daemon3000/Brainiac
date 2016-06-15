@@ -1,6 +1,5 @@
-﻿using UnityEngine;
-
-namespace Brainiac
+﻿
+namespace Brainiac.Examples
 {
 	[AddNodeMenu("Action/Yield One Frame")]
 	public class YieldOneFrame : Action

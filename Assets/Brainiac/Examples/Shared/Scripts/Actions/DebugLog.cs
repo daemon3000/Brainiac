@@ -1,7 +1,6 @@
 using UnityEngine;
-using Brainiac.Serialization;
 
-namespace Brainiac
+namespace Brainiac.Examples
 {
 	public enum LogLevel
 	{

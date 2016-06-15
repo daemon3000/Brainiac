@@ -6,6 +6,17 @@ using Brainiac;
 
 namespace BrainiacEditor
 {
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+	public class CustomNodeInspectorAttribute : Attribute
+	{
+		public readonly Type NodeType;
+
+		public CustomNodeInspectorAttribute(Type nodeType)
+		{
+			NodeType = nodeType;
+		}
+	}
+
 	public static class BTNodeInspectorFactory
 	{
 		private static Dictionary<Type, Type> m_nodeInspectors;

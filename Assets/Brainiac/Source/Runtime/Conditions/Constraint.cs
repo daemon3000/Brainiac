@@ -3,8 +3,8 @@ using Brainiac.Serialization;
 
 namespace Brainiac
 {
-	[AddNodeMenu("Decorator/Constraint")]
-	public class Constraint : Decorator
+	[AddConditionMenu("Constraint")]
+	public class Constraint : Condition
 	{
 		[BTProperty("FirstValue")]
 		private MemoryVar m_firstValue;
@@ -71,23 +71,7 @@ namespace Brainiac
 			m_referenceComparison = ReferenceComparison.IsNotNull;
 		}
 
-		protected sealed override BehaviourNodeStatus OnExecute(AIAgent agent)
-		{
-			BehaviourNodeStatus status = BehaviourNodeStatus.Success;
-
-			if(m_child != null)
-			{
-				bool evaluationResult = EvaluateCondition(agent);
-				if(evaluationResult)
-					status = m_child.Run(agent);
-				else
-					status = BehaviourNodeStatus.Failure;
-			}
-
-			return status;
-		}
-
-		private bool EvaluateCondition(AIAgent agent)
+		public sealed override bool OnEvaluate(AIAgent agent)
 		{
 			switch(m_valueType)
 			{
@@ -108,17 +92,14 @@ namespace Brainiac
 
 		private bool CompareBool(AIAgent agent)
 		{
-			bool? value = null;
+			bool value = false;
 
 			if(m_firstValue.AsBool.HasValue)
 				value = m_firstValue.AsBool.Value;
-			else if(m_firstValue.HasValue<bool>(agent.Memory))
+			else
 				value = m_firstValue.Evaluate<bool>(agent.Memory, false);
 
-			if(value.HasValue)
-				return (m_booleanComparison == BooleanComparison.IsTrue) ? value.Value : !value.Value;
-			else
-				return false;
+			return (m_booleanComparison == BooleanComparison.IsTrue) ? value : !value;
 		}
 
 		private bool CompareInteger(AIAgent agent)

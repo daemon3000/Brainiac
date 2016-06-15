@@ -35,6 +35,26 @@ namespace Brainiac
 			return null;
 		}
 
+		public static Service CreateService(Type serviceType)
+		{
+			if(serviceType != null && serviceType.IsSubclassOf(typeof(Service)) && !serviceType.IsAbstract)
+			{
+				return Activator.CreateInstance(serviceType) as Service;
+			}
+
+			return null;
+		}
+
+		public static Condition CreateCondition(Type conditionType)
+		{
+			if(conditionType != null && conditionType.IsSubclassOf(typeof(Condition)) && !conditionType.IsAbstract)
+			{
+				return Activator.CreateInstance(conditionType) as Condition;
+			}
+
+			return null;
+		}
+
 		public static string SerializeTree(BehaviourTree behaviourTree)
 		{
 			try

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Brainiac.Serialization;
 
-namespace Brainiac
+namespace Brainiac.Examples
 {
 	[AddNodeMenu("Action/Timer")]
 	public class Timer : Action

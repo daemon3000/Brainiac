@@ -1,5 +1,6 @@
 using UnityEngine;
 using Brainiac.Serialization;
+using System.Collections.Generic;
 
 namespace Brainiac
 {
@@ -11,6 +12,11 @@ namespace Brainiac
 		private float m_weight;
 		private Breakpoint m_breakpoint;
 		private BehaviourNodeStatus m_status;
+
+		[BTProperty]
+		private List<Condition> m_conditions;
+		[BTProperty]
+		private List<Service> m_services;
 
 		[BTHideInInspector]
 		public Vector2 Position
@@ -90,18 +96,58 @@ namespace Brainiac
 			protected set { m_status = value; }
 		}
 
+#if UNITY_EDITOR
+		/// <summary>
+		/// This node's list of conditions. For use only in the editor code. DO NOT USE IN RUNTIME CODE!!!
+		/// </summary>
+		[BTIgnore]
+		public List<Condition> Conditions
+		{
+			get { return m_conditions; }
+		}
+
+		/// <summary>
+		/// This node's list of services. For use only in the editor code. DO NOT USE IN RUNTIME CODE!!!
+		/// </summary>
+		[BTIgnore]
+		public List<Service> Services
+		{
+			get { return m_services; }
+		}
+#endif
+
 		public BehaviourNode()
 		{
 			m_breakpoint = Breakpoint.None;
 			m_status = BehaviourNodeStatus.None;
+			m_conditions = new List<Condition>();
+			m_services = new List<Service>();
 		}
 
-		public virtual void OnBeforeSerialize(BTAsset btAsset) { }
-		public virtual void OnAfterDeserialize(BTAsset btAsset) { }
-		public virtual void OnStart(AIAgent agent) { }
-		protected virtual void OnEnter(AIAgent agent) { }
-		protected virtual void OnExit(AIAgent agent) { }
-		protected abstract BehaviourNodeStatus OnExecute(AIAgent agent);
+		public virtual void OnBeforeSerialize(BTAsset btAsset)
+		{
+			foreach(var condition in m_conditions)
+				condition.OnBeforeSerialize(btAsset);
+			foreach(var service in m_services)
+				service.OnBeforeSerialize(btAsset);
+		}
+
+		public virtual void OnAfterDeserialize(BTAsset btAsset)
+		{
+			if(m_conditions == null)
+				m_conditions = new List<Condition>();
+			if(m_services == null)
+				m_services = new List<Service>();
+
+			foreach(var condition in m_conditions)
+				condition.OnAfterDeserialize(btAsset);
+			foreach(var service in m_services)
+				service.OnAfterDeserialize(btAsset);
+		}
+
+		public virtual void OnStart(AIAgent agent)
+		{
+		}
 
 		public virtual void OnReset()
 		{
@@ -113,6 +159,9 @@ namespace Brainiac
 			if(m_status != BehaviourNodeStatus.Running)
 			{
 				OnEnter(agent);
+
+				foreach(var service in m_services)
+					service.OnEnter(agent);
 #if UNITY_EDITOR
 				if(agent.DebugMode)
 				{
@@ -124,11 +173,24 @@ namespace Brainiac
 #endif
 			}
 
-			m_status = OnExecute(agent);
+			if(EvaluateConditions(agent))
+			{
+				m_status = OnExecute(agent);
+
+				foreach(var service in m_services)
+					service.OnExecute(agent);
+			}
+			else
+			{
+				m_status = BehaviourNodeStatus.Failure;
+			}
 
 			if(m_status != BehaviourNodeStatus.Running)
 			{
 				OnExit(agent);
+
+				foreach(var service in m_services)
+					service.OnExit(agent);
 #if UNITY_EDITOR
 				if(agent.DebugMode)
 				{
@@ -143,6 +205,27 @@ namespace Brainiac
 			}
 
 			return m_status;
+		}
+
+		protected abstract BehaviourNodeStatus OnExecute(AIAgent agent);
+
+		protected virtual void OnEnter(AIAgent agent)
+		{
+		}
+
+		protected virtual void OnExit(AIAgent agent)
+		{
+		}
+
+		private bool EvaluateConditions(AIAgent agent)
+		{
+			foreach(var condition in m_conditions)
+			{
+				if(!condition.OnEvaluate(agent))
+					return false;
+			}
+
+			return true;
 		}
 	}
 }

@@ -1,4 +1,3 @@
-using UnityEngine;
 using System.Collections.Generic;
 using Brainiac.Serialization;
 
@@ -26,6 +25,8 @@ namespace Brainiac
 
 		public override void OnBeforeSerialize(BTAsset btAsset)
 		{
+			base.OnBeforeSerialize(btAsset);
+
 			for(int i = 0; i < m_children.Count; i++)
 			{
 				m_children[i].OnBeforeSerialize(btAsset);
@@ -34,6 +35,8 @@ namespace Brainiac
 
 		public override void OnAfterDeserialize(BTAsset btAsset)
 		{
+			base.OnAfterDeserialize(btAsset);
+
 			for(int i = 0; i < m_children.Count; i++)
 			{
 				m_children[i].OnAfterDeserialize(btAsset);

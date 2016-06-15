@@ -3,8 +3,8 @@ using Brainiac;
 
 namespace BrainiacEditor
 {
-	[CustomNodeInspector(typeof(Constraint))]
-	public class ConstraintInspector : NodeInspector
+	[CustomConditionInspector(typeof(Constraint))]
+	public class ConstraintInspector : ConditionInspector
 	{
 		public override void OnInspectorGUI()
 		{
@@ -12,8 +12,6 @@ namespace BrainiacEditor
 			{
 				Constraint target = (Constraint)Target;
 				ConditionValueType oldValueType = target.ValueType;
-
-				DrawHeader();
 
 				target.ValueType = (ConditionValueType)EditorGUILayout.EnumPopup("Value Type", target.ValueType);
 				if(target.ValueType != oldValueType)
@@ -47,8 +45,6 @@ namespace BrainiacEditor
 					target.ReferenceComparison = (ReferenceComparison)EditorGUILayout.EnumPopup("Condition", target.ReferenceComparison);
 					break;
 				}
-
-				RepaintCanvas();
 			}
 		}
 	}

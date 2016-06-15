@@ -38,6 +38,8 @@ namespace Brainiac
 
 		public override void OnBeforeSerialize(BTAsset btAsset)
 		{
+			base.OnBeforeSerialize(btAsset);
+
 			if(string.IsNullOrEmpty(m_behaviourTreeID))
 			{
 				m_behaviourTreeID = BTUtils.GenerateUniqueStringID();
@@ -48,6 +50,8 @@ namespace Brainiac
 
 		public override void OnAfterDeserialize(BTAsset btAsset)
 		{
+			base.OnAfterDeserialize(btAsset);
+
 			m_behaviourTreeAsset = btAsset.GetSubtreeAsset(m_behaviourTreeID);
 		}
 

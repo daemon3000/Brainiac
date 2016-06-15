@@ -194,5 +194,78 @@ namespace BrainiacEditor
 
 			return menu;
 		}
+
+		public static GenericMenu CreateNodeInspectorContextMenu(BehaviourNode targetNode)
+		{
+			GenericMenu menu = new GenericMenu();
+			BTConditionFactory.AddCondition(menu, targetNode);
+			BTServiceFactory.AddService(menu, targetNode);
+
+			return menu;
+		}
+
+		public static GenericMenu CreateConditionContextMenu(BehaviourNode targetNode, int conditionIndex)
+		{
+			GenericMenu menu = new GenericMenu();
+			menu.AddItem(new GUIContent("Move Up"), false, () => 
+			{
+				if(conditionIndex > 0)
+				{
+					var temp = targetNode.Conditions[conditionIndex];
+					targetNode.Conditions[conditionIndex] = targetNode.Conditions[conditionIndex - 1];
+					targetNode.Conditions[conditionIndex - 1] = temp;
+				}
+			});
+
+			menu.AddItem(new GUIContent("Move Down"), false, () => 
+			{
+				if(conditionIndex < targetNode.Conditions.Count - 1)
+				{
+					var temp = targetNode.Conditions[conditionIndex];
+					targetNode.Conditions[conditionIndex] = targetNode.Conditions[conditionIndex + 1];
+					targetNode.Conditions[conditionIndex + 1] = temp;
+				}
+			});
+
+			menu.AddSeparator("");
+			menu.AddItem(new GUIContent("Remove"), false, () => 
+			{
+				targetNode.Conditions.RemoveAt(conditionIndex);
+			});
+
+			return menu;
+		}
+
+		public static GenericMenu CreateServiceContextMenu(BehaviourNode targetNode, int serviceIndex)
+		{
+			GenericMenu menu = new GenericMenu();
+			menu.AddItem(new GUIContent("Move Up"), false, () =>
+			{
+				if(serviceIndex > 0)
+				{
+					var temp = targetNode.Services[serviceIndex];
+					targetNode.Services[serviceIndex] = targetNode.Services[serviceIndex - 1];
+					targetNode.Services[serviceIndex - 1] = temp;
+				}
+			});
+
+			menu.AddItem(new GUIContent("Move Down"), false, () =>
+			{
+				if(serviceIndex < targetNode.Services.Count - 1)
+				{
+					var temp = targetNode.Services[serviceIndex];
+					targetNode.Services[serviceIndex] = targetNode.Services[serviceIndex + 1];
+					targetNode.Services[serviceIndex + 1] = temp;
+				}
+			});
+
+			menu.AddSeparator("");
+			menu.AddItem(new GUIContent("Remove"), false, () =>
+			{
+				targetNode.Services.RemoveAt(serviceIndex);
+			});
+
+			return menu;
+		}
 	}
 }

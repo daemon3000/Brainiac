@@ -3,6 +3,7 @@ using UnityEditor;
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Collections.Generic;
 using Brainiac;
 using Brainiac.Serialization;
 
@@ -12,6 +13,8 @@ namespace BrainiacEditor
 	{
 		private BehaviourNode m_target;
 		private BTEditorGraphNode m_graphNode;
+		private Dictionary<Type, ConditionInspector> m_conditionInspectors;
+		private Dictionary<Type, ServiceInspector> m_serviceInspectors;
 
 		public BehaviourNode Target
 		{
@@ -25,30 +28,52 @@ namespace BrainiacEditor
 			set { m_graphNode = value; }
 		}
 
+		public NodeInspector()
+		{
+			m_conditionInspectors = new Dictionary<Type, ConditionInspector>();
+			m_conditionInspectors.Add(typeof(ConditionInspector), new ConditionInspector());
+
+			m_serviceInspectors = new Dictionary<Type, ServiceInspector>();
+			m_serviceInspectors.Add(typeof(ServiceInspector), new ServiceInspector());
+		}
+
 		public virtual void OnInspectorGUI()
 		{
 			if(m_target != null)
 			{
 				DrawHeader();
 				DrawProperties();
+				DrawConditionsAndServices();
 				RepaintCanvas();
 			}
 		}
 
-		protected virtual void DrawHeader()
+		protected void DrawHeader()
 		{
-			EditorGUILayout.LabelField(m_target.Title, EditorStyles.boldLabel);
+			Rect titlePosition = GUILayoutUtility.GetRect(new GUIContent(m_target.Title), EditorStyles.boldLabel, GUILayout.Height(24.0f));
+			Rect optionsButtonPosition = new Rect(titlePosition.xMax - 20.0f, titlePosition.y, 20.0f, 20.0f);
+
+			EditorGUI.LabelField(titlePosition, m_target.Title, BTEditorStyle.HeaderLabel);
+			if(GUI.Button(optionsButtonPosition, BTEditorStyle.OptionsIcon, EditorStyles.label))
+			{
+				GenericMenu menu = BTContextMenuFactory.CreateNodeInspectorContextMenu(m_target);
+				menu.DropDown(new Rect(Event.current.mousePosition, Vector2.zero));
+			}
+
 			m_target.Name = EditorGUILayout.TextField("Name", m_target.Name);
 			EditorGUILayout.LabelField("Comment");
 			m_target.Comment = EditorGUILayout.TextArea(m_target.Comment, BTEditorStyle.MultilineTextArea);
 
-			EditorGUILayout.Space();
-			m_target.Weight = EditorGUILayout.Slider("Random Weight", m_target.Weight, 0.0f, 1.0f);
+			if(m_graphNode.Parent != null && m_graphNode.Parent.Node is WeightedRandom)
+			{
+				EditorGUILayout.Space();
+				m_target.Weight = EditorGUILayout.Slider("Weight", m_target.Weight, 0.0f, 1.0f);
+			}
 
 			EditorGUILayout.Space();
 		}
 
-		protected virtual void DrawProperties()
+		protected void DrawProperties()
 		{
 			Type nodeType = m_target.GetType();
 			var fields = from fi in nodeType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
@@ -105,7 +130,7 @@ namespace BrainiacEditor
 			}
 		}
 
-		protected virtual bool TryToDrawField(string label, object currentValue, Type type, out object value)
+		protected bool TryToDrawField(string label, object currentValue, Type type, out object value)
 		{
 			bool success = true;
 
@@ -146,12 +171,138 @@ namespace BrainiacEditor
 			return success;
 		}
 
-		protected virtual void DrawMemoryVarField(string label, MemoryVar memVar)
+		protected void DrawMemoryVarField(string label, MemoryVar memVar)
 		{
 			if(memVar != null)
 			{
 				memVar.Value = EditorGUILayout.TextField(label, memVar.Value);
 			}
+		}
+
+		protected void DrawConditionsAndServices()
+		{
+			EditorGUILayout.Space();
+			EditorGUILayout.Space();
+
+			if(m_target.Conditions.Count > 0)
+			{
+				EditorGUILayout.Space();
+				DrawListHeaderLabel("Conditions");
+				DrawConditions();
+			}
+
+			if(m_target.Services.Count > 0)
+			{
+				EditorGUILayout.Space();
+				DrawListHeaderLabel("Services");
+				DrawServices();
+			}
+		}
+
+		private void DrawConditions()
+		{
+			EditorGUILayout.Space();
+			DrawSeparator();
+
+			for(int i = 0; i < m_target.Conditions.Count; i++)
+			{
+				Condition condition = m_target.Conditions[i];
+				Rect headerPos = GUILayoutUtility.GetRect(0, 18.0f, GUILayout.ExpandWidth(true));
+				Rect foldoutPos = new Rect(headerPos.x, headerPos.y, 20.0f, headerPos.height);
+				Rect labelPos = new Rect(foldoutPos.xMax, headerPos.y, headerPos.width - 38.0f, headerPos.height);
+				Rect optionsButtonPos = new Rect(labelPos.xMax, headerPos.y, 18.0f, headerPos.height);
+
+				condition.IsExpanded = EditorGUI.Foldout(foldoutPos, condition.IsExpanded, GUIContent.none);
+				EditorGUI.LabelField(labelPos, condition.Title, BTEditorStyle.BoldLabel);
+				if(GUI.Button(optionsButtonPos, BTEditorStyle.OptionsIcon, EditorStyles.label))
+				{
+					GenericMenu menu = BTContextMenuFactory.CreateConditionContextMenu(m_target, i);
+					menu.DropDown(new Rect(BTEditorCanvas.Current.Event.mousePosition, Vector2.zero));
+				}
+
+				if(condition.IsExpanded)
+				{
+					var conditionInspector = GetConditionInspector(condition);
+					conditionInspector.OnInspectorGUI();
+				}
+
+				DrawSeparator();
+			}
+		}
+
+		private void DrawServices()
+		{
+			EditorGUILayout.Space();
+			DrawSeparator();
+
+			for(int i = 0; i < m_target.Services.Count; i++)
+			{
+				Service service = m_target.Services[i];
+				Rect headerPos = GUILayoutUtility.GetRect(0, 18.0f, GUILayout.ExpandWidth(true));
+				Rect foldoutPos = new Rect(headerPos.x, headerPos.y, 20.0f, headerPos.height);
+				Rect labelPos = new Rect(foldoutPos.xMax, headerPos.y, headerPos.width - 38.0f, headerPos.height);
+				Rect optionsButtonPos = new Rect(labelPos.xMax, headerPos.y, 18.0f, headerPos.height);
+
+				service.IsExpanded = EditorGUI.Foldout(foldoutPos, service.IsExpanded, GUIContent.none);
+				EditorGUI.LabelField(labelPos, service.Title, BTEditorStyle.BoldLabel);
+				if(GUI.Button(optionsButtonPos, BTEditorStyle.OptionsIcon, EditorStyles.label))
+				{
+					GenericMenu menu = BTContextMenuFactory.CreateServiceContextMenu(m_target, i);
+					menu.DropDown(new Rect(BTEditorCanvas.Current.Event.mousePosition, Vector2.zero));
+				}
+
+				if(service.IsExpanded)
+				{
+					var serviceInspector = GetServiceInspector(service);
+					serviceInspector.OnInspectorGUI();
+				}
+
+				DrawSeparator();
+			}
+		}
+
+		private void DrawListHeaderLabel(string label)
+		{
+			Rect position = GUILayoutUtility.GetRect(GUIContent.none, BTEditorStyle.ListHeader, GUILayout.ExpandWidth(true), GUILayout.Height(15.0f));
+			position.x -= 12;
+			position.width += 16;
+
+			EditorGUI.LabelField(position, label, BTEditorStyle.ListHeader);
+		}
+
+		private void DrawSeparator()
+		{
+			Rect position = GUILayoutUtility.GetRect(GUIContent.none, BTEditorStyle.SeparatorStyle, GUILayout.Height(5.0f));
+			position.x -= 12;
+			position.width += 14;
+
+			EditorGUI.LabelField(position, "", BTEditorStyle.SeparatorStyle);
+		}
+
+		private ConditionInspector GetConditionInspector(Condition condition)
+		{
+			ConditionInspector inspector = null;
+			if(!m_conditionInspectors.TryGetValue(BTConditionInspectorFactory.GetInspectorTypeForCondition(condition.GetType()), out inspector))
+			{
+				inspector = BTConditionInspectorFactory.CreateInspectorForCondition(condition);
+				m_conditionInspectors.Add(inspector.GetType(), inspector);
+			}
+
+			inspector.Target = condition;
+			return inspector;
+		}
+
+		private ServiceInspector GetServiceInspector(Service service)
+		{
+			ServiceInspector inspector = null;
+			if(!m_serviceInspectors.TryGetValue(BTServiceInspectorFactory.GetInspectorTypeForService(service.GetType()), out inspector))
+			{
+				inspector = BTServiceInspectorFactory.CreateInspectorForService(service);
+				m_serviceInspectors.Add(inspector.GetType(), inspector);
+			}
+
+			inspector.Target = service;
+			return inspector;
 		}
 
 		protected void RepaintCanvas()

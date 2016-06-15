@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-using System;
-using Brainiac.Serialization;
+﻿using Brainiac.Serialization;
 
 namespace Brainiac
 {
@@ -12,6 +10,8 @@ namespace Brainiac
 
 		public override void OnBeforeSerialize(BTAsset btAsset)
 		{
+			base.OnBeforeSerialize(btAsset);
+
 			if(m_child != null)
 			{
 				m_child.OnBeforeSerialize(btAsset);
@@ -20,6 +20,8 @@ namespace Brainiac
 
 		public override void OnAfterDeserialize(BTAsset btAsset)
 		{
+			base.OnAfterDeserialize(btAsset);
+
 			if(m_child != null)
 			{
 				m_child.OnAfterDeserialize(btAsset);

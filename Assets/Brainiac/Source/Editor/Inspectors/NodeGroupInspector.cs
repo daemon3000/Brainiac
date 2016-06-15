@@ -14,7 +14,7 @@ namespace BrainiacEditor
 				
 				DrawHeader();
 
-				if(GUILayout.Button(label, GUILayout.Height(26.0f)))
+				if(GUILayout.Button(label, GUILayout.Height(24.0f)))
 				{
 					if(GraphNode.IsRoot)
 						GraphNode.Graph.OnPopNodeGroup();
@@ -22,6 +22,7 @@ namespace BrainiacEditor
 						GraphNode.Graph.OnPushNodeGroup(GraphNode);
 				}
 
+				DrawConditionsAndServices();
 				RepaintCanvas();
 			}
 		}

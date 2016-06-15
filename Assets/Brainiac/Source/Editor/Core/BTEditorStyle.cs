@@ -18,6 +18,8 @@ namespace BrainiacEditor
 		private static BTGraphNodeStyle m_actionStyle;
 		private static BTGraphNodeStyle m_nodeGroupStyle;
 
+		private static GUIStyle m_headerLabel;
+		private static GUIStyle m_boldLabel;
 		private static GUIStyle m_editorFooter;
 		private static GUIStyle m_selectionBoxStyle;
 		private static GUIStyle m_multilineTextAreaStyle;
@@ -31,6 +33,7 @@ namespace BrainiacEditor
 		private static GUIStyle m_breadcrumbLeftActiveStyle;
 		private static GUIStyle m_breadcrumbMidStyle;
 		private static GUIStyle m_breadcrumbMidActiveStyle;
+		private static GUIStyle m_separatorStyle;
 
 		public static Texture ArrowUp
 		{
@@ -61,6 +64,22 @@ namespace BrainiacEditor
 			get
 			{
 				return m_optionsIcon;
+			}
+		}
+
+		public static GUIStyle HeaderLabel
+		{
+			get
+			{
+				return m_headerLabel;
+			}
+		}
+
+		public static GUIStyle BoldLabel
+		{
+			get
+			{
+				return m_boldLabel;
 			}
 		}
 
@@ -168,6 +187,14 @@ namespace BrainiacEditor
 			}
 		}
 
+		public static GUIStyle SeparatorStyle
+		{
+			get
+			{
+				return m_separatorStyle;
+			}
+		}
+
 		public static BTEditorTreeLayout TreeLayout
 		{
 			get
@@ -256,6 +283,20 @@ namespace BrainiacEditor
 
 		private static void CreateGUIStyles()
 		{
+			if(m_headerLabel == null)
+			{
+				m_headerLabel = new GUIStyle(EditorStyles.boldLabel);
+				m_headerLabel.alignment = TextAnchor.UpperLeft;
+				m_headerLabel.contentOffset = new Vector2(0, -2);
+				m_headerLabel.fontSize = 15;
+				m_headerLabel.fontStyle = FontStyle.Bold;
+			}
+
+			if(m_boldLabel == null)
+			{
+				m_boldLabel = new GUIStyle(EditorStyles.boldLabel);
+			}
+
 			if(m_editorFooter == null)
 			{
 				m_editorFooter = new GUIStyle("ProjectBrowserHeaderBgTop");
@@ -334,6 +375,11 @@ namespace BrainiacEditor
 				m_breadcrumbMidActiveStyle = new GUIStyle("GUIEditor.BreadcrumbMid");
 				m_breadcrumbMidActiveStyle.normal.background = m_breadcrumbMidActiveStyle.active.background;
 			}
+
+			if(m_separatorStyle == null)
+			{
+				m_separatorStyle = new GUIStyle("sv_iconselector_sep");
+			}
 		}
 
 		public static BTGraphNodeStyle GetNodeStyle(BehaviourNode node)
@@ -395,7 +441,7 @@ namespace BrainiacEditor
 			case BehaviourNodeStatus.Failure:
 				return Color.red;
 			case BehaviourNodeStatus.Running:
-				return new Color32(221, 186, 19, 255);
+				return new Color32(229, 202, 76, 255);
 			case BehaviourNodeStatus.Success:
 				return Color.green;
 			}
