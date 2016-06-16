@@ -50,15 +50,22 @@ namespace BrainiacEditor
 
 		protected void DrawHeader()
 		{
-			Rect titlePosition = GUILayoutUtility.GetRect(new GUIContent(m_target.Title), EditorStyles.boldLabel, GUILayout.Height(24.0f));
-			Rect optionsButtonPosition = new Rect(titlePosition.xMax - 20.0f, titlePosition.y, 20.0f, 20.0f);
+			Rect titlePosition = GUILayoutUtility.GetRect(GUIContent.none, BTEditorStyle.RegionBackground, GUILayout.ExpandWidth(true), GUILayout.Height(15.0f));
+			titlePosition.x -= 19;
+			titlePosition.y -= 2;
+			titlePosition.width += 28;
 
-			EditorGUI.LabelField(titlePosition, m_target.Title, BTEditorStyle.HeaderLabel);
+			Rect optionsButtonPosition = new Rect(titlePosition.xMax - 28.0f, titlePosition.y, 20.0f, 20.0f);
+
+			DrawCategoryHeader(titlePosition, m_target.Title);
 			if(GUI.Button(optionsButtonPosition, BTEditorStyle.OptionsIcon, EditorStyles.label))
 			{
 				GenericMenu menu = BTContextMenuFactory.CreateNodeInspectorContextMenu(m_target);
 				menu.DropDown(new Rect(Event.current.mousePosition, Vector2.zero));
 			}
+			
+			GUILayout.Space(2.5f);
+			DrawSeparator();
 
 			m_target.Name = EditorGUILayout.TextField("Name", m_target.Name);
 			EditorGUILayout.LabelField("Comment");
@@ -187,14 +194,14 @@ namespace BrainiacEditor
 			if(m_target.Constraints.Count > 0)
 			{
 				EditorGUILayout.Space();
-				DrawSubinspectorHeader("Constraints");
+				DrawCategoryHeader("Constraints");
 				DrawConstraints();
 			}
 
 			if(m_target.Services.Count > 0)
 			{
 				EditorGUILayout.Space();
-				DrawSubinspectorHeader("Services");
+				DrawCategoryHeader("Services");
 				DrawServices();
 			}
 		}
@@ -261,7 +268,7 @@ namespace BrainiacEditor
 			}
 		}
 
-		private void DrawSubinspectorHeader(string label)
+		private void DrawCategoryHeader(string label)
 		{
 			Rect position = GUILayoutUtility.GetRect(GUIContent.none, BTEditorStyle.RegionBackground, GUILayout.ExpandWidth(true), GUILayout.Height(15.0f));
 			position.x -= 19;
@@ -270,11 +277,16 @@ namespace BrainiacEditor
 			EditorGUI.LabelField(position, label, BTEditorStyle.RegionBackground);
 		}
 
+		private void DrawCategoryHeader(Rect position, string label)
+		{
+			EditorGUI.LabelField(position, label, BTEditorStyle.RegionBackground);
+		}
+
 		private void DrawSeparator()
 		{
 			Rect position = GUILayoutUtility.GetRect(GUIContent.none, BTEditorStyle.SeparatorStyle, GUILayout.Height(5.0f));
-			position.x -= 12;
-			position.width += 14;
+			position.x -= 16;
+			position.width += 18;
 
 			EditorGUI.LabelField(position, "", BTEditorStyle.SeparatorStyle);
 		}

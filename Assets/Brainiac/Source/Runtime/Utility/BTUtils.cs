@@ -98,7 +98,7 @@ namespace Brainiac
 			catch(Exception ex)
 			{
 				Debug.LogException(ex);
-				return new BehaviourTree();
+				return null;
 			}
 		}
 

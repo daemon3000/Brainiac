@@ -87,22 +87,29 @@ namespace BrainiacEditor
 				{
 					SaveBehaviourTree();
 					m_btAsset.Dispose();
+					m_btAsset = null;
 				}
 
-				m_btAsset = asset;
-
-				BehaviourTree behaviourTree = m_btAsset.GetEditModeTree();
-				m_graph.SetBehaviourTree(behaviourTree);
-				m_canvas.Area = m_btAsset.CanvasArea;
-				m_canvas.CenterOnPosition(behaviourTree.Root.Position, position.size);
-				m_canvas.IsDebuging = false;
-
-				if(clearNavigationHistory)
+				BehaviourTree behaviourTree = asset.GetEditModeTree();
+				if(behaviourTree != null)
 				{
-					m_navigationHistory.Clear();
-				}
+					m_btAsset = asset;
+					m_graph.SetBehaviourTree(behaviourTree);
+					m_canvas.Area = m_btAsset.CanvasArea;
+					m_canvas.CenterOnPosition(behaviourTree.Root.Position, position.size);
+					m_canvas.IsDebuging = false;
 
-				m_navigationHistory.Push(m_btAsset, null);
+					if(clearNavigationHistory)
+					{
+						m_navigationHistory.Clear();
+					}
+
+					m_navigationHistory.Push(m_btAsset, null);
+				}
+				else
+				{
+					CrashEditor("Failed to deserialize behaviour tree!\n\nThis can happen when you rename a behaviour node class, when you change the namespace or when you delete a behaviour node script.\n\nTry to enable text serialization and manually edit the asset file to fix the behaviour tree.");
+				}
 			}
 		}
 
@@ -130,12 +137,24 @@ namespace BrainiacEditor
 			if(m_btAsset != null)
 			{
 				BehaviourTree behaviourTree = m_btAsset.GetEditModeTree();
-
-				m_graph.SetBehaviourTree(behaviourTree);
-				m_canvas.CenterOnPosition(behaviourTree.Root.Position, position.size);
-				m_canvas.Area = m_btAsset.CanvasArea;
-				m_canvas.IsDebuging = false;
+				if(behaviourTree != null)
+				{
+					m_graph.SetBehaviourTree(behaviourTree);
+					m_canvas.CenterOnPosition(behaviourTree.Root.Position, position.size);
+					m_canvas.Area = m_btAsset.CanvasArea;
+					m_canvas.IsDebuging = false;
+				}
+				else
+				{
+					CrashEditor("Failed to deserialize behaviour tree!\n\nThis can happen when you rename a behaviour node class, when you change the namespace or when you delete a behaviour node script.\n\nTry to enable text serialization and manually edit the asset file to fix the behaviour tree.");
+				}
 			}
+		}
+
+		private void CrashEditor(string message)
+		{
+			Close();
+			EditorUtility.DisplayDialog("Error", message, "Close");
 		}
 
 		public void CreateNewBehaviourTree()

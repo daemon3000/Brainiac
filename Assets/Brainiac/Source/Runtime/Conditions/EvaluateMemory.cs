@@ -71,7 +71,7 @@ namespace Brainiac
 			m_referenceComparison = ReferenceComparison.IsNotNull;
 		}
 
-		public sealed override bool OnEvaluate(AIAgent agent)
+		public override bool OnEvaluate(AIAgent agent)
 		{
 			switch(m_valueType)
 			{
