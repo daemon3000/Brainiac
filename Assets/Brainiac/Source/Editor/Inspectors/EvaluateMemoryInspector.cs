@@ -3,8 +3,8 @@ using Brainiac;
 
 namespace BrainiacEditor
 {
-	[CustomConditionInspector(typeof(EvaluateMemory))]
-	public class EvaluateMemoryInspector : ConditionInspector
+	[CustomConstraintInspector(typeof(EvaluateMemory))]
+	public class EvaluateMemoryInspector : ConstraintInspector
 	{
 		public override void OnInspectorGUI()
 		{

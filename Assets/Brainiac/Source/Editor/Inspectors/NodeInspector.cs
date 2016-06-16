@@ -13,7 +13,7 @@ namespace BrainiacEditor
 	{
 		private BehaviourNode m_target;
 		private BTEditorGraphNode m_graphNode;
-		private Dictionary<Type, ConditionInspector> m_conditionInspectors;
+		private Dictionary<Type, ConstraintInspector> m_constraintInspectors;
 		private Dictionary<Type, ServiceInspector> m_serviceInspectors;
 
 		public BehaviourNode Target
@@ -30,8 +30,8 @@ namespace BrainiacEditor
 
 		public NodeInspector()
 		{
-			m_conditionInspectors = new Dictionary<Type, ConditionInspector>();
-			m_conditionInspectors.Add(typeof(ConditionInspector), new ConditionInspector());
+			m_constraintInspectors = new Dictionary<Type, ConstraintInspector>();
+			m_constraintInspectors.Add(typeof(ConstraintInspector), new ConstraintInspector());
 
 			m_serviceInspectors = new Dictionary<Type, ServiceInspector>();
 			m_serviceInspectors.Add(typeof(ServiceInspector), new ServiceInspector());
@@ -43,7 +43,7 @@ namespace BrainiacEditor
 			{
 				DrawHeader();
 				DrawProperties();
-				DrawConditionsAndServices();
+				DrawConstraintsAndServices();
 				RepaintCanvas();
 			}
 		}
@@ -179,51 +179,51 @@ namespace BrainiacEditor
 			}
 		}
 
-		protected void DrawConditionsAndServices()
+		protected void DrawConstraintsAndServices()
 		{
 			EditorGUILayout.Space();
 			EditorGUILayout.Space();
 
-			if(m_target.Conditions.Count > 0)
+			if(m_target.Constraints.Count > 0)
 			{
 				EditorGUILayout.Space();
-				DrawListHeaderLabel("Conditions");
-				DrawConditions();
+				DrawSubinspectorHeader("Constraints");
+				DrawConstraints();
 			}
 
 			if(m_target.Services.Count > 0)
 			{
 				EditorGUILayout.Space();
-				DrawListHeaderLabel("Services");
+				DrawSubinspectorHeader("Services");
 				DrawServices();
 			}
 		}
 
-		private void DrawConditions()
+		private void DrawConstraints()
 		{
 			EditorGUILayout.Space();
 			DrawSeparator();
 
-			for(int i = 0; i < m_target.Conditions.Count; i++)
+			for(int i = 0; i < m_target.Constraints.Count; i++)
 			{
-				Condition condition = m_target.Conditions[i];
+				Constraint constraint = m_target.Constraints[i];
 				Rect headerPos = GUILayoutUtility.GetRect(0, 18.0f, GUILayout.ExpandWidth(true));
 				Rect foldoutPos = new Rect(headerPos.x, headerPos.y, 20.0f, headerPos.height);
 				Rect labelPos = new Rect(foldoutPos.xMax, headerPos.y, headerPos.width - 38.0f, headerPos.height);
 				Rect optionsButtonPos = new Rect(labelPos.xMax, headerPos.y, 18.0f, headerPos.height);
 
-				condition.IsExpanded = EditorGUI.Foldout(foldoutPos, condition.IsExpanded, GUIContent.none);
-				EditorGUI.LabelField(labelPos, condition.Title, BTEditorStyle.BoldLabel);
+				constraint.IsExpanded = EditorGUI.Foldout(foldoutPos, constraint.IsExpanded, GUIContent.none);
+				EditorGUI.LabelField(labelPos, constraint.Title, BTEditorStyle.BoldLabel);
 				if(GUI.Button(optionsButtonPos, BTEditorStyle.OptionsIcon, EditorStyles.label))
 				{
-					GenericMenu menu = BTContextMenuFactory.CreateConditionContextMenu(m_target, i);
+					GenericMenu menu = BTContextMenuFactory.CreateConstraintContextMenu(m_target, i);
 					menu.DropDown(new Rect(BTEditorCanvas.Current.Event.mousePosition, Vector2.zero));
 				}
 
-				if(condition.IsExpanded)
+				if(constraint.IsExpanded)
 				{
-					var conditionInspector = GetConditionInspector(condition);
-					conditionInspector.OnInspectorGUI();
+					var constraintInspector = GetConstraintInspector(constraint);
+					constraintInspector.OnInspectorGUI();
 				}
 
 				DrawSeparator();
@@ -261,13 +261,13 @@ namespace BrainiacEditor
 			}
 		}
 
-		private void DrawListHeaderLabel(string label)
+		private void DrawSubinspectorHeader(string label)
 		{
-			Rect position = GUILayoutUtility.GetRect(GUIContent.none, BTEditorStyle.ListHeader, GUILayout.ExpandWidth(true), GUILayout.Height(15.0f));
-			position.x -= 12;
-			position.width += 16;
+			Rect position = GUILayoutUtility.GetRect(GUIContent.none, BTEditorStyle.RegionBackground, GUILayout.ExpandWidth(true), GUILayout.Height(15.0f));
+			position.x -= 19;
+			position.width += 28;
 
-			EditorGUI.LabelField(position, label, BTEditorStyle.ListHeader);
+			EditorGUI.LabelField(position, label, BTEditorStyle.RegionBackground);
 		}
 
 		private void DrawSeparator()
@@ -279,16 +279,16 @@ namespace BrainiacEditor
 			EditorGUI.LabelField(position, "", BTEditorStyle.SeparatorStyle);
 		}
 
-		private ConditionInspector GetConditionInspector(Condition condition)
+		private ConstraintInspector GetConstraintInspector(Constraint constraint)
 		{
-			ConditionInspector inspector = null;
-			if(!m_conditionInspectors.TryGetValue(BTConditionInspectorFactory.GetInspectorTypeForCondition(condition.GetType()), out inspector))
+			ConstraintInspector inspector = null;
+			if(!m_constraintInspectors.TryGetValue(BTConstraintInspectorFactory.GetInspectorTypeForConstraint(constraint.GetType()), out inspector))
 			{
-				inspector = BTConditionInspectorFactory.CreateInspectorForCondition(condition);
-				m_conditionInspectors.Add(inspector.GetType(), inspector);
+				inspector = BTConstraintInspectorFactory.CreateInspectorForConstraint(constraint);
+				m_constraintInspectors.Add(inspector.GetType(), inspector);
 			}
 
-			inspector.Target = condition;
+			inspector.Target = constraint;
 			return inspector;
 		}
 

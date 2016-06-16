@@ -13,9 +13,9 @@ namespace Brainiac
 		private Breakpoint m_breakpoint;
 		private BehaviourNodeStatus m_status;
 
-		[BTProperty]
-		private List<Condition> m_conditions;
-		[BTProperty]
+		[BTProperty("Constraints")]
+		private List<Constraint> m_constraints;
+		[BTProperty("Services")]
 		private List<Service> m_services;
 
 		[BTHideInInspector]
@@ -98,16 +98,16 @@ namespace Brainiac
 
 #if UNITY_EDITOR
 		/// <summary>
-		/// This node's list of conditions. For use only in the editor code. DO NOT USE IN RUNTIME CODE!!!
+		/// This node's list of Constraints. For use only in the editor code. DO NOT USE IN RUNTIME CODE!!!
 		/// </summary>
 		[BTIgnore]
-		public List<Condition> Conditions
+		public List<Constraint> Constraints
 		{
-			get { return m_conditions; }
+			get { return m_constraints; }
 		}
 
 		/// <summary>
-		/// This node's list of services. For use only in the editor code. DO NOT USE IN RUNTIME CODE!!!
+		/// This node's list of Services. For use only in the editor code. DO NOT USE IN RUNTIME CODE!!!
 		/// </summary>
 		[BTIgnore]
 		public List<Service> Services
@@ -120,27 +120,27 @@ namespace Brainiac
 		{
 			m_breakpoint = Breakpoint.None;
 			m_status = BehaviourNodeStatus.None;
-			m_conditions = new List<Condition>();
+			m_constraints = new List<Constraint>();
 			m_services = new List<Service>();
 		}
 
 		public virtual void OnBeforeSerialize(BTAsset btAsset)
 		{
-			foreach(var condition in m_conditions)
-				condition.OnBeforeSerialize(btAsset);
+			foreach(var constraint in m_constraints)
+				constraint.OnBeforeSerialize(btAsset);
 			foreach(var service in m_services)
 				service.OnBeforeSerialize(btAsset);
 		}
 
 		public virtual void OnAfterDeserialize(BTAsset btAsset)
 		{
-			if(m_conditions == null)
-				m_conditions = new List<Condition>();
+			if(m_constraints == null)
+				m_constraints = new List<Constraint>();
 			if(m_services == null)
 				m_services = new List<Service>();
 
-			foreach(var condition in m_conditions)
-				condition.OnAfterDeserialize(btAsset);
+			foreach(var constraint in m_constraints)
+				constraint.OnAfterDeserialize(btAsset);
 			foreach(var service in m_services)
 				service.OnAfterDeserialize(btAsset);
 		}
@@ -173,7 +173,7 @@ namespace Brainiac
 #endif
 			}
 
-			if(EvaluateConditions(agent))
+			if(CheckConstraints(agent))
 			{
 				m_status = OnExecute(agent);
 
@@ -217,11 +217,11 @@ namespace Brainiac
 		{
 		}
 
-		private bool EvaluateConditions(AIAgent agent)
+		private bool CheckConstraints(AIAgent agent)
 		{
-			foreach(var condition in m_conditions)
+			foreach(var constraint in m_constraints)
 			{
-				if(!condition.OnEvaluate(agent))
+				if(!constraint.OnEvaluate(agent))
 					return false;
 			}
 

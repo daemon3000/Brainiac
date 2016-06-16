@@ -45,11 +45,11 @@ namespace Brainiac
 			return null;
 		}
 
-		public static Condition CreateCondition(Type conditionType)
+		public static Constraint CreateConstraint(Type constraintType)
 		{
-			if(conditionType != null && conditionType.IsSubclassOf(typeof(Condition)) && !conditionType.IsAbstract)
+			if(constraintType != null && constraintType.IsSubclassOf(typeof(Constraint)) && !constraintType.IsAbstract)
 			{
-				return Activator.CreateInstance(conditionType) as Condition;
+				return Activator.CreateInstance(constraintType) as Constraint;
 			}
 
 			return null;

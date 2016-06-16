@@ -22,11 +22,11 @@ namespace Brainiac
 		}
 	}
 
-	public class AddConditionMenuAttribute : Attribute
+	public class AddConstraintMenuAttribute : Attribute
 	{
 		public readonly string MenuPath;
 
-		public AddConditionMenuAttribute(string menuPath)
+		public AddConstraintMenuAttribute(string menuPath)
 		{
 			MenuPath = menuPath;
 		}

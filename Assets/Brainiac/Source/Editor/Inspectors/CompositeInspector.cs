@@ -22,7 +22,7 @@ namespace BrainiacEditor
 
 				EditorGUILayout.Space();
 				DrawChildren(composite);
-				DrawConditionsAndServices();
+				DrawConstraintsAndServices();
 				RepaintCanvas();
 			}
 		}

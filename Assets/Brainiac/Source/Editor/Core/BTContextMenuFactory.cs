@@ -198,39 +198,39 @@ namespace BrainiacEditor
 		public static GenericMenu CreateNodeInspectorContextMenu(BehaviourNode targetNode)
 		{
 			GenericMenu menu = new GenericMenu();
-			BTConditionFactory.AddCondition(menu, targetNode);
+			BTConstraintFactory.AddConstraint(menu, targetNode);
 			BTServiceFactory.AddService(menu, targetNode);
 
 			return menu;
 		}
 
-		public static GenericMenu CreateConditionContextMenu(BehaviourNode targetNode, int conditionIndex)
+		public static GenericMenu CreateConstraintContextMenu(BehaviourNode targetNode, int constraintIndex)
 		{
 			GenericMenu menu = new GenericMenu();
 			menu.AddItem(new GUIContent("Move Up"), false, () => 
 			{
-				if(conditionIndex > 0)
+				if(constraintIndex > 0)
 				{
-					var temp = targetNode.Conditions[conditionIndex];
-					targetNode.Conditions[conditionIndex] = targetNode.Conditions[conditionIndex - 1];
-					targetNode.Conditions[conditionIndex - 1] = temp;
+					var temp = targetNode.Constraints[constraintIndex];
+					targetNode.Constraints[constraintIndex] = targetNode.Constraints[constraintIndex - 1];
+					targetNode.Constraints[constraintIndex - 1] = temp;
 				}
 			});
 
 			menu.AddItem(new GUIContent("Move Down"), false, () => 
 			{
-				if(conditionIndex < targetNode.Conditions.Count - 1)
+				if(constraintIndex < targetNode.Constraints.Count - 1)
 				{
-					var temp = targetNode.Conditions[conditionIndex];
-					targetNode.Conditions[conditionIndex] = targetNode.Conditions[conditionIndex + 1];
-					targetNode.Conditions[conditionIndex + 1] = temp;
+					var temp = targetNode.Constraints[constraintIndex];
+					targetNode.Constraints[constraintIndex] = targetNode.Constraints[constraintIndex + 1];
+					targetNode.Constraints[constraintIndex + 1] = temp;
 				}
 			});
 
 			menu.AddSeparator("");
 			menu.AddItem(new GUIContent("Remove"), false, () => 
 			{
-				targetNode.Conditions.RemoveAt(conditionIndex);
+				targetNode.Constraints.RemoveAt(constraintIndex);
 			});
 
 			return menu;

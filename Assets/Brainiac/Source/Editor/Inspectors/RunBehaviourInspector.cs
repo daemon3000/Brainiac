@@ -38,7 +38,7 @@ namespace BrainiacEditor
 				
 				GUI.enabled = prevGUIState;
 
-				DrawConditionsAndServices();
+				DrawConstraintsAndServices();
 				RepaintCanvas();
 			}
 		}

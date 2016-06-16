@@ -34,6 +34,7 @@ namespace BrainiacEditor
 		private static GUIStyle m_breadcrumbMidStyle;
 		private static GUIStyle m_breadcrumbMidActiveStyle;
 		private static GUIStyle m_separatorStyle;
+		private static GUIStyle m_regionBackground;
 
 		public static Texture ArrowUp
 		{
@@ -192,6 +193,14 @@ namespace BrainiacEditor
 			get
 			{
 				return m_separatorStyle;
+			}
+		}
+
+		public static GUIStyle RegionBackground
+		{
+			get
+			{
+				return m_regionBackground;
 			}
 		}
 
@@ -379,6 +388,13 @@ namespace BrainiacEditor
 			if(m_separatorStyle == null)
 			{
 				m_separatorStyle = new GUIStyle("sv_iconselector_sep");
+			}
+
+			if(m_regionBackground == null)
+			{
+				m_regionBackground = new GUIStyle("RegionBg");
+				m_regionBackground.contentOffset = new Vector2(0, -3);
+				m_regionBackground.alignment = TextAnchor.MiddleCenter;
 			}
 		}
 

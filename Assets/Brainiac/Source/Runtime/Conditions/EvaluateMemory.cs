@@ -3,8 +3,8 @@ using Brainiac.Serialization;
 
 namespace Brainiac
 {
-	[AddConditionMenu("Evaluate Memory")]
-	public class EvaluateMemory : Condition
+	[AddConstraintMenu("Evaluate Memory")]
+	public class EvaluateMemory : Constraint
 	{
 		[BTProperty("FirstValue")]
 		private MemoryVar m_firstValue;

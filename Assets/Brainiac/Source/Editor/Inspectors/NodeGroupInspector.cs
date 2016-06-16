@@ -22,7 +22,7 @@ namespace BrainiacEditor
 						GraphNode.Graph.OnPushNodeGroup(GraphNode);
 				}
 
-				DrawConditionsAndServices();
+				DrawConstraintsAndServices();
 				RepaintCanvas();
 			}
 		}

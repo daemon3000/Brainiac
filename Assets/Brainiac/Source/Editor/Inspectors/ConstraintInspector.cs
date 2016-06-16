@@ -8,11 +8,11 @@ using Brainiac.Serialization;
 
 namespace BrainiacEditor
 {
-	public class ConditionInspector
+	public class ConstraintInspector
 	{
-		private Condition m_target;
+		private Constraint m_target;
 		
-		public Condition Target
+		public Constraint Target
 		{
 			get { return m_target; }
 			set { m_target = value; }
@@ -28,10 +28,10 @@ namespace BrainiacEditor
 		
 		protected void DrawProperties()
 		{
-			Type conditionType = m_target.GetType();
-			var fields = from fi in conditionType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+			Type constraintType = m_target.GetType();
+			var fields = from fi in constraintType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
 						 select fi;
-			var properties = from pi in conditionType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+			var properties = from pi in constraintType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
 							 select pi;
 
 			foreach(var field in fields)

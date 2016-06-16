@@ -2,7 +2,7 @@
 
 namespace Brainiac
 {
-	public abstract class Condition
+	public abstract class Constraint
 	{
 		[BTProperty("IsExpanded")]
 		[BTHideInInspector]
