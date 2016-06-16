@@ -3,14 +3,14 @@ using Brainiac;
 
 namespace BrainiacEditor
 {
-	[CustomConditionInspector(typeof(Constraint))]
-	public class ConstraintInspector : ConditionInspector
+	[CustomConditionInspector(typeof(EvaluateMemory))]
+	public class EvaluateMemoryInspector : ConditionInspector
 	{
 		public override void OnInspectorGUI()
 		{
-			if(Target != null && Target is Constraint)
+			if(Target != null && Target is EvaluateMemory)
 			{
-				Constraint target = (Constraint)Target;
+				EvaluateMemory target = (EvaluateMemory)Target;
 				ConditionValueType oldValueType = target.ValueType;
 
 				target.ValueType = (ConditionValueType)EditorGUILayout.EnumPopup("Value Type", target.ValueType);

@@ -3,8 +3,8 @@ using Brainiac.Serialization;
 
 namespace Brainiac
 {
-	[AddConditionMenu("Constraint")]
-	public class Constraint : Condition
+	[AddConditionMenu("Evaluate Memory")]
+	public class EvaluateMemory : Condition
 	{
 		[BTProperty("FirstValue")]
 		private MemoryVar m_firstValue;
@@ -61,7 +61,7 @@ namespace Brainiac
 			set { m_referenceComparison = value; }
 		}
 
-		public Constraint()
+		public EvaluateMemory()
 		{
 			m_firstValue = new MemoryVar();
 			m_secondValue = new MemoryVar();
