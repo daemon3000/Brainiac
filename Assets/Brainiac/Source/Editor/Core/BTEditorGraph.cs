@@ -311,13 +311,17 @@ namespace BrainiacEditor
 		{
 			if(destination != null && destination.Node != null && !string.IsNullOrEmpty(BTEditorCanvas.Current.Clipboard))
 			{
-				if(destination.Node is Composite)
+				if(destination.Node is NodeGroup)
 				{
-					return true;
+					return IsRoot(destination) && destination.ChildCount == 0;
 				}
 				else if(destination.Node is Decorator)
 				{
 					return destination.ChildCount == 0;
+				}
+				else if(destination.Node is Composite)
+				{
+					return true;
 				}
 			}
 

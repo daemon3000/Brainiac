@@ -346,5 +346,18 @@ namespace BrainiacEditor
 			var window = EditorWindow.GetWindow<BehaviourTreeEditor>("Brainiac");
 			window.SetBTAssetDebug(btAsset, btInstance, false);
 		}
+
+		[UnityEditor.Callbacks.OnOpenAsset(0)]
+		private static bool OnOpenBTAsset(int instanceID, int line)
+		{
+			BTAsset asset = EditorUtility.InstanceIDToObject(instanceID) as BTAsset;
+			if(asset != null)
+			{
+				Open(asset);
+				return true;
+			}
+
+			return false;
+		}
 	}
 }

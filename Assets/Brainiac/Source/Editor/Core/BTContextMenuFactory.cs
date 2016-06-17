@@ -29,7 +29,7 @@ namespace BrainiacEditor
 					menu.AddSeparator("");
 				}
 
-				if(targetNode.Node is Root)
+				if(targetNode.IsRoot)
 				{
 					menu.AddDisabledItem(new GUIContent("Copy"));
 					menu.AddDisabledItem(new GUIContent("Cut"));
@@ -53,7 +53,7 @@ namespace BrainiacEditor
 					menu.AddDisabledItem(new GUIContent("Paste"));
 				}
 
-				if(targetNode.Node is Root)
+				if(targetNode.IsRoot)
 				{
 					menu.AddDisabledItem(new GUIContent("Delete"));
 				}

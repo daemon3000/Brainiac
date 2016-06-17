@@ -165,6 +165,13 @@ namespace BrainiacEditor
 			{
 				value = EditorGUILayout.Vector3Field(label, (Vector3)currentValue);
 			}
+			else if(type == typeof(LayerMask))
+			{
+				LayerMask lm = (LayerMask)currentValue;
+				lm.value = EditorGUILayout.MaskField(label, lm.value, UnityEditorInternal.InternalEditorUtility.layers);
+
+				value = lm;
+			}
 			else if(type.IsEnum)
 			{
 				value = EditorGUILayout.EnumPopup(label, (Enum)currentValue);
