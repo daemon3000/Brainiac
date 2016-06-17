@@ -212,24 +212,8 @@ namespace BrainiacEditor
 				Color color = BTEditorStyle.GetTransitionColor(childStatus);
 				Vector2 nodeCenter = position.center;
 				Vector2 childCenter = childPosition.center;
-
-				if(treeLayout == BTEditorTreeLayout.Horizontal)
-				{
-					if(Mathf.Approximately(nodeCenter.y, childCenter.y) || Mathf.Approximately(nodeCenter.x, childCenter.x))
-					{
-						BTEditorUtils.DrawLine(nodeCenter, childCenter, color);
-					}
-					else
-					{
-						BTEditorUtils.DrawLine(nodeCenter, nodeCenter + Vector2.right * (childCenter.x - nodeCenter.x) / 2, color);
-
-						BTEditorUtils.DrawLine(nodeCenter + Vector2.right * (childCenter.x - nodeCenter.x) / 2,
-											   childCenter + Vector2.right * (nodeCenter.x - childCenter.x) / 2, color);
-
-						BTEditorUtils.DrawLine(childCenter, childCenter + Vector2.right * (nodeCenter.x - childCenter.x) / 2, color);
-					}
-				}
-				else if(treeLayout == BTEditorTreeLayout.Vertical)
+				
+				if(treeLayout == BTEditorTreeLayout.Vertical)
 				{
 					if(Mathf.Approximately(nodeCenter.y, childCenter.y) || Mathf.Approximately(nodeCenter.x, childCenter.x))
 					{
@@ -244,6 +228,10 @@ namespace BrainiacEditor
 
 						BTEditorUtils.DrawLine(childCenter, childCenter + Vector2.up * (nodeCenter.y - childCenter.y) / 2, color);
 					}
+				}
+				else if(treeLayout == BTEditorTreeLayout.Horizontal)
+				{
+					BTEditorUtils.DrawBezier(nodeCenter, childCenter, color);
 				}
 				else
 				{

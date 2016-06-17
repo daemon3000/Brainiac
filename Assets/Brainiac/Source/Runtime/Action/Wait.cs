@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using Brainiac.Serialization;
 
-namespace Brainiac.Examples
+namespace Brainiac
 {
-	[AddNodeMenu("Action/Timer")]
-	public class Timer : Action
+	[AddNodeMenu("Action/Wait")]
+	public class Wait : Action
 	{
 		[BTProperty("Duration")]
 		private MemoryVar m_duration;
@@ -20,15 +20,7 @@ namespace Brainiac.Examples
 			}
 		}
 
-		public override string Title
-		{
-			get
-			{
-				return "Timer";
-			}
-		}
-
-		public Timer()
+		public Wait()
 		{
 			m_duration = new MemoryVar();
 		}

@@ -6,24 +6,54 @@ namespace BrainiacEditor
 {
 	public static class BTEditorUtils
 	{
-		private const int BEZIER_H_OFFSET = 150;
+		private const int BEZIER_H_OFFSET = 250;
 		private const int BEZIER_WIDTH = 3;
+		private const float MIN_V_DISTANCE = 40.0f;
+		private const float MIN_H_DISTANCE = 300.0f;
 
 		private static StringBuilder m_stringBuilder = new StringBuilder();
 
 		public static void DrawBezier(Rect a, Rect b, Color color)
 		{
-			Handles.DrawBezier(a.center, b.center,
-							   new Vector3(a.center.x + BEZIER_H_OFFSET, a.center.y, 0),
-							   new Vector3(b.center.x - BEZIER_H_OFFSET, b.center.y, 0),
-							   color, null, BEZIER_WIDTH);
+			Vector2 start = Vector3.zero;
+			Vector2 end = Vector3.zero;
+
+			if(a.center.x <= b.center.x)
+			{
+				start = a.center;
+				end = b.center;
+			}
+			else
+			{
+				start = b.center;
+				end = a.center;
+			}
+
+			float vertDistance = Mathf.Abs(start.y - end.y);
+			float horzDistance = Mathf.Abs(start.x - end.x);
+			float lerp = Mathf.Min(Mathf.Clamp01(vertDistance / MIN_V_DISTANCE), Mathf.Clamp01(horzDistance / MIN_H_DISTANCE));
+			float offset = Mathf.Lerp(0.0f, BEZIER_H_OFFSET, lerp);
+
+			Vector3 startTangent = new Vector3(start.x + offset, start.y, 0);
+			Vector3 endTangent = new Vector3(end.x - offset, end.y, 0);
+
+			Handles.DrawBezier(start, end, startTangent, endTangent, color, null, BEZIER_WIDTH);
 		}
 
 		public static void DrawBezier(Vector2 a, Vector2 b, Color color)
 		{
-			Handles.DrawBezier(a, b, new Vector3(a.x + BEZIER_H_OFFSET, a.y, 0),
-							   new Vector3(b.x - BEZIER_H_OFFSET, b.y, 0),
-							   color, null, BEZIER_WIDTH);
+			Vector2 start = a.x <= b.x ? a : b;
+			Vector2 end = a.x <= b.x ? b : a;
+
+			float vertDistance = Mathf.Abs(start.y - end.y);
+			float horzDistance = Mathf.Abs(start.x - end.x);
+			float lerp = Mathf.Min(Mathf.Clamp01(vertDistance / MIN_V_DISTANCE), Mathf.Clamp01(horzDistance / MIN_H_DISTANCE));
+			float offset = Mathf.Lerp(0.0f, BEZIER_H_OFFSET, lerp);
+
+			Vector3 startTangent = new Vector3(start.x + offset, start.y, 0);
+			Vector3 endTangent = new Vector3(end.x - offset, end.y, 0);
+
+			Handles.DrawBezier(start, end, startTangent, endTangent, color, null, BEZIER_WIDTH);
 		}
 
 		public static void DrawLine(Rect a, Rect b, Color color)

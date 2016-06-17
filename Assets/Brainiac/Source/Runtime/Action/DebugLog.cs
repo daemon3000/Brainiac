@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Brainiac.Examples
+namespace Brainiac
 {
 	public enum LogLevel
 	{

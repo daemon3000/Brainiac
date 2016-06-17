@@ -1,5 +1,5 @@
 ﻿
-namespace Brainiac.Examples
+namespace Brainiac
 {
 	[AddNodeMenu("Action/Yield One Frame")]
 	public class YieldOneFrame : Action
