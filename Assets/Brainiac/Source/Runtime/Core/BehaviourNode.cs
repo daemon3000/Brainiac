@@ -221,7 +221,7 @@ namespace Brainiac
 		{
 			foreach(var constraint in m_constraints)
 			{
-				if(!constraint.OnEvaluate(agent))
+				if(!constraint.OnExecute(agent))
 					return false;
 			}
 

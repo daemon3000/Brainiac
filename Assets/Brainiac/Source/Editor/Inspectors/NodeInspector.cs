@@ -223,11 +223,13 @@ namespace BrainiacEditor
 				Constraint constraint = m_target.Constraints[i];
 				Rect headerPos = GUILayoutUtility.GetRect(0, 18.0f, GUILayout.ExpandWidth(true));
 				Rect foldoutPos = new Rect(headerPos.x, headerPos.y, 20.0f, headerPos.height);
-				Rect labelPos = new Rect(foldoutPos.xMax, headerPos.y, headerPos.width - 38.0f, headerPos.height);
-				Rect optionsButtonPos = new Rect(labelPos.xMax, headerPos.y, 18.0f, headerPos.height);
+				Rect labelPos = new Rect(foldoutPos.xMax, headerPos.y, headerPos.width - 56.0f, headerPos.height);
+				Rect togglePos = new Rect(labelPos.xMax, headerPos.y, 18.0f, headerPos.height);
+				Rect optionsButtonPos = new Rect(togglePos.xMax, headerPos.y, 18.0f, headerPos.height);
 
 				constraint.IsExpanded = EditorGUI.Foldout(foldoutPos, constraint.IsExpanded, GUIContent.none);
 				EditorGUI.LabelField(labelPos, constraint.Title, BTEditorStyle.BoldLabel);
+				constraint.InvertResult = EditorGUI.Toggle(togglePos, GUIContent.none, constraint.InvertResult);
 				if(GUI.Button(optionsButtonPos, BTEditorStyle.OptionsIcon, EditorStyles.label))
 				{
 					GenericMenu menu = BTContextMenuFactory.CreateConstraintContextMenu(m_target, i);
