@@ -313,7 +313,7 @@ namespace BrainiacEditor
 		{
 			if(GUI.Button(screenRect, BTEditorStyle.OptionsIcon, EditorStyles.toolbarButton))
 			{
-				GenericMenu menu = BTContextMenuFactory.CreateOptionsMenu(this);
+				GenericMenu menu = BTContextMenuFactory.CreateBehaviourTreeEditorMenu(this);
 				menu.DropDown(new Rect(Event.current.mousePosition, Vector2.zero));
 			}
 		}

@@ -121,30 +121,27 @@ namespace BrainiacEditor
 		{
 			GenericMenu menu = new GenericMenu();
 
-			if(!graph.ReadOnly)
+			if(BTUndoSystem.CanUndo && !graph.ReadOnly)
 			{
-				if(BTUndoSystem.CanUndo)
-				{
-					BTUndoState topUndo = BTUndoSystem.PeekUndo();
-					menu.AddItem(new GUIContent(string.Format("Undo \"{0}\"", topUndo.Title)), false, () => BTUndoSystem.Undo());
-				}
-				else
-				{
-					menu.AddDisabledItem(new GUIContent("Undo"));
-				}
-
-				if(BTUndoSystem.CanRedo)
-				{
-					BTUndoState topRedo = BTUndoSystem.PeekRedo();
-					menu.AddItem(new GUIContent(string.Format("Redo \"{0}\"", topRedo.Title)), false, () => BTUndoSystem.Redo());
-				}
-				else
-				{
-					menu.AddDisabledItem(new GUIContent("Redo"));
-				}
-
-				menu.AddSeparator("");
+				BTUndoState topUndo = BTUndoSystem.PeekUndo();
+				menu.AddItem(new GUIContent(string.Format("Undo \"{0}\"", topUndo.Title)), false, () => BTUndoSystem.Undo());
 			}
+			else
+			{
+				menu.AddDisabledItem(new GUIContent("Undo"));
+			}
+
+			if(BTUndoSystem.CanRedo && !graph.ReadOnly)
+			{
+				BTUndoState topRedo = BTUndoSystem.PeekRedo();
+				menu.AddItem(new GUIContent(string.Format("Redo \"{0}\"", topRedo.Title)), false, () => BTUndoSystem.Redo());
+			}
+			else
+			{
+				menu.AddDisabledItem(new GUIContent("Redo"));
+			}
+
+			menu.AddSeparator("");
 
 			if(graph.Depth > 0)
 			{
@@ -156,12 +153,20 @@ namespace BrainiacEditor
 			}
 
 			if(!graph.ReadOnly)
+			{
 				menu.AddItem(new GUIContent("Select All"), false, () => graph.SelectEntireGraph());
+			}
+			else
+			{
+				menu.AddDisabledItem(new GUIContent("Select All"));
+			}
+
+			menu.AddItem(new GUIContent("Delete All Breakpoints"), false, () => graph.DeleteAllBreakpoints());
 
 			return menu;
 		}
 
-		public static GenericMenu CreateOptionsMenu(BehaviourTreeEditor editor)
+		public static GenericMenu CreateBehaviourTreeEditorMenu(BehaviourTreeEditor editor)
 		{
 			GenericMenu menu = new GenericMenu();
 			BTEditorTreeLayout treeLayout = BTEditorStyle.TreeLayout;

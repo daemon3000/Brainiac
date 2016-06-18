@@ -253,13 +253,13 @@ namespace BrainiacEditor
 			if(m_node.Breakpoint != Breakpoint.None)
 			{
 				Rect imgPosition;
-				if(m_node is Brainiac.Action)
+				if(m_node is NodeGroup)
 				{
-					imgPosition = new Rect(position.x + 4, position.yMax - 20, 16, 16);
+					imgPosition = new Rect(position.x + 2, position.y + 2, 12, 12);
 				}
 				else
 				{
-					imgPosition = new Rect(position.x + 22, position.yMax - 14, 16, 16);
+					imgPosition = new Rect(position.x - 14, position.y + 2, 12, 12);
 				}
 				
 				GUI.DrawTexture(imgPosition, BTEditorStyle.Breakpoint);

@@ -382,7 +382,7 @@ namespace BrainiacEditor
 			byte[] actualPath = Convert.FromBase64String(path);
 			if(actualPath != null)
 			{
-				BTEditorGraphNode node = WorkingRoot;
+				BTEditorGraphNode node = m_masterRoot;
 
 				for(int i = 0; i < actualPath.Length; i++)
 				{
@@ -432,6 +432,23 @@ namespace BrainiacEditor
 				}
 
 				m_selection.Clear();
+			}
+		}
+
+		public void DeleteAllBreakpoints()
+		{
+			DeleteAllBreakpoints(m_masterRoot);
+		}
+
+		private void DeleteAllBreakpoints(BTEditorGraphNode node)
+		{
+			if(node != null && node.Node != null)
+			{
+				node.Node.Breakpoint = Breakpoint.None;
+				for(int i = 0; i < node.ChildCount; i++)
+				{
+					DeleteAllBreakpoints(node.GetChild(i));
+				}
 			}
 		}
 

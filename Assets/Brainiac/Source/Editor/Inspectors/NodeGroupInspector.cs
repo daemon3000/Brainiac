@@ -9,7 +9,9 @@ namespace BrainiacEditor
 		protected override void DrawProperties()
 		{
 			string label = GraphNode.IsRoot ? "Collapse" : "Expand";
-				
+			bool prevGUIState = GUI.enabled;
+
+			GUI.enabled = true;
 			if(GUILayout.Button(label, GUILayout.Height(24.0f)))
 			{
 				if(GraphNode.IsRoot)
@@ -17,6 +19,7 @@ namespace BrainiacEditor
 				else
 					GraphNode.Graph.OnPushNodeGroup(GraphNode);
 			}
+			GUI.enabled = prevGUIState;
 		}
 	}
 }
