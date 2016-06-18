@@ -10,24 +10,60 @@ namespace BrainiacEditor
 	[Serializable]
 	public class BTNavigationHistory : ISerializationCallbackReceiver
 	{
+		private const int MAX_RECENT_FILES = 5;
+
 		[SerializeField]
 		private string m_serializedHistory;
 
 		private List<Tuple<string, BehaviourTree>> m_history;
+		private List<string> m_recentFiles;
+		private StringBuilder m_stringBuilder;
 
 		public int Size
 		{
 			get { return m_history.Count; }
 		}
 
+		public IList<string> RecentFiles
+		{
+			get { return m_recentFiles.AsReadOnly(); }
+		}
+
 		public BTNavigationHistory()
 		{
 			m_history = new List<Tuple<string, BehaviourTree>>();
+			m_recentFiles = new List<string>();
+			m_stringBuilder = new StringBuilder();
 		}
 		
 		public void Push(BTAsset asset, BehaviourTree instance)
 		{
 			m_history.Add(new Tuple<string, BehaviourTree>(AssetDatabase.GetAssetPath(asset), instance));
+			AddRecentFile(asset);
+			SaveRecentFiles();
+		}
+
+		private void AddRecentFile(BTAsset asset)
+		{
+			string filename = AssetDatabase.GetAssetPath(asset);
+			for(int i = 0; i < m_recentFiles.Count; i++)
+			{
+				if(m_recentFiles[i] == filename)
+					return;
+			}
+
+			if(m_recentFiles.Count < MAX_RECENT_FILES)
+			{
+				m_recentFiles.Add(filename);
+			}
+			else
+			{
+				for(int i = 0; i < m_recentFiles.Count - 1; i++)
+				{
+					m_recentFiles[i] = m_recentFiles[i + 1];
+				}
+				m_recentFiles[m_recentFiles.Count - 1] = filename;
+			}
 		}
 
 		public void Pop(out BTAsset asset, out BehaviourTree instance)
@@ -92,14 +128,13 @@ namespace BrainiacEditor
 
 		public void OnBeforeSerialize()
 		{
-			StringBuilder builder = new StringBuilder();
 			foreach(var item in m_history)
 			{
-				builder.Append(item.Item1);
-				builder.Append(';');
+				m_stringBuilder.Append(item.Item1);
+				m_stringBuilder.Append(';');
 			}
 
-			m_serializedHistory = builder.ToString();
+			m_serializedHistory = m_stringBuilder.ToString();
 		}
 
 		public void OnAfterDeserialize()
@@ -120,6 +155,38 @@ namespace BrainiacEditor
 					{
 						m_history.Clear();
 						break;
+					}
+				}
+			}
+
+			LoadRecentFiles();
+		}
+
+		private void SaveRecentFiles()
+		{
+			m_stringBuilder.Length = 0;
+			foreach(var file in m_recentFiles)
+			{
+				m_stringBuilder.Append(file);
+				m_stringBuilder.Append(';');
+			}
+
+			EditorPrefs.SetString(PlayerSettings.productName + ".Brainiac.RecentFiles", m_stringBuilder.ToString());
+		}
+
+		private void LoadRecentFiles()
+		{
+			string saveData = EditorPrefs.GetString(PlayerSettings.productName + ".Brainiac.RecentFiles");
+
+			m_recentFiles.Clear();
+			if(!string.IsNullOrEmpty(saveData))
+			{
+				string[] paths = m_serializedHistory.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+				foreach(var path in paths)
+				{
+					if(System.IO.File.Exists(Application.dataPath + path.Substring(6)))
+					{
+						m_recentFiles.Add(path);
 					}
 				}
 			}

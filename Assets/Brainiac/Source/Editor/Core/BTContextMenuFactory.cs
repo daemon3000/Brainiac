@@ -182,6 +182,26 @@ namespace BrainiacEditor
 				menu.AddItem(new GUIContent("Save"), false, editor.SaveBehaviourTree);
 				AssetDatabase.SaveAssets();
 			}
+
+			var recentFiles = editor.NavigationHistory.RecentFiles;
+			if(recentFiles.Count > 0)
+			{
+				GenericMenu.MenuFunction2 func = (obj) =>
+				{
+					BTAsset asset = AssetDatabase.LoadAssetAtPath<BTAsset>((string)obj);
+					BehaviourTreeEditor.Open(asset);
+				};
+
+				foreach(var file in recentFiles)
+				{
+					menu.AddItem(new GUIContent("Recent Files/" + file.Replace('/', '\\')), false, func, file);
+				}
+			}
+			else
+			{
+				menu.AddItem(new GUIContent("Recent Files/Empty"), false, () => { });
+			}
+
 			menu.AddSeparator("");
 
 			menu.AddItem(new GUIContent("Snap To Grid"), BTEditorCanvas.Current.SnapToGrid, () =>

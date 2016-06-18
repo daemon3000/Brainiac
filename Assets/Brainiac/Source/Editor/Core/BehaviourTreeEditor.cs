@@ -18,6 +18,11 @@ namespace BrainiacEditor
 		private BTEditorCanvas m_canvas;
 		private bool m_isDisposed;
 
+		public BTNavigationHistory NavigationHistory
+		{
+			get { return m_navigationHistory; }
+		}
+
 		private void OnEnable()
 		{
 			if(m_gridTexture == null)
