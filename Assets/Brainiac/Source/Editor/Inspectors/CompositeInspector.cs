@@ -11,20 +11,14 @@ namespace BrainiacEditor
 		protected const int ITEM_SPACING_HORZ = 4;
 		protected const int FIELD_HEIGHT = 20;
 
-		public override void OnInspectorGUI()
+		protected override void DrawProperties()
 		{
-			if(Target != null && Target is Composite)
-			{
-				Composite composite = (Composite)Target;
+			Composite composite = (Composite)Target;
 
-				DrawHeader();
-				DrawProperties();
+			DrawDefaultProperties();
 
-				EditorGUILayout.Space();
-				DrawChildren(composite);
-				DrawConstraintsAndServices();
-				RepaintCanvas();
-			}
+			EditorGUILayout.Space();
+			DrawChildren(composite);
 		}
 
 		protected void DrawChildren(Composite composite)

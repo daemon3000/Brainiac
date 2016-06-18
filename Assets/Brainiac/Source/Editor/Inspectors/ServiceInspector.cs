@@ -18,7 +18,7 @@ namespace BrainiacEditor
 			set { m_target = value; }
 		}
 
-		public virtual void OnInspectorGUI()
+		public void OnInspectorGUI()
 		{
 			if(m_target != null)
 			{
@@ -26,7 +26,12 @@ namespace BrainiacEditor
 			}
 		}
 
-		protected void DrawProperties()
+		protected virtual void DrawProperties()
+		{
+			DrawDefaultProperties();
+		}
+
+		protected void DrawDefaultProperties()
 		{
 			Type serviceType = m_target.GetType();
 			var fields = from fi in serviceType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)

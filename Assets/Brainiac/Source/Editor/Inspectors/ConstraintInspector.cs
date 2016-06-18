@@ -18,15 +18,20 @@ namespace BrainiacEditor
 			set { m_target = value; }
 		}
 
-		public virtual void OnInspectorGUI()
+		public void OnInspectorGUI()
 		{
 			if(m_target != null)
 			{
 				DrawProperties();
 			}
 		}
-		
-		protected void DrawProperties()
+
+		protected virtual void DrawProperties()
+		{
+			DrawDefaultProperties();
+		}
+
+		protected void DrawDefaultProperties()
 		{
 			Type constraintType = m_target.GetType();
 			var fields = from fi in constraintType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)

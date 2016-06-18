@@ -37,7 +37,7 @@ namespace BrainiacEditor
 			m_serviceInspectors.Add(typeof(ServiceInspector), new ServiceInspector());
 		}
 
-		public virtual void OnInspectorGUI()
+		public void OnInspectorGUI()
 		{
 			if(m_target != null)
 			{
@@ -48,7 +48,7 @@ namespace BrainiacEditor
 			}
 		}
 
-		protected void DrawHeader()
+		private void DrawHeader()
 		{
 			Rect titlePosition = GUILayoutUtility.GetRect(GUIContent.none, BTEditorStyle.RegionBackground, GUILayout.ExpandWidth(true), GUILayout.Height(15.0f));
 			titlePosition.x -= 19;
@@ -80,7 +80,12 @@ namespace BrainiacEditor
 			EditorGUILayout.Space();
 		}
 
-		protected void DrawProperties()
+		protected virtual void DrawProperties()
+		{
+			DrawDefaultProperties();
+		}
+
+		protected void DrawDefaultProperties()
 		{
 			Type nodeType = m_target.GetType();
 			var fields = from fi in nodeType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
@@ -193,7 +198,7 @@ namespace BrainiacEditor
 			}
 		}
 
-		protected void DrawConstraintsAndServices()
+		private void DrawConstraintsAndServices()
 		{
 			EditorGUILayout.Space();
 			EditorGUILayout.Space();
@@ -326,7 +331,7 @@ namespace BrainiacEditor
 			return inspector;
 		}
 
-		protected void RepaintCanvas()
+		private void RepaintCanvas()
 		{
 			if(BTEditorCanvas.Current != null)
 			{
