@@ -6,6 +6,9 @@ namespace Brainiac
 {
 	public abstract class BehaviourNode
 	{
+		[BTProperty("__UniqueID")]
+		private string m_uniqueID;
+
 		private Vector2 m_position;
 		private string m_comment;
 		private string m_name;
@@ -17,7 +20,7 @@ namespace Brainiac
 		private List<Constraint> m_constraints;
 		[BTProperty("Services")]
 		private List<Service> m_services;
-
+		
 		[BTHideInInspector]
 		public Vector2 Position
 		{
@@ -94,6 +97,12 @@ namespace Brainiac
 		{
 			get { return m_status; }
 			protected set { m_status = value; }
+		}
+
+		[BTIgnore]
+		public string UniqueID
+		{
+			get { return m_uniqueID; }
 		}
 
 #if UNITY_EDITOR

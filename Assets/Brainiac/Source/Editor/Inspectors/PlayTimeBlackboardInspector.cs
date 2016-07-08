@@ -20,9 +20,7 @@ namespace BrainiacEditor
 		{
 			EditorGUILayout.Space();
 
-			float itemCount = m_values.Count;
-			float contentHeight = HEADER_HEIGHT + itemCount * ITEM_HEIGHT + 6;
-
+			float contentHeight = HEADER_HEIGHT + Mathf.Max(m_values.Count, 1) * ITEM_HEIGHT + 8;
 			Rect groupRect = GUILayoutUtility.GetRect(0, contentHeight, GUILayout.ExpandWidth(true));
 			Rect headerRect = new Rect(0.0f, 0.0f, groupRect.width, HEADER_HEIGHT);
 			Rect bgRect = new Rect(headerRect.x, headerRect.yMax, headerRect.width, contentHeight - HEADER_HEIGHT);
@@ -36,14 +34,20 @@ namespace BrainiacEditor
 			GUI.BeginGroup(contentRect);
 
 			List<string> keys = new List<string>(m_values.Keys);
-			
-			for(int i = 0; i < keys.Count; i++)
+			if(keys.Count > 0)
 			{
-				object value = null;
-				if(TryDrawItem(new Rect(0.0f, i * ITEM_HEIGHT, contentRect.width, ITEM_HEIGHT), keys[i], m_values[keys[i]], out value))
+				for(int i = 0; i < keys.Count; i++)
 				{
-					m_values[keys[i]] = value;
+					object value = null;
+					if(TryDrawItem(new Rect(0.0f, i * ITEM_HEIGHT, contentRect.width, ITEM_HEIGHT), keys[i], m_values[keys[i]], out value))
+					{
+						m_values[keys[i]] = value;
+					}
 				}
+			}
+			else
+			{
+				EditorGUI.LabelField(new Rect(0.0f, 0.0f, contentRect.width, ITEM_HEIGHT), "List is Empty");
 			}
 
 			GUI.EndGroup();

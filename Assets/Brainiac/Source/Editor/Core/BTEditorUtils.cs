@@ -15,29 +15,7 @@ namespace BrainiacEditor
 
 		public static void DrawBezier(Rect a, Rect b, Color color)
 		{
-			Vector2 start = Vector3.zero;
-			Vector2 end = Vector3.zero;
-
-			if(a.center.x <= b.center.x)
-			{
-				start = a.center;
-				end = b.center;
-			}
-			else
-			{
-				start = b.center;
-				end = a.center;
-			}
-
-			float vertDistance = Mathf.Abs(start.y - end.y);
-			float horzDistance = Mathf.Abs(start.x - end.x);
-			float lerp = Mathf.Min(Mathf.Clamp01(vertDistance / MIN_V_DISTANCE), Mathf.Clamp01(horzDistance / MIN_H_DISTANCE));
-			float offset = Mathf.Lerp(0.0f, BEZIER_H_OFFSET, lerp);
-
-			Vector3 startTangent = new Vector3(start.x + offset, start.y, 0);
-			Vector3 endTangent = new Vector3(end.x - offset, end.y, 0);
-
-			Handles.DrawBezier(start, end, startTangent, endTangent, color, null, BEZIER_WIDTH);
+			DrawBezier(a.center, b.center, color);
 		}
 
 		public static void DrawBezier(Vector2 a, Vector2 b, Color color)

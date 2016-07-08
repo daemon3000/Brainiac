@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using System;
 using System.Text;
+using System.Reflection;
 using Brainiac.Serialization;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Brainiac
 {
@@ -25,14 +28,33 @@ namespace Brainiac
 			return (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>));
 		}
 
+		public static IEnumerable<FieldInfo> GetAllFields(Type t)
+		{
+			if(t == null)
+				return Enumerable.Empty<FieldInfo>();
+
+			BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
+								 BindingFlags.Instance | BindingFlags.DeclaredOnly;
+
+			return t.GetFields(flags).Concat(GetAllFields(t.BaseType));
+		}
+
 		public static BehaviourNode CreateNode(Type nodeType)
 		{
+			BehaviourNode node = null;
 			if(nodeType != null && nodeType.IsSubclassOf(typeof(BehaviourNode)) && !nodeType.IsAbstract)
 			{
-				return Activator.CreateInstance(nodeType) as BehaviourNode;
+				node = Activator.CreateInstance(nodeType) as BehaviourNode;
+				if(node != null)
+				{
+					FieldInfo uniqueIDField = typeof(BehaviourNode).GetField("m_uniqueID", BindingFlags.Instance | BindingFlags.NonPublic);
+					string uniqueID = GenerateUniqueStringID();
+
+					uniqueIDField.SetValue(node, uniqueID);
+				}
 			}
 
-			return null;
+			return node;
 		}
 
 		public static Service CreateService(Type serviceType)
