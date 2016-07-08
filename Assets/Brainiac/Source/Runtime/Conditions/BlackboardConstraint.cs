@@ -3,8 +3,8 @@ using Brainiac.Serialization;
 
 namespace Brainiac
 {
-	[AddConstraintMenu("Evaluate Memory")]
-	public class EvaluateMemory : Constraint
+	[AddConstraintMenu("Blackboard")]
+	public class BlackboardConstraint : Constraint
 	{
 		[BTProperty("FirstValue")]
 		private MemoryVar m_firstValue;
@@ -18,6 +18,14 @@ namespace Brainiac
 		private NumericComparison m_numericComparison;
 		[BTProperty("ReferenceComparison")]
 		private ReferenceComparison m_referenceComparison;
+
+		public override string Title
+		{
+			get
+			{
+				return "Blackboard";
+			}
+		}
 
 		[BTIgnore]
 		public MemoryVar FirstValue
@@ -61,7 +69,7 @@ namespace Brainiac
 			set { m_referenceComparison = value; }
 		}
 
-		public EvaluateMemory()
+		public BlackboardConstraint()
 		{
 			m_firstValue = new MemoryVar();
 			m_secondValue = new MemoryVar();
@@ -97,7 +105,7 @@ namespace Brainiac
 			if(m_firstValue.AsBool.HasValue)
 				value = m_firstValue.AsBool.Value;
 			else
-				value = m_firstValue.Evaluate<bool>(agent.Memory, false);
+				value = m_firstValue.Evaluate<bool>(agent.Blackboard, false);
 
 			return (m_booleanComparison == BooleanComparison.IsTrue) ? value : !value;
 		}
@@ -109,12 +117,12 @@ namespace Brainiac
 
 			if(m_firstValue.AsInt.HasValue)
 				firstValue = m_firstValue.AsInt.Value;
-			else if(m_firstValue.HasValue<int>(agent.Memory))
-				firstValue = m_firstValue.Evaluate<int>(agent.Memory, 0);
+			else if(m_firstValue.HasValue<int>(agent.Blackboard))
+				firstValue = m_firstValue.Evaluate<int>(agent.Blackboard, 0);
 			if(m_secondValue.AsInt.HasValue)
 				secondValue = m_secondValue.AsInt.Value;
-			else if(m_firstValue.HasValue<int>(agent.Memory))
-				secondValue = m_secondValue.Evaluate<int>(agent.Memory, 0);
+			else if(m_firstValue.HasValue<int>(agent.Blackboard))
+				secondValue = m_secondValue.Evaluate<int>(agent.Blackboard, 0);
 
 			if(firstValue.HasValue && secondValue.HasValue)
 			{
@@ -143,12 +151,12 @@ namespace Brainiac
 
 			if(m_firstValue.AsFloat.HasValue)
 				firstValue = m_firstValue.AsFloat.Value;
-			else if(m_firstValue.HasValue<float>(agent.Memory))
-				firstValue = m_firstValue.Evaluate<float>(agent.Memory, 0);
+			else if(m_firstValue.HasValue<float>(agent.Blackboard))
+				firstValue = m_firstValue.Evaluate<float>(agent.Blackboard, 0);
 			if(m_secondValue.AsFloat.HasValue)
 				secondValue = m_secondValue.AsFloat.Value;
-			else if(m_firstValue.HasValue<float>(agent.Memory))
-				secondValue = m_secondValue.Evaluate<float>(agent.Memory, 0);
+			else if(m_firstValue.HasValue<float>(agent.Blackboard))
+				secondValue = m_secondValue.Evaluate<float>(agent.Blackboard, 0);
 
 			if(firstValue.HasValue && secondValue.HasValue)
 			{
@@ -172,13 +180,13 @@ namespace Brainiac
 
 		private bool CompareGameObject(AIAgent agent)
 		{
-			GameObject value = m_firstValue.Evaluate<GameObject>(agent.Memory, null);
+			GameObject value = m_firstValue.Evaluate<GameObject>(agent.Blackboard, null);
 			return (m_referenceComparison == ReferenceComparison.IsNull) ? value == null : value != null;
 		}
 
 		private bool CompareUnityObject(AIAgent agent)
 		{
-			UnityEngine.Object value = m_firstValue.Evaluate<UnityEngine.Object>(agent.Memory, null);
+			UnityEngine.Object value = m_firstValue.Evaluate<UnityEngine.Object>(agent.Blackboard, null);
 			return (m_referenceComparison == ReferenceComparison.IsNull) ? value == null : value != null;
 		}
 	}

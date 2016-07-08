@@ -11,7 +11,6 @@ namespace BrainiacEditor
 		private SerializedProperty m_updateMode;
 		private SerializedProperty m_updateInterval;
 		private SerializedProperty m_body;
-		private SerializedProperty m_memory;
 		private SerializedProperty m_debugMode;
 
 		private void OnEnable()
@@ -20,7 +19,6 @@ namespace BrainiacEditor
 			m_updateMode = serializedObject.FindProperty("m_updateMode");
 			m_updateInterval = serializedObject.FindProperty("m_updateInterval");
 			m_body = serializedObject.FindProperty("m_body");
-			m_memory = serializedObject.FindProperty("m_memory");
 			m_debugMode = serializedObject.FindProperty("m_debugMode");
 		}
 
@@ -30,7 +28,6 @@ namespace BrainiacEditor
 
 			GUI.enabled = !EditorApplication.isPlaying;
 			EditorGUILayout.PropertyField(m_behaviourTree);
-			EditorGUILayout.PropertyField(m_memory);
 			EditorGUILayout.PropertyField(m_body);
 			EditorGUILayout.PropertyField(m_updateMode);
 			if(m_updateMode.enumValueIndex == (int)UpdateMode.AtInterval)

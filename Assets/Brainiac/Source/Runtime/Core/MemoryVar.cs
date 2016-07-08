@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using Brainiac.Serialization;
+﻿using Brainiac.Serialization;
 
 namespace Brainiac
 {
@@ -49,7 +48,7 @@ namespace Brainiac
 			m_value = "";
 		}
 
-		public void Change(Memory memory, object value)
+		public void Change(Blackboard memory, object value)
 		{
 			if(!string.IsNullOrEmpty(m_valueAsVariableName))
 			{
@@ -57,7 +56,7 @@ namespace Brainiac
 			}
 		}
 
-		public T Evaluate<T>(Memory memory, T defValue)
+		public T Evaluate<T>(Blackboard memory, T defValue)
 		{
 			if(!string.IsNullOrEmpty(m_valueAsVariableName))
 			{
@@ -67,7 +66,7 @@ namespace Brainiac
 			return defValue;
 		}
 
-		public bool HasValue<T>(Memory memory)
+		public bool HasValue<T>(Blackboard memory)
 		{
 			return memory.HasItem<T>(m_valueAsVariableName);
 		}

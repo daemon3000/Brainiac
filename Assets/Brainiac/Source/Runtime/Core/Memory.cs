@@ -1,70 +1,136 @@
-using UnityEngine;
-using System.Collections.Generic;
+﻿using UnityEngine;
+using System;
 
 namespace Brainiac
 {
-	public class Memory : MonoBehaviour 
+	//	The enum values should start at zero and have incremental values so they can be easily retreived
+	//	from a SerializedProperty in editor scripts.
+	public enum MemoryType
+	{
+		Boolean = 0, Integer, Float, String, Vector2, Vector3, GameObject, Asset
+	}
+
+	[Serializable]
+	public class Memory
 	{
 		[SerializeField]
-		private MemoryItem[] m_startMemory;
+		private string m_name;
+		[SerializeField]
+		private MemoryType m_type;
+		[SerializeField]
+		private bool m_valueBool;
+		[SerializeField]
+		private int m_valueInteger;
+		[SerializeField]
+		private float m_valueFloat;
+		[SerializeField]
+		private string m_valueString;
+		[SerializeField]
+		private Vector2 m_valueVector2;
+		[SerializeField]
+		private Vector3 m_valueVector3;
+		[SerializeField]
+		private GameObject m_valueGameObject;
+		[SerializeField]
+		private UnityEngine.Object m_valueAsset;
 
-		private Dictionary<string, object> m_globalMemory;
-
-		private void Awake()
+		public string Name
 		{
-			m_globalMemory = new Dictionary<string, object>();
-			for(int i = 0; i < m_startMemory.Length; i++)
+			get
 			{
-				SetItem(m_startMemory[i].Name, m_startMemory[i].GetValue());
+				return m_name;
 			}
 		}
 
-		public void SetItem(string name, object item)
+		public MemoryType Type
 		{
-			if(!string.IsNullOrEmpty(name))
+			get
 			{
-				if(m_globalMemory.ContainsKey(name))
-				{
-					m_globalMemory[name] = item;
-				}
-				else
-				{
-					m_globalMemory.Add(name, item);
-				}
+				return m_type;
 			}
 		}
 
-		public object GetItem(string name, object defValue = null)
+		public object GetValue()
 		{
-			if(!string.IsNullOrEmpty(name))
+			switch(m_type)
 			{
-				object value = null;
-				if(m_globalMemory.TryGetValue(name, out value))
-				{
-					return value;
-				}
+			case MemoryType.Boolean:
+				return m_valueBool;
+			case MemoryType.Integer:
+				return m_valueInteger;
+			case MemoryType.Float:
+				return m_valueFloat;
+			case MemoryType.String:
+				return m_valueString;
+			case MemoryType.Vector2:
+				return m_valueVector2;
+			case MemoryType.Vector3:
+				return m_valueVector3;
+			case MemoryType.GameObject:
+				return m_valueGameObject;
+			case MemoryType.Asset:
+				return m_valueAsset;
 			}
-			
-			return defValue;
+
+			return null;
 		}
 
-		public T GetItem<T>(string name, T defaultValue)
+		public void SetValue(object value, MemoryType type, bool canOverrideType)
 		{
-			object value = GetItem(name);
-			return (value != null && value is T) ? (T)value : defaultValue;
+			if(canOverrideType)
+			{
+				m_type = type;
+				ResetValues();
+				SetValueInternal(value, type);
+			}
+			else
+			{
+				if(m_type == type)
+					SetValueInternal(value, type);
+			}
 		}
 
-		public bool HasItem<T>(string name)
+		private void SetValueInternal(object value, MemoryType type)
 		{
-			object value = GetItem(name);
-			return (value != null && value is T);
+			switch(type)
+			{
+			case MemoryType.Boolean:
+				m_valueBool = (bool)value;
+				break;
+			case MemoryType.Integer:
+				m_valueInteger = (int)value;
+				break;
+			case MemoryType.Float:
+				m_valueFloat = (float)value;
+				break;
+			case MemoryType.String:
+				m_valueString = (string)value;
+				break;
+			case MemoryType.Vector2:
+				m_valueVector2 = (Vector2)value;
+				break;
+			case MemoryType.Vector3:
+				m_valueVector3 = (Vector3)value;
+				break;
+			case MemoryType.GameObject:
+				m_valueGameObject = (GameObject)value;
+				break;
+			case MemoryType.Asset:
+				m_valueAsset = (UnityEngine.Object)value;
+				break;
+			}
 		}
 
-#if UNITY_EDITOR
-		public IDictionary<string, object> GetMemory()
+		private void ResetValues()
 		{
-			return m_globalMemory;
+			m_valueBool = false;
+			m_valueInteger = 0;
+			m_valueFloat = 0.0f;
+			m_valueString = null;
+			m_valueVector2.Set(0, 0);
+			m_valueVector3.Set(0, 0, 0);
+			m_valueGameObject = null;
+			m_valueAsset = null;
 		}
-#endif
 	}
 }

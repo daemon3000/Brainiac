@@ -3,6 +3,7 @@ using UnityEngine.Events;
 
 namespace Brainiac
 {
+	[RequireComponent(typeof(Blackboard))]
 	public class AIAgent : MonoBehaviour 
 	{
 		public event UnityAction BeforeUpdate;
@@ -10,8 +11,6 @@ namespace Brainiac
 
 		[SerializeField]
 		private BTAsset m_behaviourTree;
-		[SerializeField]
-		private Memory m_memory;
 		[SerializeField]
 		private GameObject m_body;
 		[SerializeField]
@@ -22,6 +21,7 @@ namespace Brainiac
 		private bool m_debugMode;
 
 		private BehaviourTree m_btInstance;
+		private Blackboard m_blackboard;
 		private float m_timeElapsedSinceLastUpdate;
 		private bool m_isRunning;
 
@@ -33,11 +33,11 @@ namespace Brainiac
 			}
 		}
 
-		public Memory Memory
+		public Blackboard Blackboard
 		{
 			get
 			{
-				return m_memory;
+				return m_blackboard;
 			}
 		}
 		
@@ -55,14 +55,7 @@ namespace Brainiac
 
 		private void Awake()
 		{
-			if(m_memory == null)
-			{
-				m_memory = gameObject.GetComponent<Memory>();
-				if(m_memory == null)
-				{
-					m_memory = gameObject.AddComponent<Memory>();
-				}
-			}
+			m_blackboard = gameObject.GetComponent<Blackboard>();
 
 			if(m_behaviourTree != null)
 			{
@@ -97,18 +90,18 @@ namespace Brainiac
 
 		private void UpdateInternal()
 		{
-			RaiseBeforeUpdateEvent();
-
 			if(m_btInstance != null)
 			{
+				RaiseBeforeUpdateEvent();
+
 				if(m_btInstance.Root.Status != BehaviourNodeStatus.Running)
 				{
 					m_btInstance.Root.OnReset();
 				}
 				m_btInstance.Root.Run(this);
+
+				RaiseAfterUpdateEvent();
 			}
-			
-			RaiseAfterUpdateEvent();
 		}
 
 		public void Stop()

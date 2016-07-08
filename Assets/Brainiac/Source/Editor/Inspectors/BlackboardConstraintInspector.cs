@@ -3,12 +3,12 @@ using Brainiac;
 
 namespace BrainiacEditor
 {
-	[CustomConstraintInspector(typeof(EvaluateMemory))]
-	public class EvaluateMemoryInspector : ConstraintInspector
+	[CustomConstraintInspector(typeof(BlackboardConstraint))]
+	public class BlackboardConstraintInspector : ConstraintInspector
 	{
 		protected override void DrawProperties()
 		{
-			EvaluateMemory target = (EvaluateMemory)Target;
+			BlackboardConstraint target = (BlackboardConstraint)Target;
 			ConditionValueType oldValueType = target.ValueType;
 
 			target.ValueType = (ConditionValueType)EditorGUILayout.EnumPopup("Value Type", target.ValueType);
