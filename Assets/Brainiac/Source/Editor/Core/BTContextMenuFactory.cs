@@ -16,6 +16,10 @@ namespace BrainiacEditor
 			{
 				canAddChild = true;
 			}
+			else if(targetNode.Node is NodeGroup)
+			{
+				canAddChild = ((NodeGroup)targetNode.Node).GetChild() == null && targetNode.IsRoot;
+			}
 			else if(targetNode.Node is Decorator)
 			{
 				canAddChild = ((Decorator)targetNode.Node).GetChild() == null;
@@ -71,6 +75,20 @@ namespace BrainiacEditor
 					else
 					{
 						menu.AddDisabledItem(new GUIContent("Delete Children"));
+					}
+				}
+				else if(targetNode.Node is NodeGroup)
+				{
+					if(targetNode.IsRoot)
+					{
+						if(((NodeGroup)targetNode.Node).GetChild() != null)
+						{
+							menu.AddItem(new GUIContent("Delete Child"), false, () => targetNode.Graph.OnNodeDeleteChildren(targetNode));
+						}
+						else
+						{
+							menu.AddDisabledItem(new GUIContent("Delete Child"));
+						}
 					}
 				}
 				else if(targetNode.Node is Decorator)
@@ -142,15 +160,6 @@ namespace BrainiacEditor
 			}
 
 			menu.AddSeparator("");
-
-			if(graph.Depth > 0)
-			{
-				menu.AddItem(new GUIContent("Go Up"), false, () => graph.OnPopNodeGroup());
-			}
-			else
-			{
-				menu.AddDisabledItem(new GUIContent("Go Up"));
-			}
 
 			if(!graph.ReadOnly)
 			{
