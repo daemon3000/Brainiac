@@ -226,7 +226,39 @@ namespace BrainiacEditor
 				}, layout);
 			}
 
+			CreateHelpOptions(menu);
+
 			return menu;
+		}
+
+		private static void CreateHelpOptions(GenericMenu menu)
+		{
+			menu.AddItem(new GUIContent("Help/Check For Updates"), false, () =>
+			{
+				Application.OpenURL("https://github.com/daemon3000/Brainiac");
+			});
+
+			menu.AddItem(new GUIContent("Help/Documentation"), false, () =>
+			{
+				Application.OpenURL("https://github.com/daemon3000/Brainiac/wiki");
+			});
+
+			menu.AddItem(new GUIContent("Help/Report A Bug"), false, () =>
+			{
+				Application.OpenURL("https://github.com/daemon3000/Brainiac/issues");
+			});
+
+			menu.AddItem(new GUIContent("Help/Contact"), false, () =>
+			{
+				string message = "Email: daemon3000@hotmail.com";
+				EditorUtility.DisplayDialog("Contact", message, "Close");
+			});
+
+			menu.AddItem(new GUIContent("Help/About"), false, () =>
+			{
+				string message = "Brainiac, MIT licensed\nCopyright \u00A9 2016 Cristian Alexandru Geambasu\nhttps://github.com/daemon3000/Brainiac";
+				EditorUtility.DisplayDialog("About", message, "OK");
+			});
 		}
 
 		public static GenericMenu CreateNodeInspectorContextMenu(BehaviourNode targetNode)
