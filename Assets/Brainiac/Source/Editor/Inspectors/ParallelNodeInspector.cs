@@ -17,6 +17,8 @@ namespace BrainiacEditor
 			parallel.SucceedOnAny = EditorGUILayout.Popup("Succeed", parallel.SucceedOnAny ? 0 : 1, m_exitConditions) == 0;
 			parallel.FailOnTie = EditorGUILayout.Popup("Tie Breaker", parallel.FailOnTie ? 0 : 1, m_tieConditions) == 0;
 			EditorGUILayout.Space();
+
+			DrawChildren(parallel);
 		}
 	}
 }
