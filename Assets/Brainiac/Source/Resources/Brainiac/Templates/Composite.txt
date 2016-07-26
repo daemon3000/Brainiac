@@ -1,0 +1,12 @@
+using UnityEngine;
+using System;
+using Brainiac;
+
+[AddNodeMenu("Composite/{0}")]
+public class {0} : Composite
+{{
+	protected override BehaviourNodeStatus OnExecute(AIAgent agent)
+	{{
+		throw new NotImplementedException();
+	}}
+}}

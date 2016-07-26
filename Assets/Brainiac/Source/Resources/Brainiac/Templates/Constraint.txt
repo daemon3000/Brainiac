@@ -1,0 +1,12 @@
+using UnityEngine;
+using System;
+using Brainiac;
+
+[AddConstraintMenu("{0}")]
+public class {0} : Constraint
+{{
+	protected override bool Evaluate(AIAgent agent)
+	{{
+		throw new NotImplementedException();
+	}}
+}}

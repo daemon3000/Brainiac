@@ -27,7 +27,7 @@ namespace BrainiacEditor
 		{
 			if(m_gridTexture == null)
 			{
-				m_gridTexture = Resources.Load<Texture>("Brainiac/background");
+				m_gridTexture = Resources.Load<Texture>("Brainiac/EditorGUI/background");
 			}
 			
 			if(m_graph == null)

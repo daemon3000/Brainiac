@@ -1,0 +1,12 @@
+using UnityEngine;
+using System;
+using Brainiac;
+
+[AddNodeMenu("Action/{0}")]
+public class {0} : Brainiac.Action
+{{
+	protected override BehaviourNodeStatus OnExecute(AIAgent agent)
+	{{
+		throw new NotImplementedException();
+	}}
+}}

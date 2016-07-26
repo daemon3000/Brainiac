@@ -228,7 +228,7 @@ namespace BrainiacEditor
 		{
 			if(m_editorSkin == null)
 			{
-				m_editorSkin = Resources.Load<GUISkin>("Brainiac/editor_style");
+				m_editorSkin = Resources.Load<GUISkin>("Brainiac/EditorGUI/editor_style");
 			}
 		}
 
@@ -236,22 +236,22 @@ namespace BrainiacEditor
 		{
 			if(m_arrowUp == null)
 			{
-				m_arrowUp = Resources.Load<Texture>("Brainiac/arrow_2_up");
+				m_arrowUp = Resources.Load<Texture>("Brainiac/EditorGUI/arrow_2_up");
 			}
 
 			if(m_arrowDown == null)
 			{
-				m_arrowDown = Resources.Load<Texture>("Brainiac/arrow_2_down");
+				m_arrowDown = Resources.Load<Texture>("Brainiac/EditorGUI/arrow_2_down");
 			}
 
 			if(m_breakpoint == null)
 			{
-				m_breakpoint = Resources.Load<Texture>("Brainiac/breakpoint");
+				m_breakpoint = Resources.Load<Texture>("Brainiac/EditorGUI/breakpoint");
 			}
 
 			if(m_optionsIcon == null)
 			{
-				m_optionsIcon = Resources.Load<Texture>("Brainiac/options_icon");
+				m_optionsIcon = Resources.Load<Texture>("Brainiac/EditorGUI/options_icon");
 			}
 		}
 

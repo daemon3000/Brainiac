@@ -1,5 +1,5 @@
-﻿using UnityEditor;
-using System.Text;
+﻿using UnityEngine;
+using UnityEditor;
 
 namespace BrainiacEditor
 {
@@ -8,13 +8,6 @@ namespace BrainiacEditor
 		private enum ScriptType
 		{
 			Composite, Decorator, Action, Constraint, Service
-		}
-
-		private static StringBuilder m_stringBuilder;
-
-		static BTScriptCreationTool()
-		{
-			m_stringBuilder = new StringBuilder();
 		}
 
 		private static void CreateScript(ScriptType scriptType, string defaultFilename = "MyScript")
@@ -34,53 +27,40 @@ namespace BrainiacEditor
 
 		private static string GenerateScriptContent(ScriptType scriptType, string scriptName)
 		{
-			m_stringBuilder.Length = 0;
-			m_stringBuilder.AppendLine("using UnityEngine;");
-			m_stringBuilder.AppendLine("using System;");
-			m_stringBuilder.AppendLine("using Brainiac;");
-			m_stringBuilder.AppendLine();
+			string content = string.Empty;
 
-			if(scriptType == ScriptType.Composite || scriptType == ScriptType.Decorator || scriptType == ScriptType.Action)
+			try
 			{
-				m_stringBuilder.AppendFormat("[AddNodeMenu(\"{0}/{1}\")]\n", scriptType.ToString(), scriptName);
-			}
-			else if(scriptType == ScriptType.Constraint)
-			{
-				m_stringBuilder.AppendFormat("[AddConstraintMenu(\"{0}\")]\n", scriptName);
-			}
-			else if(scriptType == ScriptType.Service)
-			{
-				m_stringBuilder.AppendFormat("[AddServiceMenu(\"{0}\")]\n", scriptName);
-			}
+				TextAsset template = null;
+				switch(scriptType)
+				{
+				case ScriptType.Composite:
+					template = Resources.Load<TextAsset>("Brainiac/Templates/Composite");
+					break;
+				case ScriptType.Decorator:
+					template = Resources.Load<TextAsset>("Brainiac/Templates/Decorator");
+					break;
+				case ScriptType.Action:
+					template = Resources.Load<TextAsset>("Brainiac/Templates/Action");
+					break;
+				case ScriptType.Constraint:
+					template = Resources.Load<TextAsset>("Brainiac/Templates/Constraint");
+					break;
+				case ScriptType.Service:
+					template = Resources.Load<TextAsset>("Brainiac/Templates/Service");
+					break;
+				}
 
-			m_stringBuilder.AppendFormat("public class {0} : Brainiac.{1}\n", scriptName, scriptType.ToString());
-			m_stringBuilder.AppendLine("{");
-
-			if(scriptType == ScriptType.Composite || scriptType == ScriptType.Decorator || scriptType == ScriptType.Action)
-			{
-				m_stringBuilder.AppendLine("\tprotected override BehaviourNodeStatus OnExecute(AIAgent agent)");
-				m_stringBuilder.AppendLine("\t{");
-				m_stringBuilder.AppendLine("\t\tthrow new NotImplementedException();");
-				m_stringBuilder.AppendLine("\t}");
+				if(template != null)
+					content = string.Format(template.text, scriptName);
 			}
-			else if(scriptType == ScriptType.Constraint)
+			catch(System.Exception ex)
 			{
-				m_stringBuilder.AppendLine("\tpublic override bool OnEvaluate(AIAgent agent)");
-				m_stringBuilder.AppendLine("\t{");
-				m_stringBuilder.AppendLine("\t\tthrow new NotImplementedException();");
-				m_stringBuilder.AppendLine("\t}");
-			}
-			else if(scriptType == ScriptType.Service)
-			{
-				m_stringBuilder.AppendLine("\tpublic override void OnExecute(AIAgent agent)");
-				m_stringBuilder.AppendLine("\t{");
-				m_stringBuilder.AppendLine("\t\tthrow new NotImplementedException();");
-				m_stringBuilder.AppendLine("\t}");
+				Debug.LogException(ex);
+				content = string.Empty;
 			}
 
-			m_stringBuilder.AppendLine("}");
-
-			return m_stringBuilder.ToString();
+			return content;
 		}
 
 		[MenuItem("Assets/Create/Brainiac/Composite")]

@@ -1,0 +1,12 @@
+using UnityEngine;
+using System;
+using Brainiac;
+
+[AddServiceMenu("{0}")]
+public class {0} : Service
+{{
+	public override void OnExecute(AIAgent agent)
+	{{
+		throw new NotImplementedException();
+	}}
+}}
