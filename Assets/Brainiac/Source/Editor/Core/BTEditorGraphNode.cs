@@ -66,10 +66,7 @@ namespace BrainiacEditor
 
 		private Vector2 NodePositon
 		{
-			get
-			{
-				return IsRoot ? Vector2.zero : m_node.Position;
-			}
+			get { return m_node.Position; }
 			set
 			{
 				if(!IsRoot)
@@ -119,7 +116,7 @@ namespace BrainiacEditor
 				if(position.Contains(mousePosition))
 				{
 					if(!m_isSelected)
-						m_graph.OnNodeSelected(this);
+						m_graph.OnNodeSelect(this);
 
 					if(m_lastClickTime.HasValue)
 					{
@@ -174,14 +171,14 @@ namespace BrainiacEditor
 				{
 					if(!m_isSelected)
 					{
-						m_graph.OnNodeSelected(this);
+						m_graph.OnNodeSelect(this);
 					}
 				}
 				else
 				{
 					if(m_isSelected)
 					{
-						m_graph.OnNodeDeselected(this);
+						m_graph.OnNodeDeselect(this);
 					}
 				}
 			}
@@ -531,15 +528,7 @@ namespace BrainiacEditor
 
 		private void OnDestroy()
 		{
-			if(m_isSelected)
-			{
-				m_graph.RemoveNodeFromSelection(this);
-				if(Selection.activeObject == this)
-				{
-					Selection.activeObject = null;
-				}
-			}
-
+			m_graph.OnNodeDeselect(this);
 			foreach(var child in m_children)
 			{
 				BTEditorGraphNode.DestroyImmediate(child);

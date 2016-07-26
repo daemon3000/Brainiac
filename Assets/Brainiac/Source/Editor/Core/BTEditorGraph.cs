@@ -55,6 +55,13 @@ namespace BrainiacEditor
 			SelectionBox = null;
 		}
 
+		private void OnDestroy()
+		{
+			BTEditorGraphNode.DestroyImmediate(m_masterRoot);
+			m_masterRoot = null;
+			m_rootStack.Clear();
+		}
+
 		public void SetBehaviourTree(BehaviourTree behaviourTree)
 		{
 			if(m_masterRoot != null)
@@ -160,6 +167,8 @@ namespace BrainiacEditor
 			{
 				BTUndoSystem.RegisterUndo(new UndoNodeGroupPush(node));
 				m_rootStack.Push(node);
+
+				SelectSingle(node);
 			}
 		}
 
@@ -168,11 +177,13 @@ namespace BrainiacEditor
 			if(m_rootStack.Count > 1)
 			{
 				var oldWorkingRoot = m_rootStack.Pop();
+
+				SelectEntireNodeGroup(oldWorkingRoot);
 				BTUndoSystem.RegisterUndo(new UndoNodeGroupPop(oldWorkingRoot));
 			}
 		}
 
-		public void OnNodeSelected(BTEditorGraphNode node)
+		public void OnNodeSelect(BTEditorGraphNode node)
 		{
 			if(BTEditorCanvas.Current.Event.shift && (node.Node is Composite || node.Node is Decorator))
 			{
@@ -182,19 +193,22 @@ namespace BrainiacEditor
 			{
 				if(!m_selection.Contains(node))
 				{
-					m_selection.Add(node);
-					node.OnSelected();
+					if(node.Node is NodeGroup && !IsRoot(node))
+						SelectEntireNodeGroupAdditive(node);
+					else
+						SelectSingleAdditive(node);
 				}
 			}
 			else
 			{
-				ClearSelection();
-				m_selection.Add(node);
-				node.OnSelected();
+				if(node.Node is NodeGroup && !IsRoot(node))
+					SelectEntireNodeGroup(node);
+				else
+					SelectSingle(node);
 			}
 		}
 
-		public void OnNodeDeselected(BTEditorGraphNode node)
+		public void OnNodeDeselect(BTEditorGraphNode node)
 		{
 			if(m_selection.Remove(node))
 			{
@@ -328,22 +342,6 @@ namespace BrainiacEditor
 			return false;
 		}
 
-		public void RemoveNodeFromSelection(BTEditorGraphNode node)
-		{
-			if(node != null)
-			{
-				m_selection.Remove(node);
-			}
-		}
-
-		public void AddNodeToSelection(BTEditorGraphNode node)
-		{
-			if(node != null && !m_selection.Contains(node))
-			{
-				m_selection.Add(node);
-			}
-		}
-
 		public void IncreaseEditingDepth(BTEditorGraphNode node)
 		{
 			if(node != null && (node.Node is NodeGroup || node.Node is Root))
@@ -363,6 +361,89 @@ namespace BrainiacEditor
 		public bool IsRoot(BTEditorGraphNode node)
 		{
 			return node == WorkingRoot;
+		}
+
+		public void SelectEntireGraph()
+		{
+			ClearSelection();
+			SelectBranchRecursive(WorkingRoot);
+		}
+
+		private void SelectEntireNodeGroup(BTEditorGraphNode node)
+		{
+			SelectBranch(node);
+			node.OnSelected();
+		}
+		
+		private void SelectEntireNodeGroupAdditive(BTEditorGraphNode node)
+		{
+			SelectBranchAdditive(node);
+			node.OnSelected();
+		}
+
+		private void SelectBranch(BTEditorGraphNode root)
+		{
+			ClearSelection();
+			SelectBranchRecursive(root);
+		}
+
+		private void SelectBranchAdditive(BTEditorGraphNode root)
+		{
+			SelectBranchRecursive(root);
+		}
+
+		private void SelectSingle(BTEditorGraphNode node)
+		{
+			ClearSelection();
+			m_selection.Add(node);
+			node.OnSelected();
+		}
+
+		private void SelectSingleAdditive(BTEditorGraphNode node)
+		{
+			m_selection.Add(node);
+			node.OnSelected();
+		}
+
+		private void SelectBranchRecursive(BTEditorGraphNode node)
+		{
+			m_selection.Add(node);
+			node.OnSelected();
+
+			for(int i = 0; i < node.ChildCount; i++)
+			{
+				SelectBranchRecursive(node.GetChild(i));
+			}
+		}
+
+		private void ClearSelection()
+		{
+			if(m_selection.Count > 0)
+			{
+				for(int i = 0; i < m_selection.Count; i++)
+				{
+					m_selection[i].OnDeselected();
+				}
+
+				m_selection.Clear();
+			}
+		}
+
+		public void DeleteAllBreakpoints()
+		{
+			DeleteBreakpointsRecursive(m_masterRoot);
+		}
+
+		private void DeleteBreakpointsRecursive(BTEditorGraphNode node)
+		{
+			if(node != null && node.Node != null)
+			{
+				node.Node.Breakpoint = Breakpoint.None;
+				for(int i = 0; i < node.ChildCount; i++)
+				{
+					DeleteBreakpointsRecursive(node.GetChild(i));
+				}
+			}
 		}
 
 		public string GetNodeHash(BTEditorGraphNode node)
@@ -397,66 +478,6 @@ namespace BrainiacEditor
 			}
 
 			return null;
-		}
-
-		public void SelectEntireGraph()
-		{
-			ClearSelection();
-			SelectBranchRecursive(WorkingRoot);
-		}
-
-		public void SelectBranch(BTEditorGraphNode root)
-		{
-			ClearSelection();
-			SelectBranchRecursive(root);
-		}
-
-		private void SelectBranchRecursive(BTEditorGraphNode node)
-		{
-			m_selection.Add(node);
-			node.OnSelected();
-
-			for(int i = 0; i < node.ChildCount; i++)
-			{
-				SelectBranchRecursive(node.GetChild(i));
-			}
-		}
-
-		private void ClearSelection()
-		{
-			if(m_selection.Count > 0)
-			{
-				for(int i = 0; i < m_selection.Count; i++)
-				{
-					m_selection[i].OnDeselected();
-				}
-
-				m_selection.Clear();
-			}
-		}
-
-		public void DeleteAllBreakpoints()
-		{
-			DeleteAllBreakpoints(m_masterRoot);
-		}
-
-		private void DeleteAllBreakpoints(BTEditorGraphNode node)
-		{
-			if(node != null && node.Node != null)
-			{
-				node.Node.Breakpoint = Breakpoint.None;
-				for(int i = 0; i < node.ChildCount; i++)
-				{
-					DeleteAllBreakpoints(node.GetChild(i));
-				}
-			}
-		}
-
-		private void OnDestroy()
-		{
-			BTEditorGraphNode.DestroyImmediate(m_masterRoot);
-			m_masterRoot = null;
-			m_rootStack.Clear();
 		}
 
 		public static BTEditorGraph Create()
