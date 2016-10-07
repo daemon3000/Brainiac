@@ -72,7 +72,7 @@ namespace BrainiacEditor
 			}
 
 			m_isBehaviourTreeReadOnly = behaviourTree.ReadOnly;
-			m_masterRoot = BTEditorGraphNode.Create(this, behaviourTree.Root);
+			m_masterRoot = BTEditorGraphNode.CreateRoot(this, behaviourTree.Root);
 			m_rootStack.Push(m_masterRoot);
 			BTUndoSystem.Clear();
 		}
@@ -265,6 +265,49 @@ namespace BrainiacEditor
 			}
 		}
 
+		public void OnNodeSwitchType(BTEditorGraphNode target, Type newType)
+		{
+			if(target == null || newType == null)
+				return;
+
+			BTEditorGraphNode parentNode = target.Parent;
+			Vector2 oldPosition = target.NodePositon;
+			int oldIndex = target.Parent.GetChildIndex(target);
+
+			BehaviourNode node = BTUtils.CreateNode(newType);
+			if(node != null)
+			{
+				if(node is Decorator)
+				{
+					Decorator original = target.Node as Decorator;
+					Decorator decorator = node as Decorator;
+
+					decorator.SetChild(original.GetChild());
+				}
+				else if(node is Composite)
+				{
+					Composite original = target.Node as Composite;
+					Composite composite = node as Composite;
+
+					for(int i = 0; i < original.ChildCount; i++)
+						composite.AddChild(original.GetChild(i));
+				}
+				
+				BTUndoSystem.BeginUndoGroup("Changed node type");
+				BTUndoSystem.RegisterUndo(new UndoNodeDeleted(target));
+				target.OnDelete();
+
+				BTEditorGraphNode newNode = parentNode.OnInsertChild(oldIndex, node);
+				if(newNode != null)
+				{
+					newNode.NodePositon = oldPosition;
+					BTUndoSystem.RegisterUndo(new UndoNodeCreated(newNode));
+				}
+
+				BTUndoSystem.EndUndoGroup();
+			}
+		}
+
 		public void OnNodeDelete(BTEditorGraphNode node)
 		{
 			if(node != null)
@@ -308,7 +351,7 @@ namespace BrainiacEditor
 			if(CanPaste(destination))
 			{
 				BehaviourNode node = BTUtils.DeserializeNode(BTEditorCanvas.Current.Clipboard);
-				BTEditorGraphNode child = BTEditorGraphNode.Create(destination, node);
+				BTEditorGraphNode child = destination.OnCreateChild(node);
 				if(child != null)
 				{
 					SelectBranch(child);

@@ -28,10 +28,13 @@ namespace BrainiacEditor
 			if(!targetNode.Graph.ReadOnly)
 			{
 				if(canAddChild)
-				{
 					BTNodeFactory.AddChild(menu, targetNode);
+
+				if(!(targetNode.Node is NodeGroup))
+					BTNodeFactory.SwitchType(menu, targetNode);
+				
+				if(canAddChild || !(targetNode.Node is NodeGroup))
 					menu.AddSeparator("");
-				}
 
 				if(targetNode.IsRoot)
 				{

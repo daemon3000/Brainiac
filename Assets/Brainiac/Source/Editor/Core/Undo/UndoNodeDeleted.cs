@@ -58,13 +58,13 @@ namespace BrainiacEditor
 				if(m_childIndex >= 0)
 				{
 					var parentNode = m_graph.GetNodeByHash(m_parentNodeHash);
-					var createdNode = BTEditorGraphNode.Create(parentNode, node, m_childIndex);
+					var createdNode = parentNode.OnInsertChild(m_childIndex, node);
 					m_createdNodeHash = m_graph.GetNodeHash(createdNode);
 				}
 				else
 				{
 					var parentNode = m_graph.GetNodeByHash(m_parentNodeHash);
-					var createdNode = BTEditorGraphNode.Create(parentNode, node);
+					var createdNode = parentNode.OnCreateChild(node);
 					m_createdNodeHash = m_graph.GetNodeHash(createdNode);
 				}
 

@@ -1,11 +1,11 @@
-﻿using UnityEngine;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace BrainiacEditor
 {
 	public class BTUndoGroup : BTUndoState
 	{
+		private const int MAX_UNDO_STEPS = 32;
+
 		private List<BTUndoState> m_content;
 		private bool m_isOpen;
 
@@ -38,7 +38,7 @@ namespace BrainiacEditor
 		
 		public void AddUndoState(BTUndoState undoState)
 		{
-			if(m_isOpen)
+			if(m_isOpen && m_content.Count < MAX_UNDO_STEPS)
 			{
 				m_content.Add(undoState);
 			}
@@ -46,7 +46,7 @@ namespace BrainiacEditor
 
 		public override void Undo()
 		{
-			for(int i = 0; i < m_content.Count; i++)
+			for(int i = m_content.Count - 1; i >= 0; i--)
 			{
 				m_content[i].Undo();
 			}

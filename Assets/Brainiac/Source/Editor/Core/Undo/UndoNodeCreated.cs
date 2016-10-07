@@ -56,7 +56,7 @@ namespace BrainiacEditor
 			{
 				BTEditorGraphNode parentNode = m_graph.GetNodeByHash(m_parentNodeHash);
 				BehaviourNode node = BTUtils.DeserializeNode(m_serializedNode);
-				BTEditorGraphNode createdNode = BTEditorGraphNode.Create(parentNode, node);
+				BTEditorGraphNode createdNode = parentNode.OnCreateChild(node);
 
 				m_createdNodeHash = m_graph.GetNodeHash(createdNode);
 				m_parentNodeHash = null;

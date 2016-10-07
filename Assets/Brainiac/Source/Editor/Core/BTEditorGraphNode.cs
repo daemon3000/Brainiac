@@ -48,6 +48,18 @@ namespace BrainiacEditor
 			get { return m_graph.IsRoot(this); }
 		}
 
+		public Vector2 NodePositon
+		{
+			get { return m_node.Position; }
+			set
+			{
+				if(!IsRoot)
+				{
+					m_node.Position = value;
+				}
+			}
+		}
+
 		private bool CanUpdateChildren
 		{
 			get
@@ -61,18 +73,6 @@ namespace BrainiacEditor
 			get
 			{
 				return !(m_node is NodeGroup) || m_graph.IsRoot(this);
-			}
-		}
-
-		private Vector2 NodePositon
-		{
-			get { return m_node.Position; }
-			set
-			{
-				if(!IsRoot)
-				{
-					m_node.Position = value;
-				}
 			}
 		}
 		
@@ -425,6 +425,27 @@ namespace BrainiacEditor
 			return null;
 		}
 
+		public BTEditorGraphNode OnInsertChild(int index, Type type)
+		{
+			if(type != null)
+			{
+				BehaviourNode node = BTUtils.CreateNode(type);
+				if(node != null)
+				{
+					Vector2 nodeSize = BTEditorStyle.GetNodeSize(node);
+					Vector2 nodePos = NodePositon + nodeSize * 1.5f;
+					nodePos.x = Mathf.Max(nodePos.x, 0.0f);
+					nodePos.y = Mathf.Max(nodePos.y, 0.0f);
+
+					node.Position = nodePos;
+
+					return OnInsertChild(index, node);
+				}
+			}
+
+			return null;
+		}
+
 		public BTEditorGraphNode OnInsertChild(int index, BehaviourNode node)
 		{
 			if(node != null && ((m_node is Composite) || (m_node is Decorator)))
@@ -478,6 +499,13 @@ namespace BrainiacEditor
 		public int GetChildIndex(BTEditorGraphNode child)
 		{
 			return m_children.IndexOf(child);
+		}
+
+		public void ChangeChildIndex(int sourceIndex, int destinationIndex)
+		{
+			if(sourceIndex >= 0 && sourceIndex < ChildCount && destinationIndex >= 0 && destinationIndex < ChildCount)
+			{
+			}
 		}
 
 		public BTEditorGraphNode GetChild(int index)
@@ -554,36 +582,16 @@ namespace BrainiacEditor
 			return graphNode;
 		}
 
-		public static BTEditorGraphNode Create(BTEditorGraph graph, Root node)
+		public static BTEditorGraphNode CreateRoot(BTEditorGraph graph, Root node)
 		{
 			if(graph != null && node != null)
 			{
-				BTEditorGraphNode graphNode = CreateEmptyNode();
+				BTEditorGraphNode graphNode = BTEditorGraphNode.CreateEmptyNode();
 				graphNode.m_graph = graph;
 				graphNode.m_parent = null;
 				graphNode.SetExistingNode(node);
 
 				return graphNode;
-			}
-
-			return null;
-		}
-
-		public static BTEditorGraphNode Create(BTEditorGraphNode parent, BehaviourNode node)
-		{
-			if(parent != null && node != null)
-			{
-				return parent.OnCreateChild(node);
-			}
-
-			return null;
-		}
-
-		public static BTEditorGraphNode Create(BTEditorGraphNode parent, BehaviourNode node, int index)
-		{
-			if(parent != null && node != null)
-			{
-				return parent.OnInsertChild(index, node);
 			}
 
 			return null;
