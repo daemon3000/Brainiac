@@ -48,27 +48,27 @@ namespace Brainiac
 			m_value = "";
 		}
 
-		public void Change(Blackboard memory, object value)
+		public void Change(Blackboard blackboard, object value)
 		{
 			if(!string.IsNullOrEmpty(m_valueAsVariableName))
 			{
-				memory.SetItem(m_valueAsVariableName, value);
+				blackboard.SetItem(m_valueAsVariableName, value);
 			}
 		}
 
-		public T Evaluate<T>(Blackboard memory, T defValue)
+		public T Evaluate<T>(Blackboard blackboard, T defValue)
 		{
 			if(!string.IsNullOrEmpty(m_valueAsVariableName))
 			{
-				return memory.GetItem<T>(m_valueAsVariableName, defValue);
+				return blackboard.GetItem<T>(m_valueAsVariableName, defValue);
 			}
 
 			return defValue;
 		}
 
-		public bool HasValue<T>(Blackboard memory)
+		public bool HasValue<T>(Blackboard blackboard)
 		{
-			return memory.HasItem<T>(m_valueAsVariableName);
+			return blackboard.HasItem<T>(m_valueAsVariableName);
 		}
 
 		private void ParseContent()
