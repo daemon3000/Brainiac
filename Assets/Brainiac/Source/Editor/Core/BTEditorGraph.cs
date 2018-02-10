@@ -253,9 +253,6 @@ namespace BrainiacEditor
 
 		private void MoveNonSelectedChildren(BTEditorGraphNode node, Vector2 delta)
 		{
-			if (node.Node is NodeGroup)
-				return;
-
 			for (int i = 0; i < node.ChildCount; i++)
 			{
 				var child = node.GetChild(i);
