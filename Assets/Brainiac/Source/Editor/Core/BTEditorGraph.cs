@@ -229,13 +229,40 @@ namespace BrainiacEditor
 			}
 		}
 
-		public void OnNodeDrag(BTEditorGraphNode node, Vector2 position)
+		public void OnNodeDrag(BTEditorGraphNode node, Vector2 position, bool recursive = false)
 		{
 			if(m_selection.Contains(node))
 			{
 				for(int i = 0; i < m_selection.Count; i++)
 				{
-					m_selection[i].OnDrag(position);
+					if (recursive)
+					{
+						var selectedNode = m_selection[i];
+						var oldPos = selectedNode.NodePositon;
+						selectedNode.OnDrag(position);
+						var positionDelta = selectedNode.NodePositon - oldPos;
+						MoveNonSelectedChildren(selectedNode, positionDelta);
+					}
+					else
+					{
+						m_selection[i].OnDrag(position);
+					}
+				}
+			}
+		}
+
+		private void MoveNonSelectedChildren(BTEditorGraphNode node, Vector2 delta)
+		{
+			if (node.Node is NodeGroup)
+				return;
+
+			for (int i = 0; i < node.ChildCount; i++)
+			{
+				var child = node.GetChild(i);
+				if (m_selection.IndexOf(child) < 0)
+				{
+					child.NodePositon = child.NodePositon + delta;
+					MoveNonSelectedChildren(child, delta);
 				}
 			}
 		}

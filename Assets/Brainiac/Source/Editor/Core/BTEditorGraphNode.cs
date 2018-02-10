@@ -161,7 +161,7 @@ namespace BrainiacEditor
 				}
 				else if(m_isDragging)
 				{
-					m_graph.OnNodeDrag(this, mousePosition);
+					m_graph.OnNodeDrag(this, mousePosition, BTEditorCanvas.Current.Event.control);
 					BTEditorCanvas.Current.Event.Use();
 				}
 			}
