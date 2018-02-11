@@ -14,3 +14,4 @@ This software uses [Json FX](https://bitbucket.org/TowerOfBricks/jsonfx-for-unit
 ## Contributors
 
 - [Joen Joensen](https://github.com/Joen-UnLogick)
+- [entim](https://github.com/entim)
