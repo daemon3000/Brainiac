@@ -10,3 +10,7 @@ For detailed information on how to get started with this plugin visit the [Wiki]
 This software is released under the [MIT license](http://opensource.org/licenses/MIT). You can find a copy of the license in the LICENSE file included in the *Brainiac* source distribution.
 
 This software uses [Json FX](https://bitbucket.org/TowerOfBricks/jsonfx-for-unity3d-git) which is released under the [MIT license](http://opensource.org/licenses/MIT).
+
+## Contributors
+
+- [Joen Joensen](https://github.com/Joen-UnLogick)
