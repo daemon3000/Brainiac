@@ -14,6 +14,9 @@ namespace BrainiacEditor
 
 		[SerializeField]
 		private string m_serializedHistory;
+		
+		[NonSerialized]
+		private bool m_needRefresh;
 
 		private List<Tuple<string, BehaviourTree>> m_history;
 		private List<string> m_recentFiles;
@@ -26,7 +29,11 @@ namespace BrainiacEditor
 
 		public IList<string> RecentFiles
 		{
-			get { return m_recentFiles.AsReadOnly(); }
+			get
+			{
+				LoadRecentFiles();
+				return m_recentFiles.AsReadOnly();
+			}
 		}
 
 		public BTNavigationHistory()
@@ -126,8 +133,38 @@ namespace BrainiacEditor
 			}
 		}
 
+		public void Refresh()
+		{
+			if (m_needRefresh)
+			{
+				m_needRefresh = false;
+
+				m_history.Clear();
+
+				if(m_serializedHistory != null)
+				{
+					string[] paths = m_serializedHistory.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+					foreach(var path in paths)
+					{
+						BTAsset asset = AssetDatabase.LoadAssetAtPath<BTAsset>(path);
+						if(asset != null)
+						{
+							m_history.Add(new Tuple<string, BehaviourTree>(path, null));
+						}
+						else
+						{
+							m_history.Clear();
+							break;
+						}
+					}
+				}
+			}
+		}
+
 		public void OnBeforeSerialize()
 		{
+			m_stringBuilder.Length = 0;
+
 			foreach(var item in m_history)
 			{
 				m_stringBuilder.Append(item.Item1);
@@ -139,27 +176,7 @@ namespace BrainiacEditor
 
 		public void OnAfterDeserialize()
 		{
-			m_history.Clear();
-
-			if(m_serializedHistory != null)
-			{
-				string[] paths = m_serializedHistory.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-				foreach(var path in paths)
-				{
-					BTAsset asset = AssetDatabase.LoadAssetAtPath<BTAsset>(path);
-					if(asset != null)
-					{
-						m_history.Add(new Tuple<string, BehaviourTree>(path, null));
-					}
-					else
-					{
-						m_history.Clear();
-						break;
-					}
-				}
-			}
-
-			LoadRecentFiles();
+			m_needRefresh = true;
 		}
 
 		private void SaveRecentFiles()

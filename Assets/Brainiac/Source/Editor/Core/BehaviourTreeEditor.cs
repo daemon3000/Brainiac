@@ -51,7 +51,7 @@ namespace BrainiacEditor
 			ReloadBehaviourTree();
 			m_isDisposed = false;
 			m_canvas.OnRepaint += OnRepaint;
-			EditorApplication.playmodeStateChanged += HandlePlayModeChanged;
+			EditorApplication.playModeStateChanged += HandlePlayModeChanged;
 		}
 
 		private void OnDisable()
@@ -79,7 +79,7 @@ namespace BrainiacEditor
 					m_btAsset.Dispose();
 				}
 
-				EditorApplication.playmodeStateChanged -= HandlePlayModeChanged;
+				EditorApplication.playModeStateChanged -= HandlePlayModeChanged;
 				m_isDisposed = true;
 			}
 		}
@@ -200,7 +200,7 @@ namespace BrainiacEditor
 			}
 		}
 
-		private void HandlePlayModeChanged()
+		private void HandlePlayModeChanged(PlayModeStateChange change)
 		{
 			if(!EditorApplication.isPlaying)
 			{
@@ -243,6 +243,8 @@ namespace BrainiacEditor
 		private void DrawNavigationHistory(Rect screenRect)
 		{
 			EditorGUI.LabelField(screenRect, "", BTEditorStyle.EditorFooter);
+
+			m_navigationHistory.Refresh();
 
 			if(m_navigationHistory.Size > 0)
 			{
