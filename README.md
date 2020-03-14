@@ -1,7 +1,7 @@
 ## Introduction
 *Brainiac* is a behaviour tree implementation for Unity3D that features an intuitive, node-based visual editor.
 
-![](https://drive.google.com/uc?export=download&id=0B_OOorYkEbF_a2ptOHZPY0RoTVE)
+![](https://i.imgur.com/fQHRUne.png)
 
 ## Getting Started
 For detailed information on how to get started with this plugin visit the [Wiki](https://github.com/daemon3000/Brainiac/wiki).
